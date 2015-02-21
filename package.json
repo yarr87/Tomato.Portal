@@ -1,0 +1,55 @@
+{
+  "name": "ReactRefluxGen",
+  "version": "0.0.0",
+  "description": "testing",
+  "author": "me",
+  "license": "MIT",
+  "dependencies": {
+    "gulp-less": "^3.0.0",
+    "jquery": "~2.1.1",
+    "react": "~0.12.1",
+    "react-router": "~0.11.4",
+    "reflux": "~0.2.1"
+  },
+  "devDependencies": {
+    "browserify": "~7.0.0",
+    "browserify-shim": "^3.8.3",
+    "del": "~1.1.0",
+    "exorcist": "^0.1.6",
+    "glob": "^4.4.0",
+    "gulp": "~3.8.10",
+    "gulp-autoprefixer": "~2.0.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-cssmin": "^0.1.6",
+    "gulp-filter": "~1.0.2",
+    "gulp-htmlmin": "~0.2.0",
+    "gulp-if": "^1.2.5",
+    "gulp-imagemin": "~2.0.0",
+    "gulp-livereload": "^3.7.0",
+    "gulp-load-plugins": "~0.8.0",
+    "gulp-minify-css": "~0.3.11",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "~0.6.6",
+    "gulp-rev-all": "~0.7.2",
+    "gulp-rev-replace": "~0.3.1",
+    "gulp-shell": "^0.3.0",
+    "gulp-size": "~1.1.0",
+    "gulp-streamify": "0.0.5",
+    "gulp-uglify": "~1.0.2",
+    "gulp-useref": "~1.0.2",
+    "gulp-util": "^3.0.3",
+    "gulp-webserver": "~0.8.8",
+    "reactify": "~0.16.0",
+    "run-sequence": "~1.0.2",
+    "vinyl-source-stream": "~1.0.0",
+    "vinyl-transform": "^1.0.0",
+    "watchify": "^2.4.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "start": "./node_modules/gulp/bin/gulp.js serve",
+    "build": "./node_modules/gulp/bin/gulp.js build"
+  }
+}
