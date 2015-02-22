@@ -1,18 +1,23 @@
 var React = require('react');
+var Reflux = require('reflux');
 var Link = require('globals').Router.Link;
 var deviceStore = require('stores/deviceStore');
 var DeviceListItem = require('components/device_list/deviceListItem');
 var DeviceListSearch = require('components/device_list/DeviceListSearch');
+var actions = require('actions/actions');
 
 var DeviceList = React.createClass({
+    mixins: [Reflux.connect(deviceStore, 'devices')],
+
     getInitialState: function() {
         return {devices: []};
     },
 
     componentWillMount: function() {
-        deviceStore.getDevices(function(devices) {
-            this.setState({devices: devices })
-        }.bind(this));
+        actions.loadDevices();
+        // deviceStore.getDevices().then(function(devices) {
+        //     this.setState({devices: devices })
+        // }.bind(this));
     },
 
     render: function () {

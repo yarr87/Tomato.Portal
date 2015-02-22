@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var $           = require('gulp-load-plugins')();
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
+var browserifyShim = require('browserify-shim');
 var watchify = require('watchify');
 var reactify = require('reactify'); 
 var gulpif = require('gulp-if');
@@ -34,7 +35,7 @@ var browserifyTask = function (options) {
      files you create in the "app" folder */
     var appBundler = browserify({
         entries: [options.src], // The entry file, normally "main.js"
-        transform: [reactify], // Convert JSX style
+        //transform: [browserifyShim, reactify], // Convert JSX style
         debug: options.development, // Sourcemapping
         extensions: ['.jsx'],
         paths: ['./node_modules', './app/scripts/'],
@@ -44,6 +45,9 @@ var browserifyTask = function (options) {
     /* We set our dependencies as externals of our app bundler.
      For some reason it does not work to set these in the options above */
   appBundler.external(options.development ? dependencies : []);
+
+  appBundler.transform('browserify-shim');
+  appBundler.transform('reactify');
   
   /* This is the actual rebundle process of our application bundle. It produces
     a "main.js" file in our "build" folder. */
@@ -167,6 +171,10 @@ var fontsTask = function(options) {
 // Starts our development workflow
 gulp.task('default', function () {
 
+  // Copy extra files
+  // gulp.src('./app/bower_components/bootstrap/dist/js/*.min.js')
+  //   .pipe(gulp.dest('./.tmp/bower_components/bootstrap/dist/js'));
+
   browserifyTask({
     development: true,
     src: './app/scripts/app.js',
@@ -208,7 +216,7 @@ gulp.task('deploy', function () {
   });
 
   fontsTask({
-    dest: '.dist/fonts'
+    dest: './dist/fonts'
   });
 
 

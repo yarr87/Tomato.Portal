@@ -1,8 +1,18 @@
 var React = require('react');
+var Reflux = require('reflux');
 var deviceStore = require('stores/deviceStore');
 var addons = require('react/addons').addons;
+var actions = require('actions/actions');
+var _ = require('lodash');
 
 var LightSwitch = React.createClass({
+    mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
+
+        var device = _.find(devices, { id: this.props.item.id });
+
+        return device && device.state;
+    })],
+
     getInitialState: function() {
         return {
             // TODO: this is an 'anti-pattern' according to the docs.  State should be passed in.
@@ -17,9 +27,11 @@ var LightSwitch = React.createClass({
         if (state === 'ON') state = 'OFF';
         else state = 'ON';
 
-        deviceStore.sendCommand(this.props.item, state);
+        actions.setDeviceState(this.props.item, state);
 
-        this.setState({ switchState: state });
+        //deviceStore.sendCommand(this.props.item, state);
+
+        //this.setState({ switchState: state });
     },
     render: function () {
 

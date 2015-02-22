@@ -11,7 +11,17 @@
     "react-router": "~0.11.4",
     "reflux": "~0.2.1"
   },
+  "browser": {
+    "bootstrap": "./app/bower_components/bootstrap/dist/js/bootstrap.js"
+  },
+  "browserify-shim": {
+    "bootstrap": {
+      "exports": "bootstrap",
+      "depends": [ "jquery:jQuery" ]
+    }
+  },
   "devDependencies": {
+    "bluebird": "^2.9.12",
     "browserify": "~7.0.0",
     "browserify-shim": "^3.8.3",
     "del": "~1.1.0",
@@ -39,8 +49,11 @@
     "gulp-useref": "~1.0.2",
     "gulp-util": "^3.0.3",
     "gulp-webserver": "~0.8.8",
+    "lodash": "^3.3.0",
     "reactify": "~0.16.0",
     "run-sequence": "~1.0.2",
+    "superagent": "^0.21.0",
+    "superagent-bluebird-promise": "^0.6.0",
     "vinyl-source-stream": "~1.0.0",
     "vinyl-transform": "^1.0.0",
     "watchify": "^2.4.0"

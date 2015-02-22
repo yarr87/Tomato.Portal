@@ -1,7 +1,8 @@
-var React = require('react')
+var React = require('react');
 var Link = require('globals').Router.Link;
 
 var DeviceListItem = React.createClass({
+    
     getInitialState: function() {
         return {search: ''};
     },

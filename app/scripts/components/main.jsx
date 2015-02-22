@@ -1,5 +1,5 @@
 var React = require('react');
-var deviceStore = require('stores/deviceStore');
+var deviceStore = require('repositories/deviceRepository');
 var Device = require('components/devices/device');
 
 var Main = React.createClass({
@@ -8,8 +8,8 @@ var Main = React.createClass({
     },
 
     componentWillMount: function() {
-        deviceStore.getDevices(function(devices) {
-            this.setState({devices: devices })
+        deviceStore.getDevices().then(function(devices) {
+            this.setState({devices: devices });
         }.bind(this));
     },
 

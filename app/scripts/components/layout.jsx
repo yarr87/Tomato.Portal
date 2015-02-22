@@ -5,19 +5,38 @@ var Link = Router.Link;
 
 var Layout = React.createClass({
 
+  mixins: [Router.State],
+
+  getMenuLinkClass: function(routeName) {
+    var routes = this.getRoutes();
+    var route = routes[routes.length - 1];
+    var isActive = route.name === routeName;// this.isActive(routeName);
+    return isActive ? 'active' : '';
+  },
+
   render: function() {
 
     return (
       <div>
-            <header>
-              <ul>
-                <li><Link to="layout">Dashboard</Link></li>
-                <li><Link to="devices">Manage Devices</Link></li>
-                { /*<li><Link to="inbox">Inbox</Link></li>
-                    <li><Link to="calendar">Calendar</Link></li> */ }
+        <nav className="navbar navbar-default">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span className="sr-only">Toggle navigation</span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+              </button>
+              <a className="navbar-brand" href="#">Tomato</a>
+            </div>
+            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul className="nav navbar-nav">
+                <li className={ this.getMenuLinkClass('dashboard') }><Link to="dashboard">Dashboard</Link></li>
+                <li className={ this.getMenuLinkClass('devices') }><Link to="devices">Manage Devices</Link></li>
               </ul>
-            </header>
-
+            </div>
+          </div>
+        </nav>
          <div className="container">
 	        <RouteHandler/>
 	     </div>

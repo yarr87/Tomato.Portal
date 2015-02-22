@@ -12,8 +12,9 @@ var EditDevice = require('components/device_edit/editDevice');
 
 var routes = (
   <Route name="layout" path="/" handler={Layout}>
+    <Route name="dashboard" path="/" handler={Main} />
     <Route name="devices" handler={DeviceList} />
-    <Route name="addDevice" path="devices/add" handler={EditDevice} />      
+    <Route name="addDevice" path="devices/add" handler={EditDevice} />
     <Route name="editDevice" path="devices/edit/:id" handler={EditDevice} />
     <DefaultRoute handler={Main}/>
   </Route>

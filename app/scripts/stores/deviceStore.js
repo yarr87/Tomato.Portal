@@ -1,66 +1,107 @@
+var Reflux = require('reflux');
+var actions = require('actions/actions');
+var deviceRepo = require('repositories/deviceRepository');
+var _ = require('lodash');
 var $ = require('jquery');
 
-var DeviceStore = (function () {
+var deviceStore = Reflux.createStore({
 
-    var baseUrl = 'http://localhost:49310/'
+    listenables: actions,
 
-    var getDevices = function (callback) {
+    init: function() {
+        this.devices = [];
+        actions.loadDevices();
+    },
 
-        $.ajax({
-            url: baseUrl + 'api/devices',
-            dataType: 'json',
-            success: callback,
-            error: function (xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    };
+    onLoadDevices: function() {
+        deviceRepo.getDevices().then(function(devices) {
+            this.devices = devices;
+            this.trigger(this.devices)
+        }.bind(this));
+    },
 
-    var getDeviceById = function(id, callback) {
-        $.ajax({
-            url: baseUrl + 'api/devices/' + id,
-            dataType: 'json',
-            success: callback,
-            error: function (xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    };
+    onSetDeviceState: function(device, state) {
+        var localDevice = _.find(this.devices, { name: device.name });
 
-    var addDevice = function (device, callback) {
+        if (localDevice) {
+            deviceRepo.sendCommand(localDevice, state);
 
-        $.ajax({
-            url: baseUrl + 'api/devices',
-            dataType: 'json',
-            data: device,
-            method: 'POST'//,
-            //success: callback,
-            //error: function (xhr, status, err) {
-            //    console.error(this.props.url, status, err.toString());
-            //}.bind(this)
-        });
-    };
+            localDevice.state = state;
 
-    var sendCommand = function (device, command) {
+            this.trigger(this.devices);
+        }
 
-        $.ajax({
-            url: baseUrl + 'api/devices/' + device.name + '/' + command,
-            dataType: 'json',
-            method: 'POST',
-            //success: callback,
-            error: function (xhr, status, err) {
-                //console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    };
+        // if (device) {
+        //     device.state = options.state;
+        // } 
+    },
 
-    return {
-        getDevices: getDevices,
-        getDeviceById: getDeviceById,
-        addDevice: addDevice,
-        sendCommand: sendCommand
-    };
+    onSaveDevice: function(device) {
 
-})();
+        var localDevice = _.find(this.devices, { name: device.name });
 
-module.exports = DeviceStore;
+        if (localDevice) {
+            $.extend(localDevice, device);
+        }
+        else {
+            this.devices.push(device);
+        }
+
+        deviceRepo.addDevice(device);
+
+        this.trigger(this.devices);
+    }
+
+    // setSortBy: function(value) {
+    //     this.sortOptions.currentValue = value;
+    // },
+
+    // listenToPosts: function(pageNum) {
+    //     this.currentPage = pageNum;
+    //     postsRef
+    //         .orderByChild(this.sortOptions.values[this.sortOptions.currentValue])
+    //         // + 1 extra post to determine whether another page exists
+    //         .limitToLast((this.currentPage * postsPerPage) + 1)
+    //         .on('value', this.updatePosts.bind(this));
+    // },
+
+    // stopListeningToPosts: function() {
+    //     postsRef.off();
+    // },
+
+    // updatePosts: function(postsSnapshot) {
+    //     // posts is all posts through current page + 1
+    //     var endAt = this.currentPage * postsPerPage;
+    //     // accumulate posts in posts array
+    //     var posts = [];
+    //     postsSnapshot.forEach(function(postData) {
+    //         var post = postData.val();
+    //         post.id = postData.key();
+    //         posts.unshift(post);
+    //     });
+
+    //     // if extra post doesn't exist, indicate that there are no more posts
+    //     this.nextPage = (posts.length === endAt + 1);        
+    //     // slice off extra post
+    //     this.posts = posts.slice(0, endAt);
+
+    //     this.trigger({
+    //         posts: this.posts,
+    //         currentPage: this.currentPage,
+    //         nextPage: this.nextPage,
+    //         sortOptions: this.sortOptions
+    //     });
+    // },
+
+    // getDefaultData: function() {
+    //     return {
+    //         posts: this.posts,
+    //         currentPage: this.currentPage,
+    //         nextPage: this.nextPage,
+    //         sortOptions: this.sortOptions
+    //     };
+    // }
+
+});
+
+module.exports = deviceStore;
