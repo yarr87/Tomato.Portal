@@ -13,6 +13,19 @@ var deviceStore = Reflux.createStore({
         actions.loadDevices();
     },
 
+    onDeleteDevice: function(device) {
+
+        var index = _.findIndex(this.devices, { id: device.id });
+
+        if (index >= 0) {
+            this.devices.splice(index, 1);
+
+            this.trigger(this.devices);
+
+            deviceRepo.deleteDevice(device);
+        } 
+    },
+
     onLoadDevices: function() {
         deviceRepo.getDevices().then(function(devices) {
             this.devices = devices;
@@ -30,10 +43,6 @@ var deviceStore = Reflux.createStore({
 
             this.trigger(this.devices);
         }
-
-        // if (device) {
-        //     device.state = options.state;
-        // } 
     },
 
     onSaveDevice: function(device) {
@@ -44,63 +53,19 @@ var deviceStore = Reflux.createStore({
             $.extend(localDevice, device);
         }
         else {
-            this.devices.push(device);
+            localDevice = device;
+            this.devices.push(localDevice);
         }
 
-        deviceRepo.addDevice(device);
+        deviceRepo.addDevice(device).then(function(updatedDevice) {
+            // Updates from server (mostly for id on insert)
+            $.extend(localDevice, updatedDevice);
+
+            this.trigger(this.devices);
+        }.bind(this));
 
         this.trigger(this.devices);
     }
-
-    // setSortBy: function(value) {
-    //     this.sortOptions.currentValue = value;
-    // },
-
-    // listenToPosts: function(pageNum) {
-    //     this.currentPage = pageNum;
-    //     postsRef
-    //         .orderByChild(this.sortOptions.values[this.sortOptions.currentValue])
-    //         // + 1 extra post to determine whether another page exists
-    //         .limitToLast((this.currentPage * postsPerPage) + 1)
-    //         .on('value', this.updatePosts.bind(this));
-    // },
-
-    // stopListeningToPosts: function() {
-    //     postsRef.off();
-    // },
-
-    // updatePosts: function(postsSnapshot) {
-    //     // posts is all posts through current page + 1
-    //     var endAt = this.currentPage * postsPerPage;
-    //     // accumulate posts in posts array
-    //     var posts = [];
-    //     postsSnapshot.forEach(function(postData) {
-    //         var post = postData.val();
-    //         post.id = postData.key();
-    //         posts.unshift(post);
-    //     });
-
-    //     // if extra post doesn't exist, indicate that there are no more posts
-    //     this.nextPage = (posts.length === endAt + 1);        
-    //     // slice off extra post
-    //     this.posts = posts.slice(0, endAt);
-
-    //     this.trigger({
-    //         posts: this.posts,
-    //         currentPage: this.currentPage,
-    //         nextPage: this.nextPage,
-    //         sortOptions: this.sortOptions
-    //     });
-    // },
-
-    // getDefaultData: function() {
-    //     return {
-    //         posts: this.posts,
-    //         currentPage: this.currentPage,
-    //         nextPage: this.nextPage,
-    //         sortOptions: this.sortOptions
-    //     };
-    // }
 
 });
 

@@ -1,10 +1,19 @@
 var React = require('react');
 var Link = require('globals').Router.Link;
+var actions = require('actions/actions');
 
 var DeviceListItem = React.createClass({
     
     getInitialState: function() {
         return {search: ''};
+    },
+
+    handleDelete: function(e) {
+        e.preventDefault();
+
+        if (confirm('really delete?')) {
+            actions.deleteDevice(this.props.device);
+        }
     },
 
     render: function () {
@@ -14,7 +23,8 @@ var DeviceListItem = React.createClass({
                 <td>{this.props.device.name}
                 </td>
                 <td>{this.props.device.type}</td>
-                <td><Link to="editDevice" params={this.props.device}>Edit</Link></td>
+                <td><Link to="editDevice" params={this.props.device}>Edit</Link>&nbsp;&nbsp;&nbsp;
+                    <a href="#" onClick={this.handleDelete}>Delete</a></td>
             </tr>
         );
     }

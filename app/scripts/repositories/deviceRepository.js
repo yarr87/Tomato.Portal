@@ -46,24 +46,37 @@ var DeviceRepository = (function () {
         //               });
     };
 
-    var addDevice = function (device, callback) {
+    var addDevice = function (device) {
 
         return request.post(baseUrl + 'api/devices')
                       .send(device)
-                      .promise();
+                      .promise()
+                      .then(function(result) {
+                        return result.body;
+                      });
+    };
+
+    var deleteDevice = function (device) {
+      return request.del(baseUrl + 'api/devices/' + device.id)
+                    .send()
+                    .promise();
     };
 
     var sendCommand = function (device, command) {
 
         return request.post(baseUrl + 'api/devices/' + device.name + '/' + command)
                       .send({})
-                      .promise();
+                      .promise()
+                      .then(function(result) {
+                        return result.body;
+                      });
     };
 
     return {
         getDevices: getDevices,
         getDeviceById: getDeviceById,
         addDevice: addDevice,
+        deleteDevice: deleteDevice,
         sendCommand: sendCommand
     };
 

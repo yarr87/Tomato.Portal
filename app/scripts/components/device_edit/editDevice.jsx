@@ -13,7 +13,7 @@ var EditDevice = React.createClass({
 
                 var device = _.find(devices, { id: parseInt(this.getParams().id) });
 
-                return device;
+                return device || this.getInitialState().device;
             })
     ],
 
@@ -22,7 +22,7 @@ var EditDevice = React.createClass({
         return {
             device: {
                 name: '',
-                type: 'lightSwitch',
+                type: 'LightSwitch',
                 id: 0,
                 deviceId: ''
             }

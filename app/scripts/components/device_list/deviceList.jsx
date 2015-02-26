@@ -32,7 +32,7 @@ var DeviceList = React.createClass({
             <div>
                 <Link to="addDevice">Add Device</Link>
                 <DeviceListSearch />
-                <table className="table">
+                <table className="table table-striped table-hover">
                     <thead>
                     <tr>
                         <th>Name</th>
