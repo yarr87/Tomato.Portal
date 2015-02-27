@@ -24,7 +24,7 @@ var EditDevice = React.createClass({
                 name: '',
                 type: 'LightSwitch',
                 id: 0,
-                deviceId: ''
+                nodeId: ''
             }
         };
     },
@@ -49,7 +49,7 @@ var EditDevice = React.createClass({
     },
 
     handleIdChange: function(e) {
-        this.state.device.deviceId = e.target.value;
+        this.state.device.nodeId = e.target.value;
         this.setState({device: this.state.device});
     },
 
@@ -63,7 +63,7 @@ var EditDevice = React.createClass({
 
         var device = {
             id: this.state.device.id,
-            deviceId: this.refs.deviceId.getDOMNode().value.trim(),
+            nodeId: this.refs.nodeId.getDOMNode().value.trim(),
             name: this.refs.name.getDOMNode().value.trim(),
             type: this.refs.type.getCheckedValue()
         };
@@ -89,8 +89,8 @@ var EditDevice = React.createClass({
                     </label>
                 </div>
                 <div className="form-group">
-                    <label>Device Id
-                    <input className="form-control" type="text" ref="deviceId"  value={this.state.device.deviceId} onChange={this.handleIdChange} required />
+                    <label>Node Id
+                    <input className="form-control" type="text" ref="nodeId"  value={this.state.device.nodeId} onChange={this.handleIdChange} required />
                     </label>
                 </div>
                 <div className="form-group">

@@ -42,10 +42,17 @@ var LightSwitch = React.createClass({
             'off': this.state.switchState === 'OFF'
         });
 
+         var tagMarkup = this.props.item.tags.map(function(tag) {
+            return (
+                <div className="tag">{tag.name}</div>
+            );
+        });
+
         return (
           <div className={classes} onClick={this.clickHandler}>
             <i className="fa fa-lightbulb-o fa-4x"></i>
             Light Switch - {this.props.item.name}
+            {tagMarkup}
           </div>
         );
     }
