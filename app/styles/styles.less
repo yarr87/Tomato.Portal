@@ -7,6 +7,11 @@
 @import "themes/superhero/variables.less";
 @import "themes/superhero/bootswatch.less";
 
+@import "../bower_components/selectize/dist/less/selectize.bootstrap3.less";
+	
+// Fix selectize selected items
+@selectize-color-item: @dropdown-bg;
+
 .device {
     border: solid 1px #ccc;
     border-radius: 4px;

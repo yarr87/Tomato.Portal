@@ -12,7 +12,10 @@
     "reflux": "~0.2.1"
   },
   "browser": {
-    "bootstrap": "./app/bower_components/bootstrap/dist/js/bootstrap.js"
+    "bootstrap": "./app/bower_components/bootstrap/dist/js/bootstrap.js",
+    "selectize": "./app/bower_components/selectize/dist/js/selectize.min.js",
+    "sifter": "./app/bower_components/sifter/sifter.min.js",
+    "microplugin": "./app/bower_components/microplugin/src/microplugin.js"
   },
   "browserify-shim": {
     "bootstrap": {

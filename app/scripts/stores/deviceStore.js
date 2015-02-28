@@ -1,6 +1,7 @@
 var Reflux = require('reflux');
 var actions = require('actions/actions');
 var deviceRepo = require('repositories/deviceRepository');
+var tagStore = require('stores/tagStore');
 var _ = require('lodash');
 var $ = require('jquery');
 
@@ -10,7 +11,9 @@ var deviceStore = Reflux.createStore({
 
     init: function() {
         this.devices = [];
-        actions.loadDevices();
+        //actions.loadDevices();
+
+        this.listenTo(tagStore, this.onTagUpdate); // use to update tags when they change
     },
 
     onDeleteDevice: function(device) {
@@ -63,6 +66,24 @@ var deviceStore = Reflux.createStore({
 
             this.trigger(this.devices);
         }.bind(this));
+
+        this.trigger(this.devices);
+    },
+
+    // When a tag is updated, update the name of all tags linked to devices
+    onTagUpdate: function(tagObj) {
+        if (!tagObj.updatedTagId) return;
+        
+        _.each(this.devices, function(device) {
+
+            var tag = _.find(device.tags, { id: tagObj.updatedTag.id });
+
+            // Copy this tag onto the device tag
+            if (tag) {
+                $.extend(tag, tagObj.updatedTag);
+            }
+
+        });
 
         this.trigger(this.devices);
     }

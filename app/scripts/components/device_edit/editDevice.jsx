@@ -4,8 +4,11 @@ var ReactRouter = globals.Router;
 var Reflux = require('reflux');
 var RadioGroup = require('vendor/react-radiogroup');
 var deviceStore = require('stores/deviceStore');
+var tagStore = require('stores/tagStore');
 var actions = require('actions/actions');
 var _ = require('lodash');
+var selectize = require('selectize');
+var $ = require('jquery');
 
 var EditDevice = React.createClass({
     mixins: [ReactRouter.State, ReactRouter.Navigation,
@@ -14,7 +17,8 @@ var EditDevice = React.createClass({
                 var device = _.find(devices, { id: parseInt(this.getParams().id) });
 
                 return device || this.getInitialState().device;
-            })
+            }),
+             Reflux.listenTo(tagStore, 'onTagsLoaded')
     ],
 
 
@@ -24,20 +28,31 @@ var EditDevice = React.createClass({
                 name: '',
                 type: 'LightSwitch',
                 id: 0,
-                nodeId: ''
-            }
+                nodeId: '',
+                tags: []
+            },
+            tags: []
         };
     },
 
     componentWillMount: function() {
         actions.loadDevices();
-        // var id = this.getParams().id;
+        actions.loadTags();
+    },
 
-        // if (id) {
-        //     deviceStore.getDeviceById(id).then(function(device) {
-        //         this.setState({ device: device });
-        //     }.bind(this));
-        // }
+    onTagsLoaded: function(tagObj) {
+        this.state.tags = tagObj.tags;
+        this.setState({tags: this.state.tags});
+        setTimeout(function() {
+            $('#select-tags').selectize({
+                maxItems: 1000, // no max, really
+                //options: this.state.tags,
+                //items: this.state.device.tags,
+                labelField: 'name',
+                valueField: 'id',
+                searchField: 'name'
+            });
+        }.bind(this), 0);
     },
 
     // This totally sucks, because once you bind a value react forces it to always be that value and ignores input.  The way to update
@@ -65,7 +80,8 @@ var EditDevice = React.createClass({
             id: this.state.device.id,
             nodeId: this.refs.nodeId.getDOMNode().value.trim(),
             name: this.refs.name.getDOMNode().value.trim(),
-            type: this.refs.type.getCheckedValue()
+            type: this.refs.type.getCheckedValue(),
+            tags: this.state.device.tags
         };
 
         actions.saveDevice(device);
@@ -78,6 +94,13 @@ var EditDevice = React.createClass({
     },
 
     render: function () {
+
+        var tagOptions = this.state.tags.map(function(tag) {
+            var selected = _.any(this.state.device.tags, { id: tag.id });
+            return (
+                <option value={tag.id} selected={selected ? 'selected' : ''}>{tag.name}</option>
+            );
+        }.bind(this));
 
         return (
             <div className="row">
@@ -104,6 +127,13 @@ var EditDevice = React.createClass({
                         </div>
                     </RadioGroup>
                     </label>
+                </div>
+                <div className="form-group">
+                    <label>Tags</label> 
+                    <select id="select-tags">
+                        <option />
+                        {tagOptions}
+                    </select>
                 </div>
                 <div className="form-group btn-toolbar">
                     <button className="btn btn-primary" onClick={this.handleClick}>Save</button>

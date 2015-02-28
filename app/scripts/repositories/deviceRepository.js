@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var constants = require('appConstants');
 var globals = require('globals');
 var request = require('globals').request;
 var promise2 = require('bluebird').promise;
@@ -7,7 +8,7 @@ var _ = require('lodash');
 
 var DeviceRepository = (function () {
 
-    var baseUrl = 'http://localhost:49310/'
+    var baseUrl = constants.ApiBaseUrl;
 
     var _devices = [];
     var _devicePromise;
@@ -21,7 +22,7 @@ var DeviceRepository = (function () {
           return _devicePromise;
         }
 
-        var result = request.get(baseUrl + 'api/devices');
+        var result = request.get(baseUrl + 'devices');
 
         _devicePromise = result.promise().then(function(result) {
             _devices = result.body;
@@ -39,7 +40,7 @@ var DeviceRepository = (function () {
         return _.find(devices, { id: id });
       });
 
-        // return request.get(baseUrl + 'api/devices/' + id)
+        // return request.get(baseUrl + 'devices/' + id)
         //               .promise()
         //               .then(function(result) {
         //                 return result.body;
@@ -48,7 +49,7 @@ var DeviceRepository = (function () {
 
     var addDevice = function (device) {
 
-        return request.post(baseUrl + 'api/devices')
+        return request.post(baseUrl + 'devices')
                       .send(device)
                       .promise()
                       .then(function(result) {
@@ -57,14 +58,14 @@ var DeviceRepository = (function () {
     };
 
     var deleteDevice = function (device) {
-      return request.del(baseUrl + 'api/devices/' + device.id)
+      return request.del(baseUrl + 'devices/' + device.id)
                     .send()
                     .promise();
     };
 
     var sendCommand = function (device, command) {
 
-        return request.post(baseUrl + 'api/devices/' + device.name + '/' + command)
+        return request.post(baseUrl + 'devices/' + device.name + '/' + command)
                       .send({})
                       .promise()
                       .then(function(result) {
