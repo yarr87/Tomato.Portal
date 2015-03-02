@@ -26,6 +26,7 @@ var EditDevice = React.createClass({
         return {
             device: {
                 name: '',
+                internalName: '',
                 type: 'LightSwitch',
                 id: 0,
                 nodeId: '',
@@ -38,6 +39,10 @@ var EditDevice = React.createClass({
     componentWillMount: function() {
         actions.loadDevices();
         actions.loadTags();
+    },
+
+    componentWillUnmount: function() {
+        $("#select-tags")[0].selectize.destroy();
     },
 
     onTagsLoaded: function(tagObj) {
@@ -63,6 +68,11 @@ var EditDevice = React.createClass({
         this.setState({device: this.state.device});
     },
 
+    handleInternalNameChange: function(e) {
+        this.state.device.internalName = e.target.value;
+        this.setState({device: this.state.device});
+    },
+
     handleIdChange: function(e) {
         this.state.device.nodeId = e.target.value;
         this.setState({device: this.state.device});
@@ -76,12 +86,18 @@ var EditDevice = React.createClass({
     handleClick: function(e) {
         e.preventDefault();
 
+        // Control gives an array of ids, convert to full objects using the full tag list we already have
+        var tags = $("#select-tags")[0].selectize.getValue().map(function(tagId) {
+            return _.find(this.state.tags, { id: parseInt(tagId) });
+        }.bind(this));
+
         var device = {
             id: this.state.device.id,
             nodeId: this.refs.nodeId.getDOMNode().value.trim(),
             name: this.refs.name.getDOMNode().value.trim(),
+            internalName: this.refs.internalName.getDOMNode().value.trim(),
             type: this.refs.type.getCheckedValue(),
-            tags: this.state.device.tags
+            tags: tags
         };
 
         actions.saveDevice(device);
@@ -95,12 +111,29 @@ var EditDevice = React.createClass({
 
     render: function () {
 
-        var tagOptions = this.state.tags.map(function(tag) {
-            var selected = _.any(this.state.device.tags, { id: tag.id });
-            return (
-                <option value={tag.id} selected={selected ? 'selected' : ''}>{tag.name}</option>
-            );
-        }.bind(this));
+        var tagSelectMarkup = '';
+
+        // Want to render the tag select only after tags and device are loaded, so we can use defaultValue for initializing it.
+        // I want this select to be uncontrolled so I don't have to deal with change events, but defaultValue can only be called once.
+        if (this.state.tags.length && (this.state.device.id || this.getParams().id === undefined)) {
+
+            // Options for the tag select
+            var tagOptions = this.state.tags.map(function(tag) {
+                var selected = _.any(this.state.device.tags, { id: tag.id });
+                return (
+                    <option key={tag.id} value={tag.id}>{tag.name}</option>
+                );
+            }.bind(this));
+
+            // Default value is the device's tags
+            var selectedTagIds = this.state.device.tags.map(function(tag) { return tag.id.toString(); });
+
+            tagSelectMarkup = (
+                <select className="form-control" id="select-tags" multiple={true} defaultValue={selectedTagIds}>
+                    {tagOptions}
+                </select>
+            );      
+        }
 
         return (
             <div className="row">
@@ -109,6 +142,11 @@ var EditDevice = React.createClass({
                 <div className="form-group">
                     <label>Name
                     <input className="form-control" type="text" ref="name" value={this.state.device.name} onChange={this.handleNameChange} required />
+                    </label>
+                </div>
+                   <div className="form-group">
+                    <label>Node Id
+                    <input className="form-control" type="text" ref="internalName"  value={this.state.device.internalName} onChange={this.handleInternalNameChange} required />
                     </label>
                 </div>
                 <div className="form-group">
@@ -130,10 +168,7 @@ var EditDevice = React.createClass({
                 </div>
                 <div className="form-group">
                     <label>Tags</label> 
-                    <select id="select-tags">
-                        <option />
-                        {tagOptions}
-                    </select>
+                    {tagSelectMarkup}
                 </div>
                 <div className="form-group btn-toolbar">
                     <button className="btn btn-primary" onClick={this.handleClick}>Save</button>

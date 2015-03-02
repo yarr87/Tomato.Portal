@@ -46,6 +46,7 @@ var browserifyTask = function (options) {
      For some reason it does not work to set these in the options above */
   appBundler.external(options.development ? dependencies : []);
 
+  // using the transform options property double-shims stuff.  This doesn't.
   appBundler.transform('browserify-shim');
   appBundler.transform('reactify');
   
@@ -193,7 +194,7 @@ gulp.task('default', function () {
 
   return gulp.src(['.tmp', 'app'])
     .pipe($.webserver({
-      host: 'localhost', //change to 'localhost' to disable outside connections
+      host: '0.0.0.0', //change to 'localhost' to disable outside connections
       livereload: true,
       open: true
     }));

@@ -36,6 +36,7 @@ var DeviceList = React.createClass({
                     <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Id</th>
                         <th>Type</th>
                         <th></th>
                     </tr>
