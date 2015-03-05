@@ -39,7 +39,7 @@ var TagSearch = React.createClass({
     render: function () {
 
         var tags = this.state.tags.map(function(tag) {
-            var cn = "";
+            var cn = "tag";
             if (_.indexOf(this.state.selectedTagIds, tag.id) >= 0) {
                 cn += " active";
             }
@@ -55,7 +55,7 @@ var TagSearch = React.createClass({
         }.bind(this));
 
         return (
-            <ul className="nav nav-pills">
+            <ul className="nav nav-pills tag-search">
                 {tags}
             </ul>
         );

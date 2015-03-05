@@ -194,7 +194,8 @@ gulp.task('default', function () {
 
   return gulp.src(['.tmp', 'app'])
     .pipe($.webserver({
-      host: '0.0.0.0', //change to 'localhost' to disable outside connections
+      //host: '0.0.0.0', //change to 'localhost' to disable outside connections
+      host: 'localhost',
       livereload: true,
       open: true
     }));

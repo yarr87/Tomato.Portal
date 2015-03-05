@@ -15,18 +15,20 @@ var tagStore = Reflux.createStore({
         // this.listenTo(tagStore, onTagUpdate); // use to update tags when they change
     },
 
-    // onDeleteDevice: function(device) {
+    onDeleteTag: function(tag) {
 
-    //     var index = _.findIndex(this.devices, { id: device.id });
+        var index = _.findIndex(this.tags, { id: tag.id });
 
-    //     if (index >= 0) {
-    //         this.devices.splice(index, 1);
+        if (index >= 0) {
+            this.tags.splice(index, 1);
 
-    //         this.trigger(this.devices);
+            this.trigger({
+                tags: this.tags
+            });
 
-    //         tagRepo.deleteDevice(device);
-    //     } 
-    // },
+            tagRepo.deleteTag(tag);
+        } 
+    },
 
     onLoadTags: function() {
         tagRepo.getTags().then(function(tags) {

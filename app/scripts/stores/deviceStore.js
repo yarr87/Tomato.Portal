@@ -37,7 +37,7 @@ var deviceStore = Reflux.createStore({
     },
 
     onSetDeviceState: function(device, state) {
-        var localDevice = _.find(this.devices, { name: device.name });
+        var localDevice = _.find(this.devices, { id: device.id });
 
         if (localDevice) {
             deviceRepo.sendCommand(localDevice, state);
@@ -50,7 +50,7 @@ var deviceStore = Reflux.createStore({
 
     onSaveDevice: function(device) {
 
-        var localDevice = _.find(this.devices, { name: device.name });
+        var localDevice = _.find(this.devices, { id: device.id });
 
         if (localDevice) {
             $.extend(localDevice, device);
