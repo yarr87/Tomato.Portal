@@ -20,5 +20,8 @@
     "fontawesome": "~4.3.0",
     "react-radio-group": "~0.1.2",
     "selectize": "~0.12.0"
+  },
+  "devDependencies": {
+    "signalr": "~2.2.0"
   }
 }

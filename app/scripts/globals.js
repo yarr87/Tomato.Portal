@@ -6,5 +6,5 @@ module.exports = {
 	request: require('superagent'),
 	promise: require('bluebird'),
 	// Used indirectly
-	SuperagentPromise: require('superagent-bluebird-promise')
+	SuperagentPromise: require('superagent-bluebird-promise'),
 };

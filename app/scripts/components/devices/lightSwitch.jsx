@@ -39,20 +39,26 @@ var LightSwitch = React.createClass({
             'device': true,
             'lightSwitch': true,
             'on': this.state.switchState === 'ON',
-            'off': this.state.switchState === 'OFF'
+            'off': this.state.switchState === 'OFF',
+            'clearfix': true
         });
 
          var tagMarkup = this.props.item.tags.map(function(tag) {
             return (
-                <div className="tag">{tag.name}</div>
+                <span className="device-tag label label-default">{tag.name}</span>
             );
         });
 
         return (
           <div className={classes} onClick={this.clickHandler}>
-            <i className="fa fa-lightbulb-o fa-4x"></i>
-            Light Switch - {this.props.item.name}
-            {tagMarkup}
+            <div className="device-icon">
+                <i className="fa fa-lightbulb-o fa-4x"></i>
+            </div>
+            <div className="device-content">
+                <div className="device-type">Light Switch blah blah</div>
+                <div className="device-name"><h3>{this.props.item.name}</h3></div>
+                <div className="device-tags">{tagMarkup}</div>
+            </div>
           </div>
         );
     }
