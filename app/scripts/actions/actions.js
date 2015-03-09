@@ -5,7 +5,8 @@ var actions = Reflux.createActions([
     'deleteDevice',
     'loadDevices',
     'saveDevice',
-    'setDeviceState',
+    'setDeviceState', // User updates state in the app
+    'deviceStatesUpdated', // States are updated from server
 
     // tag actions
     'deleteTag',
@@ -15,3 +16,6 @@ var actions = Reflux.createActions([
 ]);
 
 module.exports = actions;
+
+// Expose globally for use by hubs
+window._actions = actions;

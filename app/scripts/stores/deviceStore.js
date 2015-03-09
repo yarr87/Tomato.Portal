@@ -29,6 +29,24 @@ var deviceStore = Reflux.createStore({
         } 
     },
 
+    onDeviceStatesUpdated: function(updates) {
+
+        var updated = false;
+
+        _.each(updates, function(update) {
+            var localDevice = _.find(this.devices, { internalName: update.internalName });
+
+            if (localDevice && localDevice.state !== update.state) {
+                localDevice.state = update.state;
+                updated = true;
+            }
+        }.bind(this));
+
+        if (updated) {
+            this.trigger(this.devices);
+        }
+    },
+
     onLoadDevices: function() {
         deviceRepo.getDevices().then(function(devices) {
             this.devices = devices;

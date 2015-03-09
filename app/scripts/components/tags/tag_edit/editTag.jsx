@@ -13,7 +13,8 @@ var EditTag = React.createClass({
                 var tag = _.find(tagObj.tags, { id: parseInt(this.getParams().id) });
 
                 return tag || this.getInitialState().tag;
-            })
+            }),
+             Reflux.listenTo(tagStore, 'onTagsLoaded')
     ],
 
 
@@ -21,8 +22,10 @@ var EditTag = React.createClass({
         return {
             tag: {
                 id: 0,
-                name: ''
-            }
+                name: '',
+                parentId: null
+            },
+            tags: []
         };
     },
 
@@ -38,15 +41,21 @@ var EditTag = React.createClass({
         this.setState({tag: this.state.tag});
     },
 
+    handleParentTagChange: function(e) {
+        this.state.tag.parentId = e.target.value;
+        this.setState({tag: this.state.tag});
+    },
+
     handleClick: function(e) {
         e.preventDefault();
 
-        var tag = {
-            id: this.state.tag.id,
-            name: this.refs.name.getDOMNode().value.trim()
-        };
+        // var tag = {
+        //     id: this.state.tag.id,
+        //     name: this.refs.name.getDOMNode().value.trim(),
 
-        actions.saveTag(tag);
+        // };
+
+        actions.saveTag(this.state.tag);
         this.transitionTo('tags');
     },
 
@@ -55,7 +64,21 @@ var EditTag = React.createClass({
         this.transitionTo('tags');
     },
 
+    onTagsLoaded: function(tagObj) {
+        this.state.tags = tagObj.tags;
+        this.setState({tags: this.state.tags});
+    },
+
     render: function () {
+
+        var tagOptions = this.state.tags.map(function(tag) {
+
+            if (tag.id === this.state.tag.id) return;
+            
+            return (
+                <option key={tag.id} value={tag.id}>{tag.name}</option>
+            );
+        }.bind(this));
 
         return (
             <div className="row">
@@ -65,6 +88,13 @@ var EditTag = React.createClass({
                     <label>Name
                     <input className="form-control" type="text" ref="name" value={this.state.tag.name} onChange={this.handleNameChange} required />
                     </label>
+                </div>
+                 <div className="form-group">
+                    <label>Parent</label>
+                    <select className="form-control" value={this.state.tag.parentId} onChange={this.handleParentTagChange}>
+                        <option />
+                        {tagOptions}
+                    </select>
                 </div>
                 <div className="form-group btn-toolbar">
                     <button className="btn btn-primary" onClick={this.handleClick}>Save</button>

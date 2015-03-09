@@ -63,9 +63,9 @@ var DeviceRepository = (function () {
                     .promise();
     };
 
-    var sendCommand = function (device, command) {
+    var sendCommand = function (device, state) {
 
-        return request.post(baseUrl + 'devices/' + device.internalName + '/' + command)
+        return request.post(baseUrl + 'devices/' + device.internalName + '/set/state/' + state)
                       .send({})
                       .promise()
                       .then(function(result) {
