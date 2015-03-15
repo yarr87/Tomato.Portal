@@ -119,14 +119,14 @@ var EditDevice = React.createClass({
 
             // Options for the tag select
             var tagOptions = this.state.tags.map(function(tag) {
-                var selected = _.any(this.state.device.tags, { id: tag.id });
                 return (
                     <option key={tag.id} value={tag.id}>{tag.name}</option>
                 );
             }.bind(this));
 
             // Default value is the device's tags
-            var selectedTagIds = this.state.device.tags.map(function(tag) { return tag.id.toString(); });
+            var directTags = _.filter(this.state.device.tags, function(tag) { return !tag.isIndirect; });
+            var selectedTagIds = directTags.map(function(tag) { return tag.id.toString(); });
 
             tagSelectMarkup = (
                 <select className="form-control" id="select-tags" multiple={true} defaultValue={selectedTagIds}>
@@ -145,7 +145,7 @@ var EditDevice = React.createClass({
                     </label>
                 </div>
                    <div className="form-group">
-                    <label>Node Id
+                    <label>Internal Name
                     <input className="form-control" type="text" ref="internalName"  value={this.state.device.internalName} onChange={this.handleInternalNameChange} required />
                     </label>
                 </div>

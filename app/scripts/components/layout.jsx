@@ -18,7 +18,7 @@ var Layout = React.createClass({
 
     return (
       <div>
-        <nav className="navbar navbar-default">
+        <nav className="navbar navbar-fixed-top navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">
               <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">

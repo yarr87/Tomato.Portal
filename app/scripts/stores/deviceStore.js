@@ -90,7 +90,7 @@ var deviceStore = Reflux.createStore({
 
     // When a tag is updated, update the name of all tags linked to devices
     onTagUpdate: function(tagObj) {
-        if (!tagObj.updatedTagId) return;
+        if (!tagObj.updatedTag) return;
         
         _.each(this.devices, function(device) {
 

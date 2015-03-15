@@ -12,7 +12,7 @@ var Main = React.createClass({
     getInitialState: function() {
         return {
             devices: [],
-            selectedTagIds: []
+            selectedTags: []
         };
     },
 
@@ -20,18 +20,18 @@ var Main = React.createClass({
         actions.loadDevices();
     },
 
-    onTagSelect: function(selectedTagIds) {
-        this.setState({selectedTagIds: selectedTagIds});
+    onTagSelect: function(selectedTags) {
+        this.setState({selectedTags: selectedTags});
     },
 
     render: function () {
 
-        var tagIds = this.state.selectedTagIds;
+        var tags = this.state.selectedTags;
 
         var markup = this.state.devices.map(function(item) {
 
-            if (tagIds.length == 0 || _.any(item.tags, function(tag) {
-                return _.indexOf(tagIds, tag.id) >= 0;
+            if (tags.length == 0 || _.any(item.tags, function(tag) {
+                return _.any(tags, { id: tag.id });
             })) {
                 
                 return (
@@ -48,7 +48,7 @@ var Main = React.createClass({
         return (
             <div>
                 <TagSearch onTagSelect={this.onTagSelect} />
-                <div className="block-grid-md-3 block-grid-sm-2 block-grid-xs-2">
+                <div className="block-grid-md-3 block-grid-sm-2 block-grid-xs-1">
                    {markup}
                 </div>
             </div>

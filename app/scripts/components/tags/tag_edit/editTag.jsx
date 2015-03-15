@@ -74,7 +74,7 @@ var EditTag = React.createClass({
         var tagOptions = this.state.tags.map(function(tag) {
 
             if (tag.id === this.state.tag.id) return;
-            
+
             return (
                 <option key={tag.id} value={tag.id}>{tag.name}</option>
             );

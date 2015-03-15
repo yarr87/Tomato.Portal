@@ -10,7 +10,7 @@ var TagSearch = React.createClass({
     getInitialState: function() {
         return {
             tags: [],
-            selectedTagIds: []
+            selectedTags: []
         };
     },
 
@@ -18,29 +18,75 @@ var TagSearch = React.createClass({
         actions.loadTags();
     },
 
-    handleTagClick: function(tag) {
+    addTagFilter: function(tag) {
 
-        var selectedTagIds = this.state.selectedTagIds;
+    },
 
-        var index = _.indexOf(selectedTagIds, tag.id);
+    addSelectedTag: function(tag, selectedTags) {
+
+        var tagToAdd = tag;
+
+        while(tagToAdd) {
+            var index = _.indexOf(selectedTags, tagToAdd);
+
+            if (index === -1) {
+                selectedTags.push(tagToAdd);
+            }
+
+            // not sure if i want auto-select
+            tagToAdd = undefined;
+            // if (tagToAdd.parentId) {
+            //     tagToAdd = _.find(this.state.tags, { id: tagToAdd.parentId });
+            // }
+            // else {
+            //     tagToAdd = undefined;
+            // }
+        }
+    },
+
+    removeSelectedTag: function(tag, selectedTags) {
+         var tagToRemove = tag;
+
+        var index = _.indexOf(selectedTags, tagToRemove);
 
         if (index >= 0) {
-            selectedTagIds.splice(index, 1);
+            selectedTags.splice(index, 1);
+        }
+
+        var childTags = _.filter(this.state.tags, { parentId: tagToRemove.id });
+
+        _.each(childTags, function(childTag) {
+            // not sure if i want auto-select
+            //this.removeSelectedTag(childTag, selectedTagIds);
+        }.bind(this));
+    },
+
+    handleTagClick: function(tag) {
+
+        var tagToUpdate = tag;
+
+        var selectedTags = this.state.selectedTags;
+
+        // Removing the tag if it's in the selected list, adding it otherwise
+        var isRemove = _.indexOf(selectedTags, tag) >= 0;
+
+        if (isRemove) {
+            this.removeSelectedTag(tag, selectedTags);
         }
         else {
-            selectedTagIds.push(tag.id);
+            this.addSelectedTag(tag, selectedTags);
         }
 
-        this.setState({ selectedTagIds: selectedTagIds });
+        this.setState({ selectedTags: selectedTags });
 
-        this.props.onTagSelect(this.state.selectedTagIds);
+        this.props.onTagSelect(this.state.selectedTags);
     },
 
     render: function () {
 
         var tags = this.state.tags.map(function(tag) {
             var cn = "tag";
-            if (_.indexOf(this.state.selectedTagIds, tag.id) >= 0) {
+            if (_.indexOf(this.state.selectedTags, tag) >= 0) {
                 cn += " active";
             }
             else {

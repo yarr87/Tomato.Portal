@@ -153,7 +153,7 @@ var cssTask = function (options) {
           .pipe(gulp.dest(options.dest));
       };
       run();
-      gulp.watch(options.src, run);
+      gulp.watch('./app/styles/*.less', run);
     } else {
       gulp.src(options.src)
         .pipe(less())
