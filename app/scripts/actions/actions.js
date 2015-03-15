@@ -11,7 +11,10 @@ var actions = Reflux.createActions([
     // tag actions
     'deleteTag',
     'loadTags',
-    'saveTag'
+    'saveTag',
+
+    // scene actions
+    'loadScenes'
 
 ]);
 

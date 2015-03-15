@@ -11,6 +11,8 @@ var DeviceList = require('components/device_list/deviceList');
 var EditDevice = require('components/device_edit/editDevice');
 var TagList = require('components/tags/tag_list/tagList');
 var EditTag = require('components/tags/tag_edit/editTag');
+var SceneList = require('components/scenes/sceneList');
+var EditScene = require('components/scenes/editScene');
 
 var routes = (
   <Route name="layout" path="/" handler={Layout}>
@@ -23,6 +25,9 @@ var routes = (
     <Route name="tags" handler={TagList} />
     <Route name="addTag" path="tags/add" handler={EditTag} />
     <Route name="editTag" path="tags/edit/:id" handler={EditTag} />
+
+    <Route name="scenes" handler={SceneList} />
+    <Route name="editScene" path="scenes/edit/:id" handler={EditScene} />
 
     <DefaultRoute handler={Main}/>
   </Route>

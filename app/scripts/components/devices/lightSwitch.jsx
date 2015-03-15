@@ -55,7 +55,7 @@ var LightSwitch = React.createClass({
                 <i className="fa fa-lightbulb-o fa-4x"></i>
             </div>
             <div className="device-content">
-                <div className="device-type">Light Switch blah blah</div>
+                <div className="device-type">Light Switch</div>
                 <div className="device-name"><h3>{this.props.item.name}</h3></div>
                 <div className="device-tags">{tagMarkup}</div>
             </div>

@@ -1,13 +1,14 @@
-
-
 @import "../bower_components/bootstrap/less/bootstrap.less";
 @import "../bower_components/fontawesome/less/font-awesome.less";
 @import "./block-grid.less";
 
-@import "themes/superhero/variables.less";
-@import "themes/superhero/bootswatch.less";
+@import "themes/darkly/variables.less";
+@import "themes/darkly/bootswatch.less";
 
 @import "../bower_components/selectize/dist/less/selectize.bootstrap3.less";
+
+@import "devices.less";
+@import "scenes.less";
 	
 // Fix selectize selected items
 @selectize-color-item: @dropdown-bg;
@@ -17,66 +18,16 @@
     color: @body-bg;
 }
 
+.selectize-control.multi .selectize-input > div {
+    background-color: @body-bg;
+}
+
+.selectize-dropdown-content {
+    color: @body-bg;
+}
+
 // For the fixed header
-body { padding-top: 50px; }
-
-.device {
-    border: solid 1px #ccc;
-    border-radius: 4px;
-    min-height: 100px;
-
-    .device-icon {
-        float: left;
-        margin-right: 10px;
-        padding: 20px;
-    }
-
-    .device-content {
-        padding: 20px;
-
-        .device-type {
-            display: none;
-        }
-
-        .device-name {
-            h3 {
-                margin: 0px;
-            }
-        }
-
-        .device-tags {
-
-            margin-top: 5px;
-            float: right;
-
-            .device-tag {
-                font-size: .9em;
-                display: inline-block;
-                margin-right: 4px;
-            }
-        }
-    }
-}
-
-.lightSwitch {
-    cursor: pointer;
-}
-
-.lightSwitch.off {
-    background-color: transparent;
-}
-
-.lightSwitch.on {
-
-    .device-icon {
-        background-color: #edd523;
-    }
-}
-
-.lightSwitch.on .fa-lightbulb-o {
-    color: #fff;
-    text-shadow: 0px 0px 10px yellow;
-}
+body { padding-top: 70px; }
 
 .tag-search {
     .tag {
