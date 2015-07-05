@@ -20,7 +20,9 @@
     "jQuery": "global:jQuery",
     "bootstrap": {
       "exports": "bootstrap",
-      "depends": [ "jquery:jQuery" ]
+      "depends": [
+        "jquery:jQuery"
+      ]
     }
   },
   "devDependencies": {
@@ -28,21 +30,27 @@
     "browserify": "~7.0.0",
     "browserify-shim": "^3.8.3",
     "del": "~1.1.0",
+    "event-stream": "^3.3.1",
     "exorcist": "^0.1.6",
     "glob": "^4.4.0",
     "gulp": "~3.8.10",
     "gulp-autoprefixer": "~2.0.0",
+    "gulp-buffer": "0.0.2",
     "gulp-concat": "^2.5.2",
     "gulp-cssmin": "^0.1.6",
     "gulp-filter": "~1.0.2",
     "gulp-htmlmin": "~0.2.0",
     "gulp-if": "^1.2.5",
     "gulp-imagemin": "~2.0.0",
+    "gulp-inject": "^1.3.1",
+    "gulp-jsoncombine": "^1.0.2",
     "gulp-livereload": "^3.7.0",
     "gulp-load-plugins": "~0.8.0",
     "gulp-minify-css": "~0.3.11",
     "gulp-notify": "^2.2.0",
     "gulp-plumber": "~0.6.6",
+    "gulp-replace": "^0.5.3",
+    "gulp-rev": "^5.0.1",
     "gulp-rev-all": "~0.7.2",
     "gulp-rev-replace": "~0.3.1",
     "gulp-shell": "^0.3.0",

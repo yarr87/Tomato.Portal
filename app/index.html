@@ -10,9 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <!-- build:css styles/styles.css -->
     <link rel="stylesheet" href="styles/styles.css">
-    <!-- endbuild -->
 </head>
   <body>
     <!--[if lt IE 10]>
@@ -21,16 +19,11 @@
 
     <div id="content"></div>
 
-<!--
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
--->
-    <!-- build:js scripts/app.js -->
     <script src="scripts/vendors.js"></script>
     <script src="scripts/app.js"></script>
-    <!-- endbuild -->
 
     <script type="text/javascript" src="bower_components/signalr/jquery.signalR.min.js"></script>
+    <!-- Needs to be localhost while debugging -->
     <script type="text/javascript" src="http://192.168.0.2:49310/signalr/hubs"></script>
     <script type="text/javascript" src="scripts/hubs/deviceStateHub.js"></script>
   </body>

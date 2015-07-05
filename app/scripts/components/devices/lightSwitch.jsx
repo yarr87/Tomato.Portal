@@ -18,7 +18,7 @@ var LightSwitch = React.createClass({
             // TODO: this is an 'anti-pattern' according to the docs.  State should be passed in.
             // But why would't a component own its own state?  The examples have it just bubble up the state change to the
             // top, then push it down from there.  That seems stupid.  Maybe a flux-style action system would help.
-            switchState: this.props.item.state
+            switchState: this.props.item.state 
         }
     },
     clickHandler: function() {
@@ -27,11 +27,16 @@ var LightSwitch = React.createClass({
         if (state === 'ON') state = 'OFF';
         else state = 'ON';
 
-        actions.setDeviceState(this.props.item, state);
-
-        //deviceStore.sendCommand(this.props.item, state);
-
-        //this.setState({ switchState: state });
+        // Broadcast the change, which updates the global device list and sends a command to the sever.
+        // Able to turn off via a property for cases like scene edits.
+        if (this.props.doNotBroadcastStateChanges !== true) {
+            actions.setDeviceState(this.props.item, state);
+        }
+        else {
+            this.setState({
+                switchState: state
+            });
+        }
     },
     render: function () {
 
@@ -43,7 +48,9 @@ var LightSwitch = React.createClass({
             'clearfix': true
         });
 
-         var tagMarkup = this.props.item.tags.map(function(tag) {
+        var tags = this.props.item.tags || [];
+
+         var tagMarkup = tags.map(function(tag) {
             return (
                 <span className="device-tag label label-default">{tag.name}</span>
             );

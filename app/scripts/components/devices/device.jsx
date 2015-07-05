@@ -8,7 +8,7 @@ var Device = React.createClass({
 
         if (this.props.item.type === 'LightSwitch') {
             device = (
-                <LightSwitch item={this.props.item} />
+                <LightSwitch item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} />
             );
         }
         else {

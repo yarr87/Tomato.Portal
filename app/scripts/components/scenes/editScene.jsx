@@ -6,6 +6,7 @@ var Reflux = require('reflux');
 var sceneStore = require('stores/sceneStore');
 var actions = require('actions/actions');
 var _ = require('lodash');
+var Device = require('components/devices/device');
 
 var EditScene = React.createClass({
     mixins: [ReactRouter.State, ReactRouter.Navigation,
@@ -23,7 +24,8 @@ var EditScene = React.createClass({
             scene: {
                 id: 0,
                 name: '',
-                description: ''
+                description: '',
+                devices: []
             }
         };
     },
@@ -69,14 +71,24 @@ var EditScene = React.createClass({
     // },
 
     render: function () {
+         
+         var markup = this.state.scene.devices.map(function(device) {
+            return (
+                <div className="block-grid-item">
+                    <div className="scene-device-edit">
+                        <div class="scene-device-remove">
+                            CLOSE
+                        </div>
+                        <Device item={device} doNotBroadcastStateChanges={true} />
+                    </div>
+                </div>
+            );  
+        });
 
         return (
-            <div>
-                <div>
-                    <Link to="scenes" className="btn btn-default btn-sm">Back</Link>
-                </div>
-                now editing: {this.state.scene.name}
-            </div>
+             <div className="block-grid-md-3 block-grid-sm-2 block-grid-xs-1">
+                {markup}
+            </div>  
         );
 
         // var tagOptions = this.state.tags.map(function(tag) {
