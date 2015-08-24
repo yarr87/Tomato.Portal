@@ -64,8 +64,12 @@ var browserifyTask = function (options) {
   appBundler.external(dependencies);//options.development ? dependencies : []);
 
   // using the transform options property double-shims stuff.  This doesn't.
+  // Seems like babelify needs to go before browser-shim, but reactify was always after it.  Not sure if
+  // the order matteres for reactify.
+  // Note: babelify takes care of react jsx compilation and es6 transpilation
+  appBundler.transform('babelify');
   appBundler.transform('browserify-shim');
-  appBundler.transform('reactify');
+  //appBundler.transform('reactify');
   
   /* This is the actual rebundle process of our application bundle. It produces
     a "main.js" file in our "build" folder. */
@@ -294,10 +298,10 @@ gulp.task('default', ['js:app:dev', 'js:vendor:dev', 'css:dev', 'fonts:dev'], fu
 
 gulp.task('deploy', ['js:app:dist', 'js:vendor:dist', 'css:dist', 'fonts:dist', 'copy-html:dist', 'copy-script:dist', 'copy-bower:dist'], function() {
   
-  // Rename html files once everything else is done (js/css renaming, html copying)
-  // Update index.html with renamed js/css files
+  // Rename references in html files once everything else is done (js/css renaming, html copying)
 
   // Load all the rev.json files
+  // Couldn't get it working with a single manifest file, tasks kept overwriting each other
   return gulp.src(['./dist/css-rev.json', './dist/js-app-rev.json', './dist/js-vendor-rev.json'])
              .pipe(jsoncombine('rev.json',function(data) {
 

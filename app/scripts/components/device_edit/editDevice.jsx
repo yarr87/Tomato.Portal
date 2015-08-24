@@ -14,7 +14,7 @@ var EditDevice = React.createClass({
     mixins: [ReactRouter.State, ReactRouter.Navigation,
              Reflux.connectFilter(deviceStore, "device", function(devices) {
 
-                var device = _.find(devices, { id: parseInt(this.getParams().id) });
+                var device = _.find(devices, { id: this.getParams().id });
 
                 return device || this.getInitialState().device;
             }),
@@ -28,7 +28,7 @@ var EditDevice = React.createClass({
                 name: '',
                 internalName: '',
                 type: 'LightSwitch',
-                id: 0,
+                id: '',
                 nodeId: '',
                 tags: []
             },
@@ -88,7 +88,7 @@ var EditDevice = React.createClass({
 
         // Control gives an array of ids, convert to full objects using the full tag list we already have
         var tags = $("#select-tags")[0].selectize.getValue().map(function(tagId) {
-            return _.find(this.state.tags, { id: parseInt(tagId) });
+            return _.find(this.state.tags, { id: tagId });
         }.bind(this));
 
         var device = {
@@ -125,8 +125,8 @@ var EditDevice = React.createClass({
             }.bind(this));
 
             // Default value is the device's tags
-            var directTags = _.filter(this.state.device.tags, function(tag) { return !tag.isIndirect; });
-            var selectedTagIds = directTags.map(function(tag) { return tag.id.toString(); });
+            var directTags = _.filter(this.state.device.tags, function(tag) { return tag.isDirect; });
+            var selectedTagIds = directTags.map(function(tag) { return tag.id; });
 
             tagSelectMarkup = (
                 <select className="form-control" id="select-tags" multiple={true} defaultValue={selectedTagIds}>

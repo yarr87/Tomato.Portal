@@ -90,18 +90,33 @@ var deviceStore = Reflux.createStore({
 
     // When a tag is updated, update the name of all tags linked to devices
     onTagUpdate: function(tagObj) {
-        if (!tagObj.updatedTag) return;
+        // A tag was updated
+        if (tagObj.updatedTag) {
         
-        _.each(this.devices, function(device) {
+            _.each(this.devices, function(device) {
 
-            var tag = _.find(device.tags, { id: tagObj.updatedTag.id });
+                var tag = _.find(device.tags, { id: tagObj.updatedTag.id });
 
-            // Copy this tag onto the device tag
-            if (tag) {
-                $.extend(tag, tagObj.updatedTag);
-            }
+                // Copy this tag onto the device tag
+                if (tag) {
+                    $.extend(tag, tagObj.updatedTag);
+                }
 
-        });
+            });
+        }
+        // A tag was deleted, remove it from all devices
+        else if (tagObj.deletedTagId) {
+            _.each(this.devices, function(device) {
+
+                device.tags = _.filter(device.tags, function(tag) {
+                    return tag.id !== tagObj.deletedTagId;
+                })
+
+            });
+        }
+        else {
+            return;
+        }
 
         this.trigger(this.devices);
     }

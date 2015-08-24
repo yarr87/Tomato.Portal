@@ -23,7 +23,8 @@ var tagStore = Reflux.createStore({
             this.tags.splice(index, 1);
 
             this.trigger({
-                tags: this.tags
+                tags: this.tags,
+                deletedTagId: tag.id
             });
 
             tagRepo.deleteTag(tag);

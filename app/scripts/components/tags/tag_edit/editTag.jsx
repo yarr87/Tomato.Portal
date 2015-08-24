@@ -10,7 +10,7 @@ var EditTag = React.createClass({
     mixins: [ReactRouter.State, ReactRouter.Navigation,
              Reflux.connectFilter(tagStore, 'tag', function(tagObj) {
 
-                var tag = _.find(tagObj.tags, { id: parseInt(this.getParams().id) });
+                var tag = _.find(tagObj.tags, { id: this.getParams().id });
 
                 return tag || this.getInitialState().tag;
             }),
@@ -21,7 +21,7 @@ var EditTag = React.createClass({
     getInitialState: function() {
         return {
             tag: {
-                id: 0,
+                id: '',
                 name: '',
                 parentId: null
             },

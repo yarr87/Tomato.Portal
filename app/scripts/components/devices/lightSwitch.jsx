@@ -50,7 +50,7 @@ var LightSwitch = React.createClass({
 
         var tags = this.props.item.tags || [];
 
-         var tagMarkup = tags.map(function(tag) {
+         var tagMarkup = tags.map(tag => {
             return (
                 <span className="device-tag label label-default">{tag.name}</span>
             );
