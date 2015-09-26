@@ -156,7 +156,7 @@ var EditDevice = React.createClass({
                 </div>
                 <div className="form-group">
                     <label>Type
-                    <RadioGroup name="type" ref="type" value="0">
+                    <RadioGroup ref="type">
                         <div className="radio">
                             <label><input name="lightSwitch" type="radio" value="LightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
                         </div>

@@ -168,7 +168,7 @@ var cssTask = function (options) {
   var result = run();
 
   if (options.development) {
-    gulp.watch('./app/styles/*.less', run);
+    gulp.watch('./app/styles/**/*.less', run);
   }
 
   return result;

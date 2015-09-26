@@ -1,5 +1,6 @@
 var React = require('react');
 var LightSwitch = require('components/devices/lightSwitch');
+var Dimmer = require('components/devices/dimmer');
 
 var Device = React.createClass({
     render: function () {
@@ -9,6 +10,11 @@ var Device = React.createClass({
         if (this.props.item.type === 'LightSwitch') {
             device = (
                 <LightSwitch item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} />
+            );
+        }
+        else if (this.props.item.type === 'Dimmer') {
+            device = (
+                <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} />
             );
         }
         else {

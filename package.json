@@ -6,8 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "gulp-less": "^3.0.0",
-    "react": "^0.12.2",
-    "react-router": "~0.11.4",
+    "react": "^0.13.3",
+    "react-router": "~0.13.3",
     "reflux": "~0.2.1"
   },
   "browser": {
@@ -62,6 +62,7 @@
     "gulp-util": "^3.0.3",
     "gulp-webserver": "~0.8.8",
     "lodash": "^3.3.0",
+    "react-input-slider": "^1.2.0",
     "reactify": "~0.16.0",
     "run-sequence": "~1.0.2",
     "superagent": "^0.21.0",

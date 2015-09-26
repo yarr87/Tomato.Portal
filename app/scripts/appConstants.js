@@ -1,5 +1,5 @@
 var constants = {
-	ServerUrl: 'http://192.168.0.2:49310/',
+	ServerUrl: 'http://localhost:49310/', //'http://192.168.0.2:49310/',
 	//ApiBaseUrl: 'http://192.168.0.2:49310/api/'
 	ApiBaseUrl: 'http://localhost:49310/api/'
 };

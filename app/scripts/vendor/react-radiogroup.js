@@ -17,13 +17,18 @@ var RadioGroup = React.createClass({displayName: 'RadioGroup',
     this.setRadioNames();
     this.setCheckedRadio();
   },
+  // return this.transferPropsTo(
+  //     React.DOM.div( {onChange:this.props.onChange}, 
+  //       this.props.children
+  //     )
+  //   );
+  
 
   render: function() {
-    return this.transferPropsTo(
-      React.DOM.div( {onChange:this.props.onChange}, 
-        this.props.children
-      )
-    );
+    // JR 9/26 - changed because transferPropsTo was deprecated, I updated react, and the new version of this looks weird and didn't feel like
+    // trying to get it working here.
+    return React.DOM.div( {onChange:this.props.onChange}, Object.assign({}, this.props));
+
   },
 
   setRadioNames: function() {
