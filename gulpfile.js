@@ -28,6 +28,8 @@ var es = require('event-stream');
 var inject = require('gulp-inject');
 var jsoncombine = require('gulp-jsoncombine');
 var replace = require("gulp-replace");
+var envify = require("envify/custom");
+var replace = require('gulp-replace');
 
 // We create an array of dependencies. These are NPM modules you have
 // installed in node_modules. Think: "require('react')" or "require('underscore')"
@@ -69,6 +71,12 @@ var browserifyTask = function (options) {
   // Note: babelify takes care of react jsx compilation and es6 transpilation
   appBundler.transform('babelify');
   appBundler.transform('browserify-shim');
+
+  // Sets environment variable for dev/prod constants
+  appBundler.transform(envify({
+    NODE_ENV: options.development ? 'dev' : 'prod'
+  }));
+
   //appBundler.transform('reactify');
   
   /* This is the actual rebundle process of our application bundle. It produces
@@ -258,6 +266,9 @@ gulp.task('css:dist', ['clean:dist'], function() {
 // ********************************************************************************************************
 gulp.task('copy-html:dist', ['clean:dist'], function() {
   return gulp.src(['./app/*.html'])
+              // This is a prod-only task to replace the signalr script in the html.  Not perfect, but only
+              // needed for this one thing for now.  Rest of the env-specific constants are handled via js above.
+             .pipe(replace('localhost:49310', 'automato:81'))
              .pipe(gulp.dest('./dist'));
 });
 
@@ -296,6 +307,7 @@ gulp.task('default', ['js:app:dev', 'js:vendor:dev', 'css:dev', 'fonts:dev'], fu
 
 });
 
+// Deploy prod bits to dist folder
 gulp.task('deploy', ['js:app:dist', 'js:vendor:dist', 'css:dist', 'fonts:dist', 'copy-html:dist', 'copy-script:dist', 'copy-bower:dist'], function() {
   
   // Rename references in html files once everything else is done (js/css renaming, html copying)
