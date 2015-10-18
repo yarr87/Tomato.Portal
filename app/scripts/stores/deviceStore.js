@@ -54,7 +54,8 @@ var deviceStore = Reflux.createStore({
         }.bind(this));
     },
 
-    onSetDeviceState: function(device, state) {
+    // local version shared between single and multiple versions
+    _setDeviceState: function(device, state, doTrigger) {
         var localDevice = _.find(this.devices, { id: device.id });
 
         if (localDevice) {
@@ -62,8 +63,26 @@ var deviceStore = Reflux.createStore({
 
             localDevice.state = state;
 
-            this.trigger(this.devices);
+            if (doTrigger) {
+                this.trigger(this.devices);
+            }
         }
+    },
+
+    onSetDeviceState: function(device, state) {
+        this._setDeviceState(device, state, true);
+    },
+
+    onSetMultipleDeviceStates: function(devices, state) {
+
+        _.each(devices, (device) => {
+
+            this._setDeviceState(device, state, false);
+
+        });
+
+
+        this.trigger(this.devices); 
     },
 
     onSaveDevice: function(device) {

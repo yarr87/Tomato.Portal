@@ -94,7 +94,7 @@ var TagSearch = React.createClass({
             }
 
             return (
-                <li className={cn}>
+                <li key={tag.id} className={cn}>
                     <a href="#" onClick={this.handleTagClick.bind(this, tag)}>{tag.name}</a>
                 </li>
             );

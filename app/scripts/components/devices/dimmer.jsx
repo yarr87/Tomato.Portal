@@ -18,18 +18,27 @@ var Dimmer = React.createClass({
 
         this.delayedAction = _.debounce(this.updateState, 100);
 
+        var state = this.props.item.state;
+
+        if (state === 'ON') state = 100;
+        else if (state === 'OFF') state = 0;
+
+        // Sometimes state is "uninitialized" if z-wave isn't ready yet
+        state = parseInt(state, 10) || 0;
+
 
         return {
             // TODO: this is an 'anti-pattern' according to the docs.  State should be passed in.
             // But why would't a component own its own state?  The examples have it just bubble up the state change to the
             // top, then push it down from there.  That seems stupid.  Maybe a flux-style action system would help.
-            switchState: 75// this.props.item.state 
+            switchState: state 
         }
     },
     clickHandler: function() {
         var state = this.state.switchState;
 
-        if (state === 'ON' || state === 100) state = 0;
+        // TODO: normalize state so it always comes back as an int or a string
+        if (state === 'ON' || state === 100 || state === '100') state = 0;
         else state = 100;
 
         this.setState({
@@ -63,12 +72,17 @@ var Dimmer = React.createClass({
     },
     render: function () {
 
+        var state = this.state.switchState;
+
+        if (state === 'ON') state = 100;
+        else if (state === 'OFF') state = 0;
+
         var classes =  addons.classSet({
             'device': true,
             'dimmer': true,
             // Dimmer is 0/100, need to add a dimmer component
-            'on': this.state.switchState === 'ON' || this.state.switchState === 100,
-            'off': this.state.switchState === 'OFF' || this.state.switchState === 0,
+            'on': state === 100,
+            'off': state === 0,
             'clearfix': true
         });
 
@@ -76,7 +90,7 @@ var Dimmer = React.createClass({
 
          var tagMarkup = tags.map(tag => {
             return (
-                <span className="device-tag label label-default">{tag.name}</span>
+                <span key={tag.id} className="device-tag label label-default">{tag.name}</span>
             );
         });
 
@@ -86,11 +100,11 @@ var Dimmer = React.createClass({
                  <InputSlider
                     className="slider slider-y"
                     axis='y'
-                    y={100 - this.state.switchState}
+                    y={100 - state}
                     ymax={100}
                     onChange={this.onChange}
                   />
-                  <div>{this.state.switchState}%</div>
+                  <div>{state}%</div>
             </div>
             <div className="device-content" onClick={this.clickHandler}>
                 <div className="device-type">Light Switch</div>
