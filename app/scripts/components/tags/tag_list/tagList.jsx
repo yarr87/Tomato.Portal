@@ -26,7 +26,7 @@ var TagList = React.createClass({
 
         return (
             <div>
-                <Link to="addTag">Add Tag</Link>
+                <Link to="/tags/add">Add Tag</Link>
                 <table className="table table-striped table-hover">
                     <thead>
                     <tr>

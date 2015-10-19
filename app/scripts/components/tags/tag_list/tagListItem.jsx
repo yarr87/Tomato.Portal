@@ -22,7 +22,7 @@ var TagListItem = React.createClass({
             <tr>
                 <td>{this.props.tag.name}
                 </td>
-                <td><Link to="editTag" params={this.props.tag}>Edit</Link>&nbsp;&nbsp;&nbsp;
+                <td><Link to={`/tags/edit/${this.props.tag.id}`}>Edit</Link>&nbsp;&nbsp;&nbsp;
                     <a href="#" onClick={this.handleDelete}>Delete</a></td>
             </tr>
         );

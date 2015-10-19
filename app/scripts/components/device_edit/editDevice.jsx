@@ -11,10 +11,10 @@ var selectize = require('selectize');
 var $ = require('jquery');
 
 var EditDevice = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.Navigation,
+    mixins: [ReactRouter.State, ReactRouter.History,
              Reflux.connectFilter(deviceStore, "device", function(devices) {
 
-                var device = _.find(devices, { id: this.getParams().id });
+                var device = _.find(devices, { id: this.props.params.id });
 
                 return device || this.getInitialState().device;
             }),
@@ -42,7 +42,8 @@ var EditDevice = React.createClass({
     },
 
     componentWillUnmount: function() {
-        $("#select-tags")[0].selectize.destroy();
+        // TODO: this is broken after react 0.14
+        //$("#select-tags")[0].selectize.destroy();
     },
 
     onTagsLoaded: function(tagObj) {
@@ -101,12 +102,12 @@ var EditDevice = React.createClass({
         };
 
         actions.saveDevice(device);
-        this.transitionTo('devices');
+        this.history.pushState(null, '/devices');
     },
 
     handleCancel: function(e) {
         e.preventDefault();
-        this.transitionTo('devices');
+        this.history.pushState(null, '/devices');
     },
 
     render: function () {
@@ -115,7 +116,7 @@ var EditDevice = React.createClass({
 
         // Want to render the tag select only after tags and device are loaded, so we can use defaultValue for initializing it.
         // I want this select to be uncontrolled so I don't have to deal with change events, but defaultValue can only be called once.
-        if (this.state.tags.length && (this.state.device.id || this.getParams().id === undefined)) {
+        if (this.state.tags.length && (this.state.device.id || this.props.params.id === undefined)) {
 
             // Options for the tag select
             var tagOptions = this.state.tags.map(function(tag) {
@@ -134,6 +135,16 @@ var EditDevice = React.createClass({
                 </select>
             );      
         }
+
+        // TODO: radiogroup not working!
+        // <RadioGroup ref="type">
+        //                 <div className="radio">
+        //                     <label><input name="lightSwitch" type="radio" value="LightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
+        //                 </div>
+        //                 <div className="radio">
+        //                     <label><input name="dimmer" type="radio" value="Dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
+        //                 </div>
+        //             </RadioGroup>
 
         return (
             <div className="row">
@@ -156,14 +167,7 @@ var EditDevice = React.createClass({
                 </div>
                 <div className="form-group">
                     <label>Type
-                    <RadioGroup ref="type">
-                        <div className="radio">
-                            <label><input name="lightSwitch" type="radio" value="LightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
-                        </div>
-                        <div className="radio">
-                            <label><input name="dimmer" type="radio" value="Dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
-                        </div>
-                    </RadioGroup>
+                    
                     </label>
                 </div>
                 <div className="form-group">

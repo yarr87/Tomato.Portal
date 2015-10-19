@@ -30,7 +30,7 @@ var DeviceList = React.createClass({
 
         return (
             <div>
-                <Link to="addDevice">Add Device</Link>
+                <Link to="/devices/add">Add Device</Link>
                 <DeviceListSearch />
                 <table className="table table-striped table-hover">
                     <thead>

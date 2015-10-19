@@ -24,7 +24,7 @@ var DeviceListItem = React.createClass({
                 </td>
                 <td>{this.props.device.internalName}</td>
                 <td>{this.props.device.type}</td>
-                <td><Link to="editDevice" params={this.props.device}>Edit</Link>&nbsp;&nbsp;&nbsp;
+                <td><Link to={`/devices/edit/${this.props.device.id}`}>Edit</Link>&nbsp;&nbsp;&nbsp;
                     <a href="#" onClick={this.handleDelete}>Delete</a></td>
             </tr>
         );

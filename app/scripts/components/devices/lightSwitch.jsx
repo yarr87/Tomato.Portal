@@ -1,7 +1,7 @@
 var React = require('react');
 var Reflux = require('reflux');
 var deviceStore = require('stores/deviceStore');
-var addons = require('react/addons').addons;
+var classNames = require('classnames');
 var actions = require('actions/actions');
 var _ = require('lodash');
 
@@ -40,7 +40,7 @@ var LightSwitch = React.createClass({
     },
     render: function () {
 
-        var classes =  addons.classSet({
+        var classes =  classNames({
             'device': true,
             'lightSwitch': true,
             // Dimmer is 0/100, need to add a dimmer component

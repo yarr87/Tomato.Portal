@@ -1,10 +1,11 @@
 var React = require('react');
 var Reflux = require('reflux');
 var deviceStore = require('stores/deviceStore');
-var addons = require('react/addons').addons;
+var classNames = require('classnames');
 var actions = require('actions/actions');
 var _ = require('lodash');
-var InputSlider = require('react-input-slider');
+//var InputSlider = require('react-input-slider');
+var Hammer = require('react-hammerjs');
 
 var Dimmer = React.createClass({
     mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
@@ -70,6 +71,25 @@ var Dimmer = React.createClass({
             this.delayedAction(switchState);
         }
     },
+    onPan: function(e) {
+        
+        // TODO: this still registers a click - need to cancel that event 
+        var state = this.state.switchState;
+        var delta = parseInt(e.deltaX / 10, 10);
+                console.log('state: ' + state + ', delta: ' + delta)
+
+        state += delta;
+
+
+        if (state < 0) state = 0;
+        else if (state > 100) state = 100;
+
+        this.setState({
+            switchState: state
+        });
+
+        e.cancel = true;
+    },
     render: function () {
 
         var state = this.state.switchState;
@@ -77,7 +97,7 @@ var Dimmer = React.createClass({
         if (state === 'ON') state = 100;
         else if (state === 'OFF') state = 0;
 
-        var classes =  addons.classSet({
+        var classes =  classNames({
             'device': true,
             'dimmer': true,
             // Dimmer is 0/100, need to add a dimmer component
@@ -94,25 +114,30 @@ var Dimmer = React.createClass({
             );
         });
 
-        return (
-          <div className={classes}>
-            <div className="device-icon vertical-slider">
-                 <InputSlider
+         /*
+         <InputSlider
                     className="slider slider-y"
                     axis='y'
                     y={100 - state}
                     ymax={100}
                     onChange={this.onChange}
                   />
-                  <div>{state}%</div>
-            </div>
-            <div className="device-content" onClick={this.clickHandler}>
-                <div className="device-type">Light Switch</div>
-                <div className="device-name"><h3>{this.props.item.name}</h3></div>
-                <div className="device-tags">{tagMarkup}</div>
-            </div>
-          </div>
-        );
+                  */
+
+            return (
+                <Hammer onPan={this.onPan}>
+                    <div className={classes}>
+                        <div className="device-icon vertical-slider">
+                            <div>{state}%</div>
+                        </div>
+                        <div className="device-content" onClick={this.clickHandler}>
+                            <div className="device-type">Light Switch</div>
+                            <div className="device-name"><h3>{this.props.item.name}</h3></div>
+                            <div className="device-tags">{tagMarkup}</div>
+                        </div>
+                    </div>
+                </Hammer>
+              );
     }
 });
 
