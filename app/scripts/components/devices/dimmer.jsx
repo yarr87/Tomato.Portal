@@ -76,7 +76,11 @@ var Dimmer = React.createClass({
         // TODO: this still registers a click - need to cancel that event 
         var state = this.state.switchState;
         var delta = parseInt(e.deltaX / 10, 10);
-                console.log('state: ' + state + ', delta: ' + delta)
+
+        console.log('state: ' + state + ', delta: ' + delta);
+
+        if (state === 'ON') state = 100;
+        else if (state === 'OFF') state = 0;
 
         state += delta;
 
@@ -88,11 +92,16 @@ var Dimmer = React.createClass({
             switchState: state
         });
 
+        if (this.props.doNotBroadcastStateChanges !== true) {
+            // Delay broadcast so we don't flood the light with update requests
+            this.delayedAction(state);
+        }
+
         e.cancel = true;
     },
     render: function () {
 
-        var state = this.state.switchState;
+        var state = this.state.switchState || 0;
 
         if (state === 'ON') state = 100;
         else if (state === 'OFF') state = 0;
@@ -114,6 +123,10 @@ var Dimmer = React.createClass({
             );
         });
 
+         var style = {
+            backgroundColor: "rgba(237, 213, 35, " + state / 100 + ")"
+         };
+
          /*
          <InputSlider
                     className="slider slider-y"
@@ -125,12 +138,12 @@ var Dimmer = React.createClass({
                   */
 
             return (
-                <Hammer onPan={this.onPan}>
+                <Hammer onPan={this.onPan} onTap={this.clickHandler}>
                     <div className={classes}>
-                        <div className="device-icon vertical-slider">
+                        <div className="device-icon" style={style}>
                             <div>{state}%</div>
                         </div>
-                        <div className="device-content" onClick={this.clickHandler}>
+                        <div className="device-content">
                             <div className="device-type">Light Switch</div>
                             <div className="device-name"><h3>{this.props.item.name}</h3></div>
                             <div className="device-tags">{tagMarkup}</div>

@@ -60,7 +60,7 @@ var Main = React.createClass({
         return (
             <div>
                 <div className="row">
-                    <div className="col-sm-8 col-md-9">
+                    <div className="col-sm-8 col-md-9 clearfix">
                         <TagSearch onTagSelect={this.onTagSelect} />
                     </div>
                     <div className="col-sm-4 col-md-3 on-off-buttons clearfix">

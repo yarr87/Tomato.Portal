@@ -31,20 +31,38 @@
 // For the fixed header
 body { padding-top: 70px; }
 
+// TODO: working on this styling.  Where is the green coming from?  #0ce3ac - can't find in source, that's the tag color...
+// Comes from @link-color, a lightened version of @brand-success
+
 .tag-search {
+    margin-top: -10px;
+
     .tag {
 
-        margin-right: 5px;
+        padding: 0px;
+        cursor: pointer;
+
+        text-align: center;
 
         a {
-            border: solid 1px @text-color;
-            border-radius: 10px;
+            display: inline-block;
+            padding: 10px;
+        }
+
+        a:hover, a:focus {
+            text-decoration: none;
         }
     }
-}
 
-.slider-y {
-    height: 65px;
+    .tag.active {
+        background-color: @brand-success;
+        color: @text-color;
+        box-shadow: inset 0px 0px 2px 0px @text-color;
+
+        a {
+            color: @text-color;
+        }
+    }
 }
 
 /* All on/off buttons on dashboard */

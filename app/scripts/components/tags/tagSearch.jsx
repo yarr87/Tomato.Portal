@@ -85,7 +85,7 @@ var TagSearch = React.createClass({
     render: function () {
 
         var tags = this.state.tags.map(function(tag) {
-            var cn = "tag";
+            var cn = "block-grid-item tag";
             if (_.indexOf(this.state.selectedTags, tag) >= 0) {
                 cn += " active";
             }
@@ -94,17 +94,29 @@ var TagSearch = React.createClass({
             }
 
             return (
-                <li key={tag.id} className={cn}>
-                    <a href="#" onClick={this.handleTagClick.bind(this, tag)}>{tag.name}</a>
-                </li>
+                <div key={tag.id} className={cn} onClick={this.handleTagClick.bind(this, tag)}>
+                    <a>{tag.name}</a>
+                </div>
             );
+
+            // return (
+            //     <li key={tag.id} className={cn}>
+            //         <a href="#" onClick={this.handleTagClick.bind(this, tag)}>{tag.name}</a>
+            //     </li>
+            // );
         }.bind(this));
 
         return (
-            <ul className="nav nav-pills tag-search">
+            <div className="tag-search block-grid-lg-10 block-grid-sm-5 block-grid-md-7 block-grid-xs-3">
                 {tags}
-            </ul>
-        );
+            </div>
+            )
+
+        // return (
+        //     <ul className="nav nav-pills tag-search">
+        //         {tags}
+        //     </ul>
+        // );
     }
 });
 
