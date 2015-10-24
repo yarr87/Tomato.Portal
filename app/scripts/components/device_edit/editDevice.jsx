@@ -84,7 +84,7 @@ var EditDevice = React.createClass({
         this.setState({device: this.state.device });
     },
 
-    handleClick: function(e) {
+    handleSave: function(e) {
         e.preventDefault();
 
         // Control gives an array of ids, convert to full objects using the full tag list we already have
@@ -92,12 +92,14 @@ var EditDevice = React.createClass({
             return _.find(this.state.tags, { id: tagId });
         }.bind(this));
 
+        var type = this.refs.lightSwitch.checked ? this.refs.lightSwitch.value : this.refs.dimmer.value;
+
         var device = {
             id: this.state.device.id,
-            nodeId: this.refs.nodeId.getDOMNode().value.trim(),
-            name: this.refs.name.getDOMNode().value.trim(),
-            internalName: this.refs.internalName.getDOMNode().value.trim(),
-            type: this.refs.type.getCheckedValue(),
+            nodeId: this.refs.nodeId.value.trim(),
+            name: this.refs.name.value.trim(),
+            internalName: this.refs.internalName.value.trim(),
+            type: type,
             tags: tags
         };
 
@@ -167,7 +169,12 @@ var EditDevice = React.createClass({
                 </div>
                 <div className="form-group">
                     <label>Type
-                    
+                    <div className="radio">
+                        <label><input name="lightSwitch" type="radio" value="LightSwitch" ref="lightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
+                    </div>
+                    <div className="radio">
+                        <label><input name="dimmer" type="radio" value="Dimmer" ref="dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
+                    </div>
                     </label>
                 </div>
                 <div className="form-group">
@@ -175,7 +182,7 @@ var EditDevice = React.createClass({
                     {tagSelectMarkup}
                 </div>
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-primary" onClick={this.handleClick}>Save</button>
+                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
                     <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </form>

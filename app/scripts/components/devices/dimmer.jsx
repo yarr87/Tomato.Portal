@@ -72,12 +72,15 @@ var Dimmer = React.createClass({
         }
     },
     onPan: function(e) {
+
+        // If you start panning then hold it, this even keeps firing but velocityX is zero.  Don't update in this case
+        // because it's annoying.
+        if (e.velocityX === 0) {
+            return;
+        }
         
-        // TODO: this still registers a click - need to cancel that event 
         var state = this.state.switchState;
         var delta = parseInt(e.deltaX / 10, 10);
-
-        console.log('state: ' + state + ', delta: ' + delta);
 
         if (state === 'ON') state = 100;
         else if (state === 'OFF') state = 0;
