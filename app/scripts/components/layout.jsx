@@ -35,6 +35,7 @@ var Layout = React.createClass({
                 <li className={ this.getMenuLinkClass('scenes') }><Link to="/scenes">Scenes</Link></li>
                 <li className={ this.getMenuLinkClass('devices') }><Link to="/devices">Manage Devices</Link></li>
                 <li className={ this.getMenuLinkClass('tags') }><Link to="/tags">Manage Tags</Link></li>
+                <li className={ this.getMenuLinkClass('users') }><Link to="/users">Manage Users</Link></li>
               </ul>
             </div>
           </div>
