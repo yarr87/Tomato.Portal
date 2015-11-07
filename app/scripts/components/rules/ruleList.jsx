@@ -1,46 +1,37 @@
 var React = require('react');
 var Reflux = require('reflux');
 var Link = require('globals').Router.Link;
-var userStore = require('stores/userStore');
- var UserListItem = require('components/users/userList/userListItem');
+var ruleStore = require('stores/ruleStore');
+var RuleListItem = require('components/rules/ruleListItem');
 var actions = require('actions/actions');
 
-var UserList = React.createClass({
-    mixins: [Reflux.connect(userStore)],
+var RuleList = React.createClass({
+    mixins: [Reflux.connect(ruleStore)],
 
     getInitialState: function() {
-        return { users: [] };
+        return { rules: [] };
     },
 
     componentWillMount: function() {
-        actions.loadUsers();
-    },
-
-
-    handleDelete: function(e) {
-        e.preventDefault();
-
-        if (confirm('really delete?')) {
-            actions.deleteUser(this.props.rule);
-        }
+        actions.loadRules();
     },
 
     render: function () {
 
-        var items = this.state.users.map(function(item) {
+        var items = this.state.rules.map(function(item) {
             return (
-                <UserListItem user={item} />
+                <RuleListItem rule={item} />
             );
         });
 
         return (
             <div>
-                <Link to="/users/add">Add User</Link>
+                <Link to="/rules/add">Add Rule</Link>
                 <table className="table table-striped table-hover">
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Home?</th>
+                        <th>Description</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -53,4 +44,4 @@ var UserList = React.createClass({
     }
 });
 
-module.exports = UserList;
+module.exports = RuleList;

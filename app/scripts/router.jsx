@@ -16,6 +16,8 @@ var UserList = require('components/users/userList/userList');
 var EditUser = require('components/users/userEdit/editUser');
 var SceneList = require('components/scenes/sceneList');
 var EditScene = require('components/scenes/editScene');
+var RuleList = require('components/rules/ruleList');
+var EditRule = require('components/rules/editRule');
 
 var routes = (
   <Route path="/" component={Layout}>
@@ -32,6 +34,10 @@ var routes = (
     <Route path="users" component={UserList} />
     <Route path="users/add" component={EditUser} />
     <Route path="users/edit/:id" component={EditUser} />
+
+    <Route path="rules" component={RuleList} />
+    <Route path="rules/add" component={EditRule} />
+    <Route path="rules/edit/:id" component={EditRule} />
 
     <Route path="scenes" component={SceneList} />
     <Route path="scenes/edit/:id" component={EditScene} />

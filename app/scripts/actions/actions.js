@@ -19,6 +19,11 @@ var actions = Reflux.createActions([
     'loadUsers',
     'saveUser',
 
+    // rule actions
+    'deleteRule',
+    'loadRules',
+    'saveRule',
+
     // scene actions
     'loadScenes'
 
