@@ -24,6 +24,10 @@ var EditRuleDefinitionList = React.createClass({
         this.setState({ devices: this.state.devices });
     },
 
+    addNew: function() {
+        this.props.onAdd();
+    },
+
     render: function () {
 
         var markup = this.props.ruleDefinitions.map((ruleDef) => {
@@ -37,13 +41,23 @@ var EditRuleDefinitionList = React.createClass({
                 def = (<div>{ruleDef.ruleType}</div>);
             }
 
-            return def;
+            return (
+                <div className="rule-definition">
+                    <div className="rule-definition-delete">
+                        <a className="btn btn-link">X</a>
+                    </div>
+                    <div className="rule-definition-edit">
+                        {def}
+                    </div>
+                </div>
+            );
         });
 
         return (
             <div>
                 <h3>Rule Definitions</h3>
                 {markup}
+                <a className="btn btn-link" onClick={this.addNew}>Add</a>
             </div>
             );
     }

@@ -53,7 +53,9 @@ var EditRule = React.createClass({
         var rule = {
             id: this.state.rule.id,
             name: this.refs.name.value.trim(),
-            description: this.refs.description.value.trim()
+            description: this.refs.description.value.trim(),
+            ruleDefinitions: this.state.rule.ruleDefinitions,
+            actions: this.state.rule.actions
         };
 
         actions.saveRule(rule);
@@ -63,6 +65,17 @@ var EditRule = React.createClass({
     handleCancel: function(e) {
         e.preventDefault();
         this.history.pushState(null, '/rules');
+    },
+
+    // According to react, the state should be managed by a common parent.  So, this component has to handle all updates, even those that come from
+    // individual rule definitions.  Not sure how I feel about this, but trying.
+    handleRuleDefinitionUpdate: function() {
+
+    },
+
+    handleRuleDefinitionAdd: function() {
+        this.state.rule.ruleDefinitions.push({ ruleType: 'Light', lightState: {} });
+        this.setState({ rule: this.state.rule });
     },
 
     render: function () {
@@ -82,7 +95,7 @@ var EditRule = React.createClass({
                     </label>
                 </div>
                 <div>
-                    <EditRuleDefinitionList ruleDefinitions={this.state.rule.ruleDefinitions} />
+                    <EditRuleDefinitionList ruleDefinitions={this.state.rule.ruleDefinitions} onUpdate={this.handleRuleDefinitionUpdate} onAdd={this.handleRuleDefinitionAdd} />
                 </div>
                 <div className="form-group btn-toolbar">
                     <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
