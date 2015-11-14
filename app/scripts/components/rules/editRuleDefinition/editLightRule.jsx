@@ -10,11 +10,24 @@ var EditLightRule = React.createClass({
         { id: "turns_on", name: "turns on", state: "ON", isTriggered: true },
         { id: "turns_off", name: "turns off", state: "OFF", isTriggered: true }
     ],
-    
-    getInitialState: function() {
-        return {
-            lightRule: this.props.lightRule
-        }
+
+    handleDeviceChange: function(e) {
+        var lightRule = this.props.lightRule;
+
+        lightRule.lightState.internalName = e.target.value;
+
+        this.props.onUpdate(lightRule, this.props.ruleIndex);
+    },
+
+    handleStateChange: function(e) {
+        var lightRule = this.props.lightRule;
+
+        var selectedState = _.find(this.availableStates, { id: e.target.value });
+
+        lightRule.lightState.state = selectedState.state;
+        lightRule.isTriggered = selectedState.isTriggered; 
+
+        this.props.onUpdate(lightRule);
     },
 
     render: function () {
@@ -29,7 +42,7 @@ var EditLightRule = React.createClass({
         });
 
         var selectedState = _.find(this.availableStates, (availableState) => {
-            return this.state.lightRule.lightState.state === availableState.state && this.state.lightRule.isTriggered === availableState.isTriggered;
+            return this.props.lightRule.lightState.state === availableState.state && this.props.lightRule.isTriggered === availableState.isTriggered;
         }) || {};
 
         var stateOptions = this.availableStates.map((availableState) => {
@@ -39,13 +52,13 @@ var EditLightRule = React.createClass({
         })
 
         var deviceMarkup = (
-            <select className="form-control" value={selectedLight}>
+            <select className="form-control" value={selectedLight} onChange={this.handleDeviceChange}>
                 {deviceOptions}
             </select>
         ); 
 
         var stateMarkup = (
-            <select className="form-control" value={selectedState.id}>
+            <select className="form-control" value={selectedState.id} onChange={this.handleStateChange}>
                 {stateOptions}
             </select>
         );

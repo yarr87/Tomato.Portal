@@ -10,9 +10,16 @@ var Hammer = require('react-hammerjs');
 var Dimmer = React.createClass({
     mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
 
-        var device = _.find(devices, { id: this.props.item.id });
+        // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
+        // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
+        if (this.props.doNotBroadcastStateChanges) {
+            return this.props.item.state;
+        }
+        else {
+            var device = _.find(devices, { id: this.props.item.id });
 
-        return device && device.state;
+            return device && device.state;
+        }
     })],
 
     getInitialState: function() {
@@ -98,6 +105,10 @@ var Dimmer = React.createClass({
         if (this.props.doNotBroadcastStateChanges !== true) {
             // Delay broadcast so we don't flood the light with update requests
             this.delayedAction(state);
+        }
+
+        if (this.props.onStateChange) {
+            this.props.onStateChange(this.props.item, state);
         }
 
         e.cancel = true;

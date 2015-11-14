@@ -6,6 +6,7 @@ var ruleStore = require('stores/ruleStore');
 var actions = require('actions/actions');
 var _ = require('lodash');
 var EditRuleDefinitionList = require('components/rules/editRuleDefinition/editRuleDefinitionList');
+var EditRuleActionList = require('components/rules/editRuleAction/editRuleActionList');
 
 var EditRule = React.createClass({
     mixins: [ReactRouter.State, ReactRouter.History,
@@ -13,7 +14,7 @@ var EditRule = React.createClass({
 
                 var rule = _.find(rulesObj.rules, { id: this.props.params.id });
 
-                return rule || this.getInitialState().rule;
+                return _.clone(rule, true) || this.getInitialState().rule;
             })
     ],
 
@@ -25,7 +26,9 @@ var EditRule = React.createClass({
                 name: '',
                 description: '',
                 ruleDefinitions: [],
-                actions: []
+                action: {
+                    deviceStates: []
+                }
             }
         };
     },
@@ -55,7 +58,7 @@ var EditRule = React.createClass({
             name: this.refs.name.value.trim(),
             description: this.refs.description.value.trim(),
             ruleDefinitions: this.state.rule.ruleDefinitions,
-            actions: this.state.rule.actions
+            action: this.state.rule.action
         };
 
         actions.saveRule(rule);
@@ -69,16 +72,24 @@ var EditRule = React.createClass({
 
     // According to react, the state should be managed by a common parent.  So, this component has to handle all updates, even those that come from
     // individual rule definitions.  Not sure how I feel about this, but trying.
-    handleRuleDefinitionUpdate: function() {
-
+    handleRuleDefinitionUpdate: function(ruleDefinitions) {
+        this.state.rule.ruleDefinitions = ruleDefinitions;
+        this.setState({ rule: this.state.rule });
     },
 
-    handleRuleDefinitionAdd: function() {
-        this.state.rule.ruleDefinitions.push({ ruleType: 'Light', lightState: {} });
+    handleRuleDefinitionAdd: function(newRuleDef) {
+        this.state.rule.ruleDefinitions.push(newRuleDef);
+        this.setState({ rule: this.state.rule });
+    },
+
+    handleRuleActionUpdate: function(ruleAction) {
+        this.state.rule.action = ruleAction;
         this.setState({ rule: this.state.rule });
     },
 
     render: function () {
+
+        if (!this.state.rule.action) this.state.rule.action = { deviceStates: [] };
 
         return (
             <div className="row">
@@ -96,6 +107,9 @@ var EditRule = React.createClass({
                 </div>
                 <div>
                     <EditRuleDefinitionList ruleDefinitions={this.state.rule.ruleDefinitions} onUpdate={this.handleRuleDefinitionUpdate} onAdd={this.handleRuleDefinitionAdd} />
+                </div>
+                <div>
+                    <EditRuleActionList ruleAction={this.state.rule.action} onUpdate={this.handleRuleActionUpdate} />
                 </div>
                 <div className="form-group btn-toolbar">
                     <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
