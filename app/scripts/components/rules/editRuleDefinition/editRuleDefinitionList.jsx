@@ -1,6 +1,7 @@
 var React = require('react');
 var Reflux = require('reflux');
 var _ = require('lodash');
+var classNames = require('classnames');
 var actions = require('actions/actions');
 var deviceStore = require('stores/deviceStore');
 var userStore = require('stores/userStore');
@@ -20,6 +21,10 @@ var EditRuleDefinitionList = React.createClass({
                 internalName: '',
                 state: '',
                 isTriggered: false
+            },
+            config: {
+                text: 'Light',
+                icon: 'fa-lightbulb-o'
             }
         },
         {
@@ -29,6 +34,10 @@ var EditRuleDefinitionList = React.createClass({
                 userId: '',
                 isHome: false,
                 isTriggered: false
+            },
+            config: {
+                text: 'User',
+                icon: 'fa-user'
             }
         }
     ],
@@ -57,6 +66,8 @@ var EditRuleDefinitionList = React.createClass({
 
     addNew: function(ruleDef) {
         var newRuleDef = _.clone(ruleDef, true);
+        delete newRuleDef.config;
+
         this.props.onAdd(newRuleDef);
     },
 
@@ -77,7 +88,9 @@ var EditRuleDefinitionList = React.createClass({
             return (
                 <div className="rule-definition">
                     <div className="rule-definition-delete">
-                        <a className="btn btn-link" onClick={this.handleRuleDefinitionDelete.bind(this, index)}>X</a>
+                        <a className="btn btn-link" onClick={this.handleRuleDefinitionDelete.bind(this, index)}>
+                            <i className="fa fa-times" />
+                        </a>
                     </div>
                     <div className="rule-definition-edit">
                         <EditRuleDefinition users={this.state.users} devices={this.state.devices} ruleDefinition={ruleDef} ruleIndex={index} onUpdate={this.handleRuleDefinitionChange} />
@@ -87,7 +100,21 @@ var EditRuleDefinitionList = React.createClass({
         });
 
         var addMarkup = this.ruleDefinitionTypes.map((ruleDef) => {
-            return (<a className="btn btn-link" onClick={this.addNew.bind(this, ruleDef) }>+{ruleDef.ruleType}</a>);
+
+            var classObj = {
+                fa: true,
+                'fa-2x': true
+            };
+
+            classObj[ruleDef.config.icon] = true;
+
+            var classes =  classNames(classObj);
+
+            return (
+                <a className="btn btn-success" onClick={this.addNew.bind(this, ruleDef) }>
+                    <i className={classes} />
+                </a>
+            );
         });
 
         return (
@@ -95,6 +122,7 @@ var EditRuleDefinitionList = React.createClass({
                 <h3>Rule Definitions</h3>
                 {markup}
                 <div className="rule-definition-add">
+                    <i className="add-icon fa fa-plus" />
                     {addMarkup}
                 </div>
             </div>

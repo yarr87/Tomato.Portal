@@ -16,7 +16,7 @@ var EditLightRule = React.createClass({
 
         lightRule.lightState.internalName = e.target.value;
 
-        this.props.onUpdate(lightRule, this.props.ruleIndex);
+        this.props.onUpdate(lightRule);
     },
 
     handleStateChange: function(e) {
