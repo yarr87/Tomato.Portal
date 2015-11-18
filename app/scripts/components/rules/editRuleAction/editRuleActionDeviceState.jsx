@@ -24,7 +24,7 @@ var EditRuleActionDeviceState = React.createClass({
             deviceCopy.state = this.props.deviceState.state;
 
             return (
-                <Device item={deviceCopy} doNotBroadcastStateChanges={true} onStateChange={this.handleDeviceStateChange} />
+                <Device item={deviceCopy} doNotBroadcastStateChanges={true} isCompact={true} onStateChange={this.handleDeviceStateChange} />
             );
 
         }

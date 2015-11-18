@@ -126,7 +126,8 @@ var Dimmer = React.createClass({
             // Dimmer is 0/100, need to add a dimmer component
             'on': state === 100,
             'off': state === 0,
-            'clearfix': true
+            'clearfix': true,
+            'compact': !!this.props.isCompact
         });
 
         var tags = this.props.item.tags || [];

@@ -55,11 +55,13 @@ var EditRuleActionList = React.createClass({
         var markup = this.props.ruleAction.deviceStates.map((deviceState, index) => {
 
             return (
-                <div className="rule-action row">
-                    <div className="rule-action-delete col-xs-1">
-                        <a className="btn btn-link" onClick={this.handleRuleActionDelete.bind(this, index)}>X</a>
+                <div className="rule-action">
+                    <div className="rule-action-delete">
+                        <a className="btn btn-link" onClick={this.handleRuleActionDelete.bind(this, index)}>
+                            <i className="fa fa-times" />
+                        </a>
                     </div>
-                    <div className="rule-action-edit col-xs-11">
+                    <div className="rule-action-edit">
                         <EditRuleActionDeviceState devices={this.state.devices} deviceState={deviceState} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
                     </div>
                 </div>

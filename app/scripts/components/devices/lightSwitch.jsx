@@ -57,7 +57,8 @@ var LightSwitch = React.createClass({
             // Dimmer is 0/100, need to add a dimmer component
             'on': this.state.switchState === 'ON',
             'off': this.state.switchState === 'OFF',
-            'clearfix': true
+            'clearfix': true,
+            'compact': !!this.props.isCompact
         });
 
         var tags = this.props.item.tags || [];
@@ -68,10 +69,17 @@ var LightSwitch = React.createClass({
             );
         });
 
+         var iconClasses = classNames({
+            fa: true,
+            'fa-lightbulb-o': true,
+            'fa-2x': !!this.props.isCompact,
+            'fa-4x': !this.props.isCompact
+         });
+
         return (
           <div className={classes} onClick={this.clickHandler}>
             <div className="device-icon">
-                <i className="fa fa-lightbulb-o fa-4x"></i>
+                <i className={iconClasses}></i>
             </div>
             <div className="device-content">
                 <div className="device-type">Light Switch</div>

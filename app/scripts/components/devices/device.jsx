@@ -18,12 +18,12 @@ var Device = React.createClass({
 
         if (this.props.item.type === 'LightSwitch') {
             device = (
-                <LightSwitch item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} onStateChange={this.handleStateChange} />
+                <LightSwitch item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
             );
         }
         else if (this.props.item.type === 'Dimmer') {
             device = (
-                <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} onStateChange={this.handleStateChange} />
+                <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
             );
         }
         else {
