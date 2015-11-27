@@ -1,36 +1,37 @@
 var React = require('react');
 var Reflux = require('reflux');
 var Link = require('globals').Router.Link;
-var tagStore = require('stores/tagStore');
-var TagListItem = require('components/tags/tag_list/tagListItem');
+var ruleStore = require('stores/ruleStore');
+var RuleListItem = require('components/rules/ruleListItem');
 var actions = require('actions/actions');
 
-var TagList = React.createClass({
-    mixins: [Reflux.connect(tagStore)],
+var RuleList = React.createClass({
+    mixins: [Reflux.connect(ruleStore)],
 
     getInitialState: function() {
-        return {tags: []};
+        return { rules: [] };
     },
 
     componentWillMount: function() {
-        actions.loadTags();
+        actions.loadRules();
     },
 
     render: function () {
 
-        var items = this.state.tags.map(function(item) {
+        var items = this.state.rules.map(function(item) {
             return (
-                <TagListItem tag={item} />
+                <RuleListItem rule={item} />
             );
         });
 
         return (
             <div>
-                <Link to="/tags/add">Add Tag</Link>
+                <Link to="/rules/add">Add Rule</Link>
                 <table className="table table-striped table-hover">
                     <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Description</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -43,4 +44,4 @@ var TagList = React.createClass({
     }
 });
 
-module.exports = TagList;
+module.exports = RuleList;

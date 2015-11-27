@@ -2,7 +2,8 @@ var Globals = require('globals');
 var React = Globals.React;
 var Router = Globals.Router;
 var Route = Router.Route;
-var DefaultRoute = Router.DefaultRoute;
+var DefaultRoute = Router.IndexRoute;
+var RRouter = Router.Router;
 
 var Layout = require('components/layout');
 var Home = require('components/home');
@@ -11,32 +12,43 @@ var DeviceList = require('components/device_list/deviceList');
 var EditDevice = require('components/device_edit/editDevice');
 var TagList = require('components/tags/tag_list/tagList');
 var EditTag = require('components/tags/tag_edit/editTag');
+var UserList = require('components/users/userList/userList');
+var EditUser = require('components/users/userEdit/editUser');
 var SceneList = require('components/scenes/sceneList');
 var EditScene = require('components/scenes/editScene');
+var RuleList = require('components/rules/ruleList');
+var EditRule = require('components/rules/editRule');
 
 var routes = (
-  <Route name="layout" path="/" handler={Layout}>
-    <Route name="dashboard" path="/" handler={Main} />
+  <Route path="/" component={Layout}>
+    <Route path="/" component={Main} />
 
-    <Route name="devices" handler={DeviceList} />
-    <Route name="addDevice" path="devices/add" handler={EditDevice} />
-    <Route name="editDevice" path="devices/edit/:id" handler={EditDevice} />
+    <Route path="devices" component={DeviceList} />
+    <Route path="devices/add" component={EditDevice} />
+    <Route path="devices/edit/:id" component={EditDevice} />
 
-    <Route name="tags" handler={TagList} />
-    <Route name="addTag" path="tags/add" handler={EditTag} />
-    <Route name="editTag" path="tags/edit/:id" handler={EditTag} />
+    <Route path="tags" component={TagList} />
+    <Route path="tags/add" component={EditTag} />
+    <Route path="tags/edit/:id" component={EditTag} />
 
-    <Route name="scenes" handler={SceneList} />
-    <Route name="editScene" path="scenes/edit/:id" handler={EditScene} />
+    <Route path="users" component={UserList} />
+    <Route path="users/add" component={EditUser} />
+    <Route path="users/edit/:id" component={EditUser} />
 
-    <DefaultRoute handler={Main}/>
+    <Route path="rules" component={RuleList} />
+    <Route path="rules/add" component={EditRule} />
+    <Route path="rules/edit/:id" component={EditRule} />
+
+    <Route path="scenes" component={SceneList} />
+    <Route path="scenes/edit/:id" component={EditScene} />
+
+    <DefaultRoute component={Main}/>
   </Route>
 );
 
 
 exports.start = function() {
-  
-  Router.run(routes, function (Handler) {
-		React.render(<Handler />, document.getElementById('content'));
-	});
+
+  React.render(<RRouter routes={routes}/>, document.getElementById('content'));
+
 }

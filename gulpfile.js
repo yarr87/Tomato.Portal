@@ -36,6 +36,7 @@ var replace = require('gulp-replace');
 // These will go in the vendor.js file
 var dependencies = [
     'react',
+    'react-dom',
     'jquery',
     'lodash',
     'bluebird',

@@ -1,16 +1,23 @@
 var React = require('react');
 var Reflux = require('reflux');
 var deviceStore = require('stores/deviceStore');
-var addons = require('react/addons').addons;
+var classNames = require('classnames');
 var actions = require('actions/actions');
 var _ = require('lodash');
 
 var LightSwitch = React.createClass({
     mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
 
-        var device = _.find(devices, { id: this.props.item.id });
+        // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
+        // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
+        if (this.props.doNotBroadcastStateChanges) {
+            return this.props.item.state;
+        }
+        else {
+            var device = _.find(devices, { id: this.props.item.id });
 
-        return device && device.state;
+            return device && device.state;
+        }
     })],
 
     getInitialState: function() {
@@ -37,16 +44,21 @@ var LightSwitch = React.createClass({
                 switchState: state
             });
         }
+
+        if (this.props.onStateChange) {
+            this.props.onStateChange(this.props.item, state);
+        }
     },
     render: function () {
 
-        var classes =  addons.classSet({
+        var classes =  classNames({
             'device': true,
             'lightSwitch': true,
             // Dimmer is 0/100, need to add a dimmer component
             'on': this.state.switchState === 'ON',
             'off': this.state.switchState === 'OFF',
-            'clearfix': true
+            'clearfix': true,
+            'compact': !!this.props.isCompact
         });
 
         var tags = this.props.item.tags || [];
@@ -57,10 +69,17 @@ var LightSwitch = React.createClass({
             );
         });
 
+         var iconClasses = classNames({
+            fa: true,
+            'fa-lightbulb-o': true,
+            'fa-2x': !!this.props.isCompact,
+            'fa-4x': !this.props.isCompact
+         });
+
         return (
           <div className={classes} onClick={this.clickHandler}>
             <div className="device-icon">
-                <i className="fa fa-lightbulb-o fa-4x"></i>
+                <i className={iconClasses}></i>
             </div>
             <div className="device-content">
                 <div className="device-type">Light Switch</div>

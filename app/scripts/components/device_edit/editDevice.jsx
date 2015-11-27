@@ -11,10 +11,10 @@ var selectize = require('selectize');
 var $ = require('jquery');
 
 var EditDevice = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.Navigation,
+    mixins: [ReactRouter.State, ReactRouter.History,
              Reflux.connectFilter(deviceStore, "device", function(devices) {
 
-                var device = _.find(devices, { id: this.getParams().id });
+                var device = _.find(devices, { id: this.props.params.id });
 
                 return device || this.getInitialState().device;
             }),
@@ -42,7 +42,8 @@ var EditDevice = React.createClass({
     },
 
     componentWillUnmount: function() {
-        $("#select-tags")[0].selectize.destroy();
+        // TODO: this is broken after react 0.14
+        //$("#select-tags")[0].selectize.destroy();
     },
 
     onTagsLoaded: function(tagObj) {
@@ -83,7 +84,7 @@ var EditDevice = React.createClass({
         this.setState({device: this.state.device });
     },
 
-    handleClick: function(e) {
+    handleSave: function(e) {
         e.preventDefault();
 
         // Control gives an array of ids, convert to full objects using the full tag list we already have
@@ -91,22 +92,24 @@ var EditDevice = React.createClass({
             return _.find(this.state.tags, { id: tagId });
         }.bind(this));
 
+        var type = this.refs.lightSwitch.checked ? this.refs.lightSwitch.value : this.refs.dimmer.value;
+
         var device = {
             id: this.state.device.id,
-            nodeId: this.refs.nodeId.getDOMNode().value.trim(),
-            name: this.refs.name.getDOMNode().value.trim(),
-            internalName: this.refs.internalName.getDOMNode().value.trim(),
-            type: this.refs.type.getCheckedValue(),
+            nodeId: this.refs.nodeId.value.trim(),
+            name: this.refs.name.value.trim(),
+            internalName: this.refs.internalName.value.trim(),
+            type: type,
             tags: tags
         };
 
         actions.saveDevice(device);
-        this.transitionTo('devices');
+        this.history.pushState(null, '/devices');
     },
 
     handleCancel: function(e) {
         e.preventDefault();
-        this.transitionTo('devices');
+        this.history.pushState(null, '/devices');
     },
 
     render: function () {
@@ -115,7 +118,7 @@ var EditDevice = React.createClass({
 
         // Want to render the tag select only after tags and device are loaded, so we can use defaultValue for initializing it.
         // I want this select to be uncontrolled so I don't have to deal with change events, but defaultValue can only be called once.
-        if (this.state.tags.length && (this.state.device.id || this.getParams().id === undefined)) {
+        if (this.state.tags.length && (this.state.device.id || this.props.params.id === undefined)) {
 
             // Options for the tag select
             var tagOptions = this.state.tags.map(function(tag) {
@@ -134,6 +137,16 @@ var EditDevice = React.createClass({
                 </select>
             );      
         }
+
+        // TODO: radiogroup not working!
+        // <RadioGroup ref="type">
+        //                 <div className="radio">
+        //                     <label><input name="lightSwitch" type="radio" value="LightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
+        //                 </div>
+        //                 <div className="radio">
+        //                     <label><input name="dimmer" type="radio" value="Dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
+        //                 </div>
+        //             </RadioGroup>
 
         return (
             <div className="row">
@@ -156,14 +169,12 @@ var EditDevice = React.createClass({
                 </div>
                 <div className="form-group">
                     <label>Type
-                    <RadioGroup ref="type">
-                        <div className="radio">
-                            <label><input name="lightSwitch" type="radio" value="LightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
-                        </div>
-                        <div className="radio">
-                            <label><input name="dimmer" type="radio" value="Dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
-                        </div>
-                    </RadioGroup>
+                    <div className="radio">
+                        <label><input name="lightSwitch" type="radio" value="LightSwitch" ref="lightSwitch" checked={this.state.device.type === 'LightSwitch'} onChange={this.handleTypeChange} />Light Switch</label>
+                    </div>
+                    <div className="radio">
+                        <label><input name="dimmer" type="radio" value="Dimmer" ref="dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
+                    </div>
                     </label>
                 </div>
                 <div className="form-group">
@@ -171,7 +182,7 @@ var EditDevice = React.createClass({
                     {tagSelectMarkup}
                 </div>
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-primary" onClick={this.handleClick}>Save</button>
+                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
                     <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </form>

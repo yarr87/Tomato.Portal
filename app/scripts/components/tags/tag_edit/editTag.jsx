@@ -7,10 +7,10 @@ var actions = require('actions/actions');
 var _ = require('lodash');
 
 var EditTag = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.Navigation,
+    mixins: [ReactRouter.State, ReactRouter.History,
              Reflux.connectFilter(tagStore, 'tag', function(tagObj) {
 
-                var tag = _.find(tagObj.tags, { id: this.getParams().id });
+                var tag = _.find(tagObj.tags, { id: this.props.params.id });
 
                 return tag || this.getInitialState().tag;
             }),
@@ -56,12 +56,12 @@ var EditTag = React.createClass({
         // };
 
         actions.saveTag(this.state.tag);
-        this.transitionTo('tags');
+        this.history.pushState(null, '/tags');
     },
 
     handleCancel: function(e) {
         e.preventDefault();
-        this.transitionTo('tags');
+        this.history.pushState(null, '/tags');
     },
 
     onTagsLoaded: function(tagObj) {

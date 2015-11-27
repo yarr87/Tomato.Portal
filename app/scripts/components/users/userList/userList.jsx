@@ -1,36 +1,46 @@
 var React = require('react');
 var Reflux = require('reflux');
 var Link = require('globals').Router.Link;
-var tagStore = require('stores/tagStore');
-var TagListItem = require('components/tags/tag_list/tagListItem');
+var userStore = require('stores/userStore');
+ var UserListItem = require('components/users/userList/userListItem');
 var actions = require('actions/actions');
 
-var TagList = React.createClass({
-    mixins: [Reflux.connect(tagStore)],
+var UserList = React.createClass({
+    mixins: [Reflux.connect(userStore)],
 
     getInitialState: function() {
-        return {tags: []};
+        return { users: [] };
     },
 
     componentWillMount: function() {
-        actions.loadTags();
+        actions.loadUsers();
+    },
+
+
+    handleDelete: function(e) {
+        e.preventDefault();
+
+        if (confirm('really delete?')) {
+            actions.deleteUser(this.props.rule);
+        }
     },
 
     render: function () {
 
-        var items = this.state.tags.map(function(item) {
+        var items = this.state.users.map(function(item) {
             return (
-                <TagListItem tag={item} />
+                <UserListItem user={item} />
             );
         });
 
         return (
             <div>
-                <Link to="/tags/add">Add Tag</Link>
+                <Link to="/users/add">Add User</Link>
                 <table className="table table-striped table-hover">
                     <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Home?</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -43,4 +53,4 @@ var TagList = React.createClass({
     }
 });
 
-module.exports = TagList;
+module.exports = UserList;

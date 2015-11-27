@@ -1,17 +1,25 @@
 var React = require('react');
 var Reflux = require('reflux');
 var deviceStore = require('stores/deviceStore');
-var addons = require('react/addons').addons;
+var classNames = require('classnames');
 var actions = require('actions/actions');
 var _ = require('lodash');
-var InputSlider = require('react-input-slider');
+//var InputSlider = require('react-input-slider');
+var Hammer = require('react-hammerjs');
 
 var Dimmer = React.createClass({
     mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
 
-        var device = _.find(devices, { id: this.props.item.id });
+        // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
+        // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
+        if (this.props.doNotBroadcastStateChanges) {
+            return this.props.item.state;
+        }
+        else {
+            var device = _.find(devices, { id: this.props.item.id });
 
-        return device && device.state;
+            return device && device.state;
+        }
     })],
 
     getInitialState: function() {
@@ -70,20 +78,56 @@ var Dimmer = React.createClass({
             this.delayedAction(switchState);
         }
     },
-    render: function () {
+    onPan: function(e) {
 
+        // If you start panning then hold it, this even keeps firing but velocityX is zero.  Don't update in this case
+        // because it's annoying.
+        if (e.velocityX === 0) {
+            return;
+        }
+        
         var state = this.state.switchState;
+        var delta = parseInt(e.deltaX / 10, 10);
 
         if (state === 'ON') state = 100;
         else if (state === 'OFF') state = 0;
 
-        var classes =  addons.classSet({
+        state += delta;
+
+
+        if (state < 0) state = 0;
+        else if (state > 100) state = 100;
+
+        this.setState({
+            switchState: state
+        });
+
+        if (this.props.doNotBroadcastStateChanges !== true) {
+            // Delay broadcast so we don't flood the light with update requests
+            this.delayedAction(state);
+        }
+
+        if (this.props.onStateChange) {
+            this.props.onStateChange(this.props.item, state);
+        }
+
+        e.cancel = true;
+    },
+    render: function () {
+
+        var state = this.state.switchState || 0;
+
+        if (state === 'ON') state = 100;
+        else if (state === 'OFF') state = 0;
+
+        var classes =  classNames({
             'device': true,
             'dimmer': true,
             // Dimmer is 0/100, need to add a dimmer component
             'on': state === 100,
             'off': state === 0,
-            'clearfix': true
+            'clearfix': true,
+            'compact': !!this.props.isCompact
         });
 
         var tags = this.props.item.tags || [];
@@ -94,25 +138,34 @@ var Dimmer = React.createClass({
             );
         });
 
-        return (
-          <div className={classes}>
-            <div className="device-icon vertical-slider">
-                 <InputSlider
+         var style = {
+            backgroundColor: "rgba(237, 213, 35, " + state / 100 + ")"
+         };
+
+         /*
+         <InputSlider
                     className="slider slider-y"
                     axis='y'
                     y={100 - state}
                     ymax={100}
                     onChange={this.onChange}
                   />
-                  <div>{state}%</div>
-            </div>
-            <div className="device-content" onClick={this.clickHandler}>
-                <div className="device-type">Light Switch</div>
-                <div className="device-name"><h3>{this.props.item.name}</h3></div>
-                <div className="device-tags">{tagMarkup}</div>
-            </div>
-          </div>
-        );
+                  */
+
+            return (
+                <Hammer onPan={this.onPan} onTap={this.clickHandler}>
+                    <div className={classes}>
+                        <div className="device-icon" style={style}>
+                            <div>{state}%</div>
+                        </div>
+                        <div className="device-content">
+                            <div className="device-type">Light Switch</div>
+                            <div className="device-name"><h3>{this.props.item.name}</h3></div>
+                            <div className="device-tags">{tagMarkup}</div>
+                        </div>
+                    </div>
+                </Hammer>
+              );
     }
 });
 
