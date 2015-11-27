@@ -1,58 +1,87 @@
 var React = require('react');
 var Reflux = require('reflux');
 var _ = require('lodash');
+var classNames = require('classnames');
 var actions = require('actions/actions');
 var deviceStore = require('stores/deviceStore');
-var EditRuleActionDeviceState = require('components/rules/editRuleAction/editRuleActionDeviceState');
+var userStore = require('stores/userStore');
+var EditRuleAction = require('components/rules/editRuleAction/editRuleAction');
 
 // List of editable rule actions for edit rule page
 var EditRuleActionList = React.createClass({
     
-    mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded')],
+    mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded'),
+             Reflux.listenTo(userStore, 'onUsersLoaded')],
+
+    ruleActionTypes: [
+        { 
+            actionType: 'Light',
+            deviceState: {
+                internalName: '',
+                state: 'OFF'
+            },
+            config: {
+                text: 'Light',
+                icon: 'fa-lightbulb-o'
+            }
+        },
+        {
+            actionType: 'EmailAsText',
+            userId: '',
+            message: '',
+            config: {
+                text: 'Text',
+                icon: 'fa-mobile'
+            }
+        }
+    ],
 
     getInitialState: function() {
         return {
             devices: [],
-            addDeviceName: ''
-        }
+            users: []
+        };
     },
 
     componentWillMount: function() {
         actions.loadDevices();
+        actions.loadUsers();
     },
 
     onDevicesLoaded: function(devices) {
+        // Default for adding a new row and not changing anything
+        this.ruleActionTypes[0].deviceState.internalName = devices[0].internalName;
         this.state.devices = devices;
         this.setState({ devices: this.state.devices });
     },
 
-    addNew: function() {
-        var deviceInternalName = this.state.addDeviceName || this.state.devices[0].internalName;
-
-        // Defaulting to OFF since if it's just empty the rule won't work.
-        // TODO: maybe this logic should be in api
-        this.props.ruleAction.deviceStates.push({ internalName: deviceInternalName, state: 'OFF' });
-        this.props.onUpdate(this.props.ruleAction);
+    onUsersLoaded: function(usersObj) {
+        // Default for adding a new row and not changing anything
+        this.ruleActionTypes[1].userId = usersObj.users[0].id;
+        this.state.users = usersObj.users;
+        this.setState({ users: this.state.users });
     },
 
-    handleAddDeviceChange: function(e) {
-        this.state.addDeviceName = e.target.value;
-        this.setState({ addDeviceName: this.state.addDeviceName });
+    addNew: function(ruleAction) {
+        var newAction = _.clone(ruleAction, true);
+        delete newAction.config;
+
+        this.props.onAdd(newAction);
     },
 
-    handleRuleActionChange: function(deviceState, index) {
-        this.props.ruleAction.deviceStates[index] = deviceState;
-        this.props.onUpdate(this.props.ruleAction);
+    handleRuleActionChange: function(ruleAction, index) {
+        this.props.ruleActions[index] = ruleAction;
+        this.props.onUpdate(this.props.ruleActions);
     },
 
     handleRuleActionDelete: function(index) {
-        this.props.ruleAction.deviceStates.splice(index, 1);
-        this.props.onUpdate(this.props.ruleAction);
+        this.props.ruleActions.splice(index, 1);
+        this.props.onUpdate(this.props.ruleActions);
     },
 
     render: function () {
 
-        var markup = this.props.ruleAction.deviceStates.map((deviceState, index) => {
+        var markup = (this.props.ruleActions || []).map((ruleAction, index) => {
 
             return (
                 <div className="rule-action">
@@ -62,35 +91,38 @@ var EditRuleActionList = React.createClass({
                         </a>
                     </div>
                     <div className="rule-action-edit">
-                        <EditRuleActionDeviceState devices={this.state.devices} deviceState={deviceState} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
+                        <EditRuleAction devices={this.state.devices} users={this.state.users} ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
                     </div>
                 </div>
             );
         });
 
-         var deviceOptions = (this.state.devices || []).map((device) => {
+        var addMarkup = this.ruleActionTypes.map((ruleActionType) => {
+
+            var classObj = {
+                fa: true,
+                'fa-2x': true
+            };
+
+            classObj[ruleActionType.config.icon] = true;
+
+            var classes =  classNames(classObj);
+
             return (
-                <option key={device.id} value={device.internalName}>{device.name}</option>
+                <a className="btn btn-success" onClick={this.addNew.bind(this, ruleActionType) }>
+                    <i className={classes} />
+                </a>
             );
         });
 
-        var deviceMarkup = (
-            <select className="form-control" onChange={this.handleAddDeviceChange}>
-                {deviceOptions}
-            </select>
-        );
 
         return (
-            <div>
+            <div className="rule-action-list">
                 <h3>Rule Actions</h3>
                 {markup}
-                <div className="rule-action-add row">
-                    <div className="col-xs-6">
-                        {deviceMarkup}
-                    </div>
-                    <div className="col-xs-6">
-                        <a onClick={this.addNew}>Add</a>
-                    </div>
+                <div className="rule-action-add">
+                    <i className="add-icon fa fa-plus" />
+                    {addMarkup}
                 </div>
             </div>
             );

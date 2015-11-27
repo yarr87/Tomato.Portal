@@ -22,7 +22,9 @@ var EditUser = React.createClass({
             user: {
                 id: '',
                 name: '',
-                deviceMac: ''
+                deviceMac: '',
+                email: '',
+                textAddress: ''
             }
         };
     },
@@ -44,13 +46,25 @@ var EditUser = React.createClass({
         this.setState({user: this.state.user});
     },
 
+    handleEmailChange: function(e) {
+        this.state.user.email = e.target.value;
+        this.setState({user: this.state.user});
+    },
+
+    handleTextAddressChange: function(e) {
+        this.state.user.textAddress = e.target.value;
+        this.setState({user: this.state.user});
+    },
+
     handleSave: function(e) {
         e.preventDefault();
 
         var user = {
             id: this.state.user.id,
             name: this.refs.name.value.trim(),
-            deviceMac: this.refs.deviceMac.value.trim()
+            deviceMac: this.refs.deviceMac.value.trim(),
+            email: this.refs.email.value.trim(),
+            textAddress: this.refs.textAddress.value.trim()
         };
 
         actions.saveUser(user);
@@ -66,16 +80,26 @@ var EditUser = React.createClass({
 
         return (
             <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-8">
             <form>
                 <div className="form-group">
                     <label>Name
                     <input className="form-control" type="text" ref="name" value={this.state.user.name} onChange={this.handleNameChange} required />
                     </label>
                 </div>
-                   <div className="form-group">
+                <div className="form-group">
                     <label>Device Mac
                     <input className="form-control" type="text" ref="deviceMac"  value={this.state.user.deviceMac} onChange={this.handleMacChange} required />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>Email
+                    <input className="form-control" type="text" ref="email"  value={this.state.user.email} onChange={this.handleEmailChange} required />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>Text Address
+                    <input className="form-control" type="text" ref="textAddress"  value={this.state.user.textAddress} onChange={this.handleTextAddressChange} required />
                     </label>
                 </div>
                 <div className="form-group btn-toolbar">

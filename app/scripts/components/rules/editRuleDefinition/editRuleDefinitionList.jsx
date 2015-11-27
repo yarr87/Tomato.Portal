@@ -19,7 +19,7 @@ var EditRuleDefinitionList = React.createClass({
             lightState: 
             { 
                 internalName: '',
-                state: '',
+                state: 'OFF',
                 isTriggered: false
             },
             config: {
@@ -55,11 +55,15 @@ var EditRuleDefinitionList = React.createClass({
     },
 
     onDevicesLoaded: function(devices) {
+        // Default for adding a new row and not changing anything
+        this.ruleDefinitionTypes[0].lightState.internalName = devices[0].internalName;
         this.state.devices = devices;
         this.setState({ devices: this.state.devices });
     },
 
     onUsersLoaded: function(usersObj) {
+        // Default for adding a new row and not changing anything
+        this.ruleDefinitionTypes[1].userState.userId = usersObj.users[0].id;
         this.state.users = usersObj.users;
         this.setState({ users: this.state.users });
     },

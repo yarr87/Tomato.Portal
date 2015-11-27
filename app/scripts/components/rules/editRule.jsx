@@ -26,9 +26,7 @@ var EditRule = React.createClass({
                 name: '',
                 description: '',
                 ruleDefinitions: [],
-                action: {
-                    deviceStates: []
-                }
+                actions: []
             }
         };
     },
@@ -58,7 +56,7 @@ var EditRule = React.createClass({
             name: this.refs.name.value.trim(),
             description: this.refs.description.value.trim(),
             ruleDefinitions: this.state.rule.ruleDefinitions,
-            action: this.state.rule.action
+            actions: this.state.rule.actions
         };
 
         actions.saveRule(rule);
@@ -82,14 +80,18 @@ var EditRule = React.createClass({
         this.setState({ rule: this.state.rule });
     },
 
-    handleRuleActionUpdate: function(ruleAction) {
-        this.state.rule.action = ruleAction;
+    handleRuleActionUpdate: function(ruleActions) {
+        this.state.rule.actions = ruleActions;
+        this.setState({ rule: this.state.rule });
+    },
+
+    handleRuleActionAdd: function(newRuleAction) {
+        if (!this.state.rule.actions) this.state.rule.actions = [];
+        this.state.rule.actions.push(newRuleAction);
         this.setState({ rule: this.state.rule });
     },
 
     render: function () {
-
-        if (!this.state.rule.action) this.state.rule.action = { deviceStates: [] };
 
         return (
             <div className="row">
@@ -111,7 +113,7 @@ var EditRule = React.createClass({
                 </div>
                 <hr />
                 <div>
-                    <EditRuleActionList ruleAction={this.state.rule.action} onUpdate={this.handleRuleActionUpdate} />
+                    <EditRuleActionList ruleActions={this.state.rule.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
                 </div>
                 <div className="form-group btn-toolbar">
                     <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
