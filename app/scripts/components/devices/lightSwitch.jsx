@@ -28,6 +28,7 @@ var LightSwitch = React.createClass({
             switchState: this.props.item.state 
         }
     },
+    
     clickHandler: function() {
         var state = this.state.switchState;
 

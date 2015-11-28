@@ -122,7 +122,7 @@ var EditRuleDefinitionList = React.createClass({
         });
 
         return (
-            <div>
+            <div className="rule-definition-list">
                 <h3>Rule Definitions</h3>
                 {markup}
                 <div className="rule-definition-add">

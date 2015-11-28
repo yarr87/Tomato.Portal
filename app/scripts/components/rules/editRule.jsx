@@ -107,11 +107,9 @@ var EditRule = React.createClass({
                     <textarea className="form-control" type="text" ref="description"  value={this.state.rule.description} onChange={this.handleDescriptionChange} />
                     </label>
                 </div>
-                <hr />
                 <div>
                     <EditRuleDefinitionList ruleDefinitions={this.state.rule.ruleDefinitions} onUpdate={this.handleRuleDefinitionUpdate} onAdd={this.handleRuleDefinitionAdd} />
                 </div>
-                <hr />
                 <div>
                     <EditRuleActionList ruleActions={this.state.rule.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
                 </div>

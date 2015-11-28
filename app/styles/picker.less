@@ -1,0 +1,68 @@
+@import "../../node_modules/react-select/less/default.less";
+
+// @select-text-color: @link-color;
+// @select-input-bg: transparent;
+// @select-input-border-color: transparent;
+
+.Select {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.Select-control {
+	background-color: transparent;
+	width: auto;
+	border: none;
+	cursor: pointer;
+	position: static;
+
+	.Select-clear-zone {
+		display: none;
+	}
+
+	.Select-arrow-zone {
+		text-align: left;
+	}
+
+	.Select-arrow, .Select-arrow-zone:hover > .Select-arrow {
+		border-color: @link-color transparent transparent;
+	}
+}
+
+.is-open > .Select-control {
+	background-color: lighten(@body-bg, 5%);
+	border: none;
+}
+
+.is-focused:not(.is-open) > .Select-control {
+	border: none;
+	box-shadow: none;
+}
+
+.has-value:not(.Select--multi) > .Select-control > .Select-value .Select-value-label {
+	color: @link-color;
+}
+
+.Select-value-label {
+	// Too lazy to figure out all the weird rules to override this
+	color: @link-color !important;
+}
+
+.Select-menu-outer {
+	width: auto;
+
+	.Select-option {
+		padding: 20px;
+		white-space: nowrap;
+		overflow: visible;
+	}
+}
+
+.Select-input {
+	display: none;
+}
+
+:not(.Select--multi) > .Select-control .Select-value {
+	overflow: visible;
+	position: static;
+}

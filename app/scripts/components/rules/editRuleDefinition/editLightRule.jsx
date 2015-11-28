@@ -1,5 +1,6 @@
 var React = require('react');
 var _ = require('lodash');
+var Picker = require('components/picker/picker');
 
 // Edit a single light rule definition
 var EditLightRule = React.createClass({
@@ -11,18 +12,18 @@ var EditLightRule = React.createClass({
         { id: "turns_off", name: "turns off", state: "OFF", isTriggered: true }
     ],
 
-    handleDeviceChange: function(e) {
+    handleDeviceChange: function(newDeviceInternalName) {
         var lightRule = this.props.lightRule;
 
-        lightRule.lightState.internalName = e.target.value;
+        lightRule.lightState.internalName = newDeviceInternalName;
 
         this.props.onUpdate(lightRule);
     },
 
-    handleStateChange: function(e) {
+    handleStateChange: function(newStateId) {
         var lightRule = this.props.lightRule;
 
-        var selectedState = _.find(this.availableStates, { id: e.target.value });
+        var selectedState = _.find(this.availableStates, { id: newStateId });
 
         lightRule.lightState.state = selectedState.state;
         lightRule.isTriggered = selectedState.isTriggered; 
@@ -34,42 +35,23 @@ var EditLightRule = React.createClass({
 
         var selectedLight = this.props.lightRule.lightState.internalName;
 
-        // Options for the device select
-        var deviceOptions = (this.props.devices || []).map((device) => {
-            return (
-                <option key={device.id} value={device.internalName}>{device.name}</option>
-            );
-        });
-
         var selectedState = _.find(this.availableStates, (availableState) => {
             return this.props.lightRule.lightState.state === availableState.state && this.props.lightRule.isTriggered === availableState.isTriggered;
-        }) || {};
+        }) || this.availableStates[0];
 
-        var stateOptions = this.availableStates.map((availableState) => {
-            return (
-                <option key={availableState.id} value={availableState.id}>{availableState.name}</option>
-            );
-        })
+        var deviceSelections = (this.props.devices || []).map((device) => {
+            return { value: device.internalName, label: device.name };
+        });
 
-        var deviceMarkup = (
-            <select className="form-control" value={selectedLight} onChange={this.handleDeviceChange}>
-                {deviceOptions}
-            </select>
-        ); 
-
-        var stateMarkup = (
-            <select className="form-control" value={selectedState.id} onChange={this.handleStateChange}>
-                {stateOptions}
-            </select>
-        );
+        var stateSelections = this.availableStates.map((availableState) => {
+            return { value: availableState.id, label: availableState.name };
+        });
 
         return (
-            <div className="row rule-definition">
-                <div className="col-xs-6">
-                    {deviceMarkup}
-                </div>
-                <div className="col-xs-6">
-                    {stateMarkup}
+            <div className="row">
+                <div className="col-xs-12">
+                    <Picker options={deviceSelections} selectedValue={selectedLight} onChange={this.handleDeviceChange} />
+                    <Picker options={stateSelections} selectedValue={selectedState.id} onChange={this.handleStateChange} />
                 </div>
             </div>
             );

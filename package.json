@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "gulp-less": "^3.0.0",
-    "react": "^0.14.0",
+    "react": "^0.14.3",
     "react-router": "1.0.0-rc3",
     "reflux": "~0.2.1"
   },
@@ -66,8 +66,9 @@
     "gulp-util": "^3.0.3",
     "gulp-webserver": "~0.8.8",
     "lodash": "^3.3.0",
-    "react-dom": "^0.14.0",
+    "react-dom": "^0.14.3",
     "react-hammerjs": "^0.4.1",
+    "react-select": "1.0.0-beta5",
     "reactify": "~0.16.0",
     "run-sequence": "~1.0.2",
     "superagent": "^0.21.0",
