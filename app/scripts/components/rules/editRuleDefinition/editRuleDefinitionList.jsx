@@ -39,6 +39,16 @@ var EditRuleDefinitionList = React.createClass({
                 text: 'User',
                 icon: 'fa-user'
             }
+        },
+        {
+            ruleType: 'Time',
+            timeRuleType: 'Between',
+            start: '00:00:00',
+            end: '01:00:00',
+            config: {
+                text: 'Time',
+                icon: 'fa-clock-o'
+            }
         }
     ],
 
