@@ -62,7 +62,8 @@ var LightSwitch = React.createClass({
             'compact': !!this.props.isCompact
         });
 
-        var tags = this.props.item.tags || [];
+        // I don't think I want tags to show here anymore, so removing for now
+        var tags = [];// this.props.item.tags || [];
 
          var tagMarkup = tags.map(tag => {
             return (

@@ -4,6 +4,7 @@ var deviceStore = require('stores/deviceStore');
 var Device = require('components/devices/device');
 var TagSearch = require('components/tags/tagSearch');
 var actions = require('actions/actions');
+var classNames = require('classnames');
 var _ = require('lodash');
 
 // Filter the given list of devices to those that contain any of the given selected tags
@@ -49,9 +50,18 @@ var Main = React.createClass({
 
         var selectedDevices = getSelectedDevices(this.state.devices, tags);
 
-        var markup = selectedDevices.map(function(item) {
+        var markup = selectedDevices.map(function(item, index) {
+
+            var classObj = {
+                'block-grid-item': true
+            };
+
+            classObj['device-block-' + (index + 1)] = true;
+
+            var deviceClasses = classNames(classObj);
+
             return (
-                <div key={item.id} className="block-grid-item">
+                <div key={item.id} className={deviceClasses}>
                     <Device item={item} />
                 </div>
             );
@@ -74,7 +84,7 @@ var Main = React.createClass({
                         </button>
                     </div>
                 </div>
-                <div className="block-grid-md-3 block-grid-sm-2 block-grid-xs-1">
+                <div className="devices-dashboard block-grid-md-3 block-grid-sm-2 block-grid-xs-2">
                    {markup}
                 </div>
             </div>

@@ -1,17 +1,45 @@
+.devices-dashboard {
+    @media (max-width: @screen-xs) {
+        margin-top: 10px;
+    }
+}
+
 .device {
     border: solid 1px #ccc;
     border-radius: 4px;
     min-height: 100px;
+
+    @media (max-width: @screen-xs) {
+        max-height: 100px;
+        border: none;
+        border-radius: 0;
+    }
 
     .device-icon {
         float: left;
         margin-right: 10px;
         padding: 20px;
         width: 75px;
+
+        @media (max-width: @screen-xs) {
+            .fa-4x {
+                font-size: 3em;
+            }
+
+            width: 60px;
+            height: 100px;
+
+            padding: 16px;
+
+            i {
+                margin-top: 10px;
+            }
+        }
     }
 
     .device-content {
         padding: 20px;
+        margin-top: 10px;
 
         .device-type {
             display: none;
@@ -20,6 +48,12 @@
         .device-name {
             h3 {
                 margin: 0px;
+            }
+
+            @media (max-width: @screen-xs) { 
+                h3 {
+                    font-size: 20px;
+                }
             }
         }
 
@@ -68,29 +102,43 @@
 }
 
 .lightSwitch.off {
-    background-color: transparent;
+    .device-icon {
+        background-color: transparent;
+    }
 }
 
 .lightSwitch.on {
 
     .device-icon {
         background-color: #edd523;
+
+        @media (max-width: @screen-xs) { 
+            background-color: transparent;
+        }
     }
 }
 
 .lightSwitch.on .fa-lightbulb-o {
     color: #fff;
     text-shadow: 0px 0px 10px yellow;
+
+    @media (max-width: @screen-xs) { 
+        color: #edd523;
+    }
 }
 
 .dimmer {
 
     .device-icon {
-        padding-top: 28px;
+        padding-top: 36px;
         padding-bottom: 4px;
         height: 100px;
         font-size: 24px;
         padding-left: 10px;
+
+         @media (max-width: @screen-xs) { 
+            font-size: 16px;
+        }
     }
     
 }
@@ -102,4 +150,57 @@
         font-size: 12px;
     }
 
+}
+
+@color1:#000088;
+@color2:#008800;
+@color3:#008888;
+@color4:#880000;
+@color5:#AAAA00;
+@color6:#880088;
+
+@iterations: 6;
+
+// Base = this color's index
+// ColorCount = total number of colors
+// Count = number of shades per color
+// Step = amount to darken each round
+.block-color(@color, @base, @colorCount, @count, @step, @index: 0) when (@index =< (@count - 1)) {
+
+    // 1, 4, 7
+    // 2, 5, 8
+    // 3, 6, 9
+    // (index * colorCount) + base
+
+    @i: @index * @colorCount + @base;
+    .device-block-@{i} {
+        background-color: darken(@color, (@index * @step));
+    }
+
+  .block-color(@color, @base, @colorCount, @count, @step, (@index + 1));
+}
+
+// Creates a variable @colorSet that points to one of the @colorN variables already defined
+.define(@var) {
+  @colorSet: 'color@{var}';
+}
+
+.device-block-loop (@index) when (@index > 0) {
+
+    @actualIndex: @iterations - @index + 1;
+
+    // Creates the @colorSet variable which points to the color for this loop
+    .define(@actualIndex);
+
+    // Passes the actual colorN variable defined by @colorSet
+    // ex: @colorSet = 'color4', @@colorSet = '@color4'
+    .block-color(@@colorSet, @actualIndex, @iterations, 5, 2);
+
+    .device-block-loop(@index - 1);
+}
+
+.device-block-loop (0) {}
+
+@media (max-width: @screen-xs) {
+    .device-block-loop(@iterations);
 }

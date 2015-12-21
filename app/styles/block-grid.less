@@ -33,7 +33,12 @@
     .block-grids(@size,@index - 1);
 }
 
-//@media (max-width: @screen-xs) { .block-grids(xs) }
+@media (max-width: @screen-xs) { 
+  //.block-grids(xs) 
+  .block-grid-item {
+    padding: 0px;
+  }
+}
 @media (max-width: @screen-sm) { .block-grids(xs) }
 @media (min-width: @screen-sm) { .block-grids(sm) }
 @media (min-width: @screen-md) { .block-grids(md) }
