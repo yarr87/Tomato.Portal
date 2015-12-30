@@ -10,6 +10,12 @@ var Hammer = require('react-hammerjs');
 var Dimmer = React.createClass({
     mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
 
+        // During panning, don't update from the stores.  This prevents weird cases where we are panning and then getting
+        // sigalr updates that don't match the current pan state.
+        if (this.panStartState) {
+            return this.state.switchState;
+        }
+
         // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
         // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
         if (this.props.doNotBroadcastStateChanges) {
@@ -42,6 +48,17 @@ var Dimmer = React.createClass({
             switchState: state 
         }
     },
+
+    getNormalizedSwitchState: function() {
+        var state = this.state.switchState;
+
+        if (state === 'ON') state = 100;
+        else if (state === 'OFF') state = 0;
+
+        // Makes sure this is a number
+        return Math.floor(state);
+    },
+
     clickHandler: function() {
         var state = this.state.switchState;
 
@@ -80,20 +97,21 @@ var Dimmer = React.createClass({
     },
     onPan: function(e) {
 
-        // If you start panning then hold it, this even keeps firing but velocityX is zero.  Don't update in this case
+        // If you start panning then hold it, this event keeps firing but velocityX is zero.  Don't update in this case
         // because it's annoying.
-        if (e.velocityX === 0) {
+        if (e.velocityX === 0 || Math.floor(e.deltaX) === 0 || !e.deltaX) {
             return;
         }
         
-        var state = this.state.switchState;
-        var delta = parseInt(e.deltaX / 10, 10);
+        // e.deltaX is the total moved during this pan, so for any event we need to move based on the original
+        // position, which we capture in the panStart event below.
+        var delta = Math.ceil(e.deltaX / 5) || 0;
 
-        if (state === 'ON') state = 100;
-        else if (state === 'OFF') state = 0;
+        if (!this.panStartState) {
+            this.panStartState = this.getNormalizedSwitchState();
+        }
 
-        state += delta;
-
+        var state = this.panStartState + delta;
 
         if (state < 0) state = 0;
         else if (state > 100) state = 100;
@@ -111,14 +129,24 @@ var Dimmer = React.createClass({
             this.props.onStateChange(this.props.item, state);
         }
 
+        if (e.isFinal) {
+            this.panStartState = undefined;
+        }
+
         e.cancel = true;
     },
+
+    onPanStart: function(e) {
+        this.panStartState = this.getNormalizedSwitchState();
+    },
+
+    onPanEnd: function(e) {
+        this.panStartState = undefined;
+    },
+
     render: function () {
 
-        var state = this.state.switchState || 0;
-
-        if (state === 'ON') state = 100;
-        else if (state === 'OFF') state = 0;
+        var state = this.getNormalizedSwitchState() || 0;
 
         var classes =  classNames({
             'device': true,
@@ -155,7 +183,7 @@ var Dimmer = React.createClass({
                   */
 
             return (
-                <Hammer onPan={this.onPan} onTap={this.clickHandler}>
+                <Hammer onPan={this.onPan} onPanStart={this.onPanStart} onPanEnd={this.onPanEnd} onTap={this.clickHandler}>
                     <div className={classes}>
                         <div className="device-icon" style={style}>
                             <div>{state}%</div>

@@ -1,6 +1,7 @@
 var React = require('react');
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
+var TimePicker = require('components/picker/timePicker');
 
 // Edit a single time rule definition
 var EditTimeRule = React.createClass({
@@ -57,9 +58,9 @@ var EditTimeRule = React.createClass({
             <div className="row">
                 <div className="col-xs-12">
                     <Picker options={typeOptions} selectedValue={timeRule.timeRuleType} onChange={this.handleTypeChange} />
-                    {type.showStart ? <Picker options={times} selectedValue={timeRule.start} onChange={this.handleStartChange} /> : ''}
+                    {type.showStart ? <TimePicker time={timeRule.start} onChange={this.handleStartChange} /> : ''}
                     {type.showStart && type.showEnd ? ' and ' : '' }
-                    {type.showEnd ? <Picker options={times} selectedValue={timeRule.end} onChange={this.handleEndChange} /> : ''}
+                    {type.showEnd ? <TimePicker time={timeRule.end} onChange={this.handleEndChange} /> : ''}
                 </div>
             </div>
         );

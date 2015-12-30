@@ -1,4 +1,7 @@
-var constants = {
+var _ = require('lodash');
+
+// Per-environment constants
+var envConstants = {
 	dev: {
 		ServerUrl: 'http://localhost:49310/', //'http://192.168.0.2:49310/',
 		ApiBaseUrl: 'http://localhost:49310/api/'
@@ -9,10 +12,21 @@ var constants = {
 	}
 };
 
+// Common constants same for all environments
+var commonConstants = {
+	// Special user ids used for rules.  Matches a server constant
+	UserIds: {
+		Anyone: 'ANYONE',
+		NoOne: 'NOONE'
+	}
+};
+
 // Set in gulp via envify
 var env = process.env.NODE_ENV;
 
-module.exports = constants[env];
+var constants = _.extend(commonConstants, envConstants[env]);
+
+module.exports = constants;
 
 // Expose globally for hubs
-window._constants = constants[env];
+window._constants = constants;

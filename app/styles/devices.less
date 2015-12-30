@@ -52,7 +52,8 @@
 
             @media (max-width: @screen-xs) { 
                 h3 {
-                    font-size: 20px;
+                    font-size: 18px;
+                    overflow: hidden;
                 }
             }
         }
@@ -194,7 +195,7 @@
 
     // Passes the actual colorN variable defined by @colorSet
     // ex: @colorSet = 'color4', @@colorSet = '@color4'
-    .block-color(@@colorSet, @actualIndex, @iterations, 5, 2);
+    .block-color(@@colorSet, @actualIndex, @iterations, 5, 10);
 
     .device-block-loop(@index - 1);
 }

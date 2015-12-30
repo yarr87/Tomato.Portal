@@ -1,5 +1,6 @@
 var React = require('react');
 var _ = require('lodash');
+var constants = require('appConstants');
 var Picker = require('components/picker/picker');
 
 // Edit a single user rule definition
@@ -42,6 +43,10 @@ var EditUserRule = React.createClass({
         var userSelections = (this.props.users || []).map((user) => {
             return { value: user.id, label: user.name };
         });
+
+        // Add "Anyone" and "No one" selections
+        userSelections.push({ value: constants.UserIds.Anyone, label: "Anyone" });
+        userSelections.push({ value: constants.UserIds.NoOne, label: "No one" });
 
         var stateSelections = this.availableStates.map((availableState) => {
             return { value: availableState.id, label: availableState.name };
