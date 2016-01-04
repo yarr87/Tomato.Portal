@@ -18,6 +18,7 @@ var SceneList = require('components/scenes/sceneList');
 var EditScene = require('components/scenes/editScene');
 var RuleList = require('components/rules/ruleList');
 var EditRule = require('components/rules/editRule');
+var HVAC = require('components/hvac/hvac');
 
 var routes = (
   <Route path="/" component={Layout}>
@@ -41,6 +42,8 @@ var routes = (
 
     <Route path="scenes" component={SceneList} />
     <Route path="scenes/edit/:id" component={EditScene} />
+
+    <Route path="hvac" component={HVAC} />
 
     <DefaultRoute component={Main}/>
   </Route>

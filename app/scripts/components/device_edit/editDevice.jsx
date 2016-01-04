@@ -92,7 +92,17 @@ var EditDevice = React.createClass({
             return _.find(this.state.tags, { id: tagId });
         }.bind(this));
 
-        var type = this.refs.lightSwitch.checked ? this.refs.lightSwitch.value : this.refs.dimmer.value;
+        var type;
+
+        if (this.refs.lightSwitch.checked) {
+            type = this.refs.lightSwitch.value;
+        }
+        else if (this.refs.dimmer.checked) {
+            type = this.refs.dimmer.value;
+        }
+        else {
+            type = this.refs.temperature.value;
+        }
 
         var device = {
             id: this.state.device.id,
@@ -174,6 +184,9 @@ var EditDevice = React.createClass({
                     </div>
                     <div className="radio">
                         <label><input name="dimmer" type="radio" value="Dimmer" ref="dimmer" checked={this.state.device.type === 'Dimmer'} onChange={this.handleTypeChange} />Dimmer</label>
+                    </div>
+                    <div className="radio">
+                        <label><input name="temperature" type="radio" value="Temperature" ref="temperature" checked={this.state.device.type === 'Temperature'} onChange={this.handleTypeChange} />Temperature</label>
                     </div>
                     </label>
                 </div>

@@ -56,7 +56,8 @@ var EditRule = React.createClass({
             name: this.refs.name.value.trim(),
             description: this.refs.description.value.trim(),
             ruleDefinitions: this.state.rule.ruleDefinitions,
-            actions: this.state.rule.actions
+            actions: this.state.rule.actions,
+            isDisabled: this.state.rule.isDisabled
         };
 
         actions.saveRule(rule);
@@ -66,6 +67,12 @@ var EditRule = React.createClass({
     handleCancel: function(e) {
         e.preventDefault();
         this.history.pushState(null, '/rules');
+    },
+
+    handleDisabledChange: function(e) {
+        var checked = e.target.checked;
+        this.state.rule.isDisabled = !checked;
+        this.setState({ rule: this.state.rule });
     },
 
     // According to react, the state should be managed by a common parent.  So, this component has to handle all updates, even those that come from
@@ -102,9 +109,14 @@ var EditRule = React.createClass({
                     <input className="form-control" type="text" ref="name" value={this.state.rule.name} onChange={this.handleNameChange} required />
                     </label>
                 </div>
-                   <div className="form-group">
+                <div className="form-group">
                     <label>Description
                     <textarea className="form-control" type="text" ref="description"  value={this.state.rule.description} onChange={this.handleDescriptionChange} />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label for="chkDisabled">Enabled? &nbsp;
+                    <input id="chkDisabled" type="checkbox" checked={!this.state.rule.isDisabled} onChange={this.handleDisabledChange} />
                     </label>
                 </div>
                 <div>

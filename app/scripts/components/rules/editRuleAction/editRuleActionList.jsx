@@ -33,6 +33,17 @@ var EditRuleActionList = React.createClass({
                 text: 'Text',
                 icon: 'fa-mobile'
             }
+        },
+        {
+            actionType: 'Temperature',
+            deviceState: {
+                internalName: '',
+                state: '65'
+            },
+            config: {
+                text: 'Temp',
+                icon: 'fa-fire'
+            }
         }
     ],
 

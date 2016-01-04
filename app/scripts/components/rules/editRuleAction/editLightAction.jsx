@@ -11,10 +11,38 @@ var EditLightAction = React.createClass({
         { id: "state_off", name: "turn off", state: "OFF" }
     ],
 
+    getDimmerLevels: function() {
+        var levels = [];
+
+        for(var i = 0; i <= 100; i += 10) {
+            levels.push({value: i.toString(), label: i + '%' });
+        }
+
+        return levels;
+    },
+
     handleDeviceChange: function(newDeviceInternalName) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.internalName = newDeviceInternalName;
+        ruleAction.deviceState.internalName = newDeviceInternalName;    
+
+        var device = _.find(this.props.devices || [], (d) => { return d.internalName === ruleAction.deviceState.internalName });
+
+        // If changing from a dimmer to a switch, make sure the state is valid
+        if (device && device.type !== 'Dimmer' && ruleAction.deviceState.state !== 'ON' && ruleAction.deviceState.state !== 'OFF') {
+            ruleAction.deviceState.state = 'ON';
+        }
+        else if (device && device.type === 'Dimmer' && (ruleAction.deviceState.state === 'ON' || ruleAction.deviceState.state === 'OFF')) {
+            ruleAction.deviceState.state = '0';
+        }
+
+        this.props.onUpdate(ruleAction);
+    },
+
+    handleDimmerLevelChange: function(newDimmerLevel) {
+        var ruleAction = this.props.ruleAction;
+
+        ruleAction.deviceState.state = newDimmerLevel;
 
         this.props.onUpdate(ruleAction);
     },
@@ -45,11 +73,17 @@ var EditLightAction = React.createClass({
             return { value: device.internalName, label: device.name };
         });
 
+        var device = _.find(this.props.devices || [], (d) => { return d.internalName === selectedLight });
+
+        var isDimmer = device && device.type === 'Dimmer';
+        var dimmerState = this.props.ruleAction.deviceState.state;
+
         return (
             <div className="row">
                 <div className="col-xs-12 form-inline">
                     <Picker options={stateSelections} selectedValue={selectedState.id} onChange={this.handleStateChange} />
                     <Picker options={deviceSelections} selectedValue={selectedLight} onChange={this.handleDeviceChange} />
+                    {isDimmer ? <Picker options={this.getDimmerLevels()} selectedValue={dimmerState} onChange={this.handleDimmerLevelChange} /> : '' }
                 </div>
             </div>
             );

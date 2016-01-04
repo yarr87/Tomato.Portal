@@ -63,7 +63,10 @@ var TimePicker = React.createClass({
         var currentMinute = Math.floor(timeParts[1]);
         var currentAmPm = 'am';
 
-        if (currentHour >= 12) {
+        if (currentHour === 0) {
+            currentHour = 12;
+        }
+        else if (currentHour >= 12) {
             currentAmPm = 'pm';
             currentHour -= 12;
         }
@@ -76,7 +79,8 @@ var TimePicker = React.createClass({
     },
 
     timeToString: function(time) {
-        return (time.amPm === 'pm' ? time.hour + 12 : time.hour) + ':' + time.minute + ':00';
+        var hour = time.hour === 12 && time.amPm === 'am' ? 0 : time.hour;
+        return (time.amPm === 'pm' ? hour + 12 : hour) + ':' + time.minute + ':00';
     },
 
     render: function () {

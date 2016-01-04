@@ -24,6 +24,13 @@ var getSelectedDevices = function(devices, selectedTags) {
 var Main = React.createClass({
     mixins: [Reflux.connect(deviceStore, 'devices')],
 
+    getDevices: function() {
+        // Filter out non-lights
+        return _.filter(this.state.devices, (device) => {
+            return device.type === 'LightSwitch' || device.type === 'Dimmer';
+        });
+    },
+
     getInitialState: function() {
         return {
             devices: [],
@@ -40,7 +47,7 @@ var Main = React.createClass({
     },
 
     onAllClick: function(state) {
-        var selectedDevices = getSelectedDevices(this.state.devices, this.state.selectedTags);
+        var selectedDevices = getSelectedDevices(this.getDevices(), this.state.selectedTags);
         actions.setMultipleDeviceStates(selectedDevices, state);
     },
 
@@ -48,7 +55,7 @@ var Main = React.createClass({
 
         var tags = this.state.selectedTags;
 
-        var selectedDevices = getSelectedDevices(this.state.devices, tags);
+        var selectedDevices = getSelectedDevices(this.getDevices(), tags);
 
         var markup = selectedDevices.map(function(item, index) {
 

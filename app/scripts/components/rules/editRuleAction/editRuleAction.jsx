@@ -1,7 +1,9 @@
 var React = require('react');
 var Reflux = require('reflux');
+var _ = require('lodash');
 var EditLightAction = require('components/rules/editRuleAction/editLightAction');
 var EditEmailAsTextAction = require('components/rules/editRuleAction/editEmailAsTextAction');
+var EditTemperatureAction = require('components/rules/editRuleAction/editTemperatureAction');
 
 // Edit a single rule action.  Most of the logic will be done in a specific subclass (EditLightAction, etc)
 var EditRuleAction = React.createClass({
@@ -21,6 +23,14 @@ var EditRuleAction = React.createClass({
         }
         else if (ruleAction.actionType === 'EmailAsText') {
             markup = (<EditEmailAsTextAction users={this.props.users} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
+        }
+        else if (ruleAction.actionType === 'Temperature') {
+            // TODO: handle multiple thermostats
+            var hvac = _.find(this.props.devices, { type: 'Temperature' });
+            if (hvac) {
+                ruleAction.deviceState.internalName = hvac.internalName;
+            }
+            markup = (<EditTemperatureAction device={hvac} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
         }
         else {
             markup = (<div>{ruleAction.actionType}</div>);

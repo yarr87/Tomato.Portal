@@ -46,14 +46,6 @@ var EditTimeRule = React.createClass({
             return { value: availableType.type, label: availableType.name };
         });
 
-        // TODO: add all times
-        // consider a 'timePicker' component that contains 3 dropdowns - hours, minutes, am/pm
-        var times = [
-            { value: '00:00:00', label: '12am' },
-            { value: '01:00:00', label: '1am' },
-            { value: '02:00:00', label: '2am' }
-        ];
-
         return (
             <div className="row">
                 <div className="col-xs-12">

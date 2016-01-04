@@ -23,6 +23,7 @@ var RuleListItem = React.createClass({
                 <td>{this.props.rule.name}
                 </td>
                 <td>{this.props.rule.description}</td>
+                <td>{this.props.rule.isDisabled ? 'No' : 'Yes' }</td>
                 <td><Link to={`/rules/edit/${this.props.rule.id}`}>Edit</Link>&nbsp;&nbsp;&nbsp;
                     <a href="#" onClick={this.handleDelete}>Delete</a></td>
             </tr>
