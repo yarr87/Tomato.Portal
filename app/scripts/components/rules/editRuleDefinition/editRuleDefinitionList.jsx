@@ -133,7 +133,7 @@ var EditRuleDefinitionList = React.createClass({
 
         return (
             <div className="rule-definition-list">
-                <h3>Rule Definitions</h3>
+                <h3>Triggers</h3>
                 {markup}
                 <div className="rule-definition-add">
                     <i className="add-icon fa fa-plus" />

@@ -32,7 +32,7 @@ var Layout = React.createClass({
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul className="nav navbar-nav">
                 <li className={ this.getMenuLinkClass('dashboard') }><Link to="/">Dashboard</Link></li>
-                <li className={ this.getMenuLinkClass('hvac') }><Link to="/hvac">Temp</Link></li>
+                <li className={ this.getMenuLinkClass('thermostat') }><Link to="/thermostat">Temp</Link></li>
                 <li className={ this.getMenuLinkClass('scenes') }><Link to="/scenes">Scenes</Link></li>
                 <li className={ this.getMenuLinkClass('devices') }><Link to="/devices">Manage Devices</Link></li>
                 <li className={ this.getMenuLinkClass('tags') }><Link to="/tags">Manage Tags</Link></li>

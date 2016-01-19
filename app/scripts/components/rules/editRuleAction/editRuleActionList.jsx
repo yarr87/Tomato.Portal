@@ -129,7 +129,7 @@ var EditRuleActionList = React.createClass({
 
         return (
             <div className="rule-action-list">
-                <h3>Rule Actions</h3>
+                <h3>Actions</h3>
                 {markup}
                 <div className="rule-action-add">
                     <i className="add-icon fa fa-plus" />

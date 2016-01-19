@@ -33,34 +33,49 @@ var SceneRepository = (function () {
         return _scenePromise;
     };
 
-    // var addDevice = function (device) {
+    var getSceneById = function(id) {
 
-    //     return request.post(baseUrl + 'devices')
-    //                   .send(device)
-    //                   .promise()
-    //                   .then(function(result) {
-    //                     return result.body;
-    //                   });
-    // };
+      // Assuming the entire list is already loaded...
+      return getScenes().then(function(scenes) {
+        return _.find(scenes, { id: id });
+      });
+    };
 
-    // var deleteDevice = function (device) {
-    //   return request.del(baseUrl + 'devices/' + device.id)
-    //                 .send()
-    //                 .promise();
-    // };
+    var saveScene = function (scene) {
 
-    // var sendCommand = function (device, state) {
+        return request.post(baseUrl + 'scenes')
+                      .send(scene)
+                      .promise()
+                      .then(function(result) {
+                        return result.body;
+                      });
+    };
 
-    //     return request.post(baseUrl + 'devices/' + device.internalName + '/set/state/' + state)
-    //                   .send({})
-    //                   .promise()
-    //                   .then(function(result) {
-    //                     return result.body;
-    //                   });
-    // };
+    var deleteScene = function (scene) {
+      return request.del(baseUrl + 'scene/' + scene.id)
+                    .send()
+                    .promise();
+    };
+
+    var testScene = function(scene) {
+        return request.post(baseUrl + 'scenes/test')
+                      .send(scene)
+                      .promise();
+    };
+
+    var triggerScene = function(scene) {
+        return request.post(baseUrl + 'scenes/' + scene.id)
+                      .send(scene)
+                      .promise();
+    }
 
     return {
-        getScenes: getScenes
+        getScenes: getScenes,
+        getSceneById: getSceneById,
+        saveScene: saveScene,
+        deleteScene: deleteScene,
+        testScene: testScene,
+        triggerScene: triggerScene
     };
 
 })();

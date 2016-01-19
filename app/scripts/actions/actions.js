@@ -25,7 +25,15 @@ var actions = Reflux.createActions([
     'saveRule',
 
     // scene actions
-    'loadScenes'
+    'loadScenes',
+    'deleteScene',
+    'saveScene',
+    'testScene',
+    'triggerScene',
+
+    // scene trigger (minimote) actions
+    'loadSceneTriggers',
+    'saveSceneTriggers'
 
 ]);
 

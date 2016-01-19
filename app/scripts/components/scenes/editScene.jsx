@@ -1,20 +1,19 @@
 var globals = require('globals');
 var React = globals.React;
 var ReactRouter = globals.Router;
-var Link = require('globals').Router.Link;
 var Reflux = require('reflux');
 var sceneStore = require('stores/sceneStore');
 var actions = require('actions/actions');
 var _ = require('lodash');
-var Device = require('components/devices/device');
+var EditRuleActionList = require('components/rules/editRuleAction/editRuleActionList');
 
 var EditScene = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.Navigation,
-             Reflux.connectFilter(sceneStore, 'scene', function(scenes) {
+    mixins: [ReactRouter.State, ReactRouter.History,
+             Reflux.connectFilter(sceneStore, "scene", function(sceneObj) {
 
-                var scene = _.find(scenes, { id: parseInt(this.getParams().id) });
+                var scene = _.find(sceneObj.scenes, { id: this.props.params.id });
 
-                return scene || this.getInitialState().scene;
+                return _.clone(scene, true) || this.getInitialState().scene;
             })
     ],
 
@@ -22,10 +21,10 @@ var EditScene = React.createClass({
     getInitialState: function() {
         return {
             scene: {
-                id: 0,
+                id: '',
                 name: '',
                 description: '',
-                devices: []
+                actions: []
             }
         };
     },
@@ -34,96 +33,87 @@ var EditScene = React.createClass({
         actions.loadScenes();
     },
 
-    // This totally sucks, because once you bind a value react forces it to always be that value and ignores input.  The way to update
-    // the textbox is to catch the change event and update the underlying data.
-    // Tried just setting defaultValue, but that gets set before the data is loaded and then doesn't update again.
-    // handleNameChange: function(e) {
-    //     this.state.tag.name = e.target.value;
-    //     this.setState({tag: this.state.tag});
-    // },
+    handleNameChange: function(e) {
+        this.state.scene.name = e.target.value;
+        this.setState({scene: this.state.scene});
+    },
 
-    // handleParentTagChange: function(e) {
-    //     this.state.tag.parentId = e.target.value;
-    //     this.setState({tag: this.state.tag});
-    // },
+    handleDescriptionChange: function(e) {
+        this.state.scene.description = e.target.value;
+        this.setState({scene: this.state.scene});
+    },
 
-    // handleClick: function(e) {
-    //     e.preventDefault();
+    handleSave: function(e) {
+        e.preventDefault();
 
-    //     // var tag = {
-    //     //     id: this.state.tag.id,
-    //     //     name: this.refs.name.getDOMNode().value.trim(),
+        var scene = {
+            id: this.state.scene.id,
+            name: this.refs.name.value.trim(),
+            description: this.refs.description.value.trim(),
+            actions: this.state.scene.actions
+        };
 
-    //     // };
+        actions.saveScene(scene);
+        this.history.pushState(null, '/scenes');
+    },
 
-    //     actions.saveTag(this.state.tag);
-    //     this.transitionTo('tags');
-    // },
+    handleCancel: function(e) {
+        e.preventDefault();
+        this.history.pushState(null, '/scenes');
+    },
 
-    // handleCancel: function(e) {
-    //     e.preventDefault();
-    //     this.transitionTo('tags');
-    // },
+    handleRuleActionUpdate: function(actions) {
+        this.state.scene.actions = actions;
+        this.setState({ scene: this.state.scene });
+    },
 
-    // onTagsLoaded: function(tagObj) {
-    //     this.state.tags = tagObj.tags;
-    //     this.setState({tags: this.state.tags});
-    // },
+    handleRuleActionAdd: function(newAction) {
+        if (!this.state.scene.actions) this.state.scene.actions = [];
+        this.state.scene.actions.push(newAction);
+        this.setState({ scene: this.state.scene });
+    },
+
+    testScene: function(e) {
+        e.preventDefault();
+
+        var scene = {
+            id: this.state.scene.id,
+            name: this.refs.name.value.trim(),
+            description: this.refs.description.value.trim(),
+            actions: this.state.scene.actions
+        };
+
+        actions.testScene(scene);
+    },
 
     render: function () {
-         
-         var markup = this.state.scene.devices.map(function(device) {
-            return (
-                <div className="block-grid-item">
-                    <div className="scene-device-edit">
-                        <div class="scene-device-remove">
-                            CLOSE
-                        </div>
-                        <Device item={device} doNotBroadcastStateChanges={true} />
-                    </div>
-                </div>
-            );  
-        });
 
         return (
-             <div className="block-grid-md-3 block-grid-sm-2 block-grid-xs-1">
-                {markup}
-            </div>  
+            <div className="row">
+            <div className="col-md-6">
+            <form>
+                <div className="form-group">
+                    <label>Name
+                    <input className="form-control" type="text" ref="name" value={this.state.scene.name} onChange={this.handleNameChange} required />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>Description
+                    <textarea className="form-control" type="text" ref="description"  value={this.state.scene.description} onChange={this.handleDescriptionChange} />
+                    </label>
+                </div>
+                <div>
+                    <EditRuleActionList ruleActions={this.state.scene.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
+                </div>
+                <div className="form-group btn-toolbar">
+                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
+                    <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
+                    <button className="btn btn-info" onClick={this.testScene}>Test</button>
+                </div>
+            </form>
+            </div>
+            </div>
         );
-
-        // var tagOptions = this.state.tags.map(function(tag) {
-
-        //     if (tag.id === this.state.tag.id) return;
-
-        //     return (
-        //         <option key={tag.id} value={tag.id}>{tag.name}</option>
-        //     );
-        // }.bind(this));
-
-        // return (
-        //     <div className="row">
-        //     <div className="col-md-6">
-        //     <form>
-        //         <div className="form-group">
-        //             <label>Name
-        //             <input className="form-control" type="text" ref="name" value={this.state.tag.name} onChange={this.handleNameChange} required />
-        //             </label>
-        //         </div>
-        //          <div className="form-group">
-        //             <label>Parent</label>
-        //             <select className="form-control" value={this.state.tag.parentId} onChange={this.handleParentTagChange}>
-        //                 <option />
-        //                 {tagOptions}
-        //             </select>
-        //         </div>
-        //         <div className="form-group btn-toolbar">
-        //             <button className="btn btn-primary" onClick={this.handleClick}>Save</button>
-        //             <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
-        //         </div>
-        //     </form>
-        //     </div>
-        //     </div>
-        // );
     }
 
 });

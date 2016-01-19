@@ -15,10 +15,12 @@ var EditTag = require('components/tags/tag_edit/editTag');
 var UserList = require('components/users/userList/userList');
 var EditUser = require('components/users/userEdit/editUser');
 var SceneList = require('components/scenes/sceneList');
+var SceneDashboard = require('components/scenes/sceneDashboard');
 var EditScene = require('components/scenes/editScene');
+var SceneTriggers = require('components/scenes/triggers/sceneTriggers');
 var RuleList = require('components/rules/ruleList');
 var EditRule = require('components/rules/editRule');
-var HVAC = require('components/hvac/hvac');
+var Thermostat = require('components/hvac/thermostat');
 
 var routes = (
   <Route path="/" component={Layout}>
@@ -40,10 +42,13 @@ var routes = (
     <Route path="rules/add" component={EditRule} />
     <Route path="rules/edit/:id" component={EditRule} />
 
-    <Route path="scenes" component={SceneList} />
+    <Route path="scenes" component={SceneDashboard} />
+    <Route path="scenes/list" component={SceneList} />
+    <Route path="scenes/add" component={EditScene} />
     <Route path="scenes/edit/:id" component={EditScene} />
+    <Route path="scenes/triggers" component={SceneTriggers} />
 
-    <Route path="hvac" component={HVAC} />
+    <Route path="thermostat" component={Thermostat} />
 
     <DefaultRoute component={Main}/>
   </Route>
