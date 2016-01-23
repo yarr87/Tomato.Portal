@@ -23,11 +23,18 @@ var sceneTriggerStore = Reflux.createStore({
 
     onSaveSceneTriggers: function(triggers) {
 
+        this.triggers.length = 0;
+        this.triggers.concat(triggers);
+
         sceneTriggerRepo.saveSceneTriggers(triggers).then(function(updatedTriggers) {
             this.trigger({
                 triggers: updatedTriggers
             });
         }.bind(this));
+
+        this.trigger({
+            triggers: triggers
+        });
     }
 
 });

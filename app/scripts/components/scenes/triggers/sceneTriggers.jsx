@@ -35,6 +35,26 @@ var SceneTriggers = React.createClass({
             {
                 name: 'Button 2',
                 subId: '_2'
+            },
+            {
+                name: 'Button 2 Long',
+                subId: '_2_long'
+            },
+            {
+                name: 'Button 3',
+                subId: '_3'
+            },
+            {
+                name: 'Button 3 Long',
+                subId: '_3_long'
+            },
+            {
+                name: 'Button 4',
+                subId: '_4'
+            },
+            {
+                name: 'Button 4 Long',
+                subId: '_4_long'
             }
         ]
     },  
@@ -86,13 +106,15 @@ var SceneTriggers = React.createClass({
     addNew: function() {
 
         var newGroup = [];
+        var groupId = 'New Trigger Group ' + this.newGroupId++;
 
         this.minimoteTemplate.triggers.forEach((trigger) => {
             var t = _.clone(this.newTrigger, true);
+            t.groupId = groupId;
             newGroup.push( _.extend(t, trigger));
         });
 
-        this.state.groupedTriggers.push({ name: 'New Trigger Group ' + this.newGroupId++, triggers: newGroup });
+        this.state.groupedTriggers.push({ name: groupId, triggers: newGroup });
 
         this.setState({ groupedTriggers: this.state.groupedTriggers });
     },

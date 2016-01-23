@@ -16,8 +16,6 @@ var SceneTriggerGroupItem = React.createClass({
         this.sendUpdate(trigger);
     },
 
-    // TODO: adding items doesn't update locally until page refresh
-
     handleInternalNameChange: function(e) {
         var trigger = this.props.trigger;
 

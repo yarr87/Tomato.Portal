@@ -33,8 +33,12 @@ var actions = Reflux.createActions([
 
     // scene trigger (minimote) actions
     'loadSceneTriggers',
-    'saveSceneTriggers'
+    'saveSceneTriggers',
 
+    // thermostat actions
+    'loadThermostats',
+    'saveThermostat',
+    'deleteThermostat'
 ]);
 
 module.exports = actions;

@@ -20,7 +20,8 @@ var EditScene = require('components/scenes/editScene');
 var SceneTriggers = require('components/scenes/triggers/sceneTriggers');
 var RuleList = require('components/rules/ruleList');
 var EditRule = require('components/rules/editRule');
-var Thermostat = require('components/hvac/thermostat');
+var ThermostatList = require('components/hvac/thermostatList');
+var EditThermostat = require('components/hvac/editThermostat');
 
 var routes = (
   <Route path="/" component={Layout}>
@@ -48,7 +49,9 @@ var routes = (
     <Route path="scenes/edit/:id" component={EditScene} />
     <Route path="scenes/triggers" component={SceneTriggers} />
 
-    <Route path="thermostat" component={Thermostat} />
+    <Route path="thermostats" component={ThermostatList} />
+    <Route path="thermostats/add" component={EditThermostat} />
+    <Route path="thermostats/edit/:id" component={EditThermostat} />
 
     <DefaultRoute component={Main}/>
   </Route>
