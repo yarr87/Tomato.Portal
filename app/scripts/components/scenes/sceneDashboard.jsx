@@ -44,7 +44,7 @@ var SceneDashboard = React.createClass({
         return (
             <div>
                 <div className="scene-edit">
-                    <Link to="/scenes/list">Edit Scenes</Link>&nbsp;&nbsp;
+                    <Link to="/scenes/list">Edit Scenes</Link>&nbsp;&nbsp;&nbsp;
                     <Link to="/scenes/triggers">Triggers</Link>
                 </div>
                 <div className="devices-dashboard block-grid-md-3 block-grid-sm-2 block-grid-xs-2">

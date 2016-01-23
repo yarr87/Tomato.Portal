@@ -52,7 +52,7 @@ var SceneRepository = (function () {
     };
 
     var deleteScene = function (scene) {
-      return request.del(baseUrl + 'scene/' + scene.id)
+      return request.del(baseUrl + 'scenes/' + scene.id)
                     .send()
                     .promise();
     };
@@ -67,7 +67,7 @@ var SceneRepository = (function () {
         return request.post(baseUrl + 'scenes/' + scene.id)
                       .send(scene)
                       .promise();
-    }
+    };
 
     return {
         getScenes: getScenes,

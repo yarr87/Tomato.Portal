@@ -1,27 +1,51 @@
 var React = require('react');
 var Reflux = require('reflux');
+var ReactRouter = require('globals').Router;
 var Link = require('globals').Router.Link;
 var sceneStore = require('stores/sceneStore');
 var sceneTriggerStore = require('stores/sceneTriggerStore');
-var SceneTriggerItem = require('components/scenes/triggers/sceneTriggerItem');
+var SceneTriggerGroup = require('components/scenes/triggers/sceneTriggerGroup');
 var actions = require('actions/actions');
 var _ = require('lodash');
 
 var SceneTriggers = React.createClass({
-    mixins: [Reflux.listenTo(sceneStore, 'onScenesLoaded'),
+    mixins: [ReactRouter.History,
+             Reflux.listenTo(sceneStore, 'onScenesLoaded'),
              Reflux.listenTo(sceneTriggerStore, 'onSceneTriggersLoaded')],
 
     newTrigger: {
         id: '',
         name: '',
+        groupId: '',
+        subId: '',
         triggerInternalName: '',
         sceneId: ''
     },
 
+    minimoteTemplate: {
+        triggers: [
+            {
+                name: 'Button 1',
+                subId: '_1'
+            },
+            {
+                name: 'Button 1 Long',
+                subId: '_1_long'
+            },
+            {
+                name: 'Button 2',
+                subId: '_2'
+            }
+        ]
+    },  
+
+    newGroupId: 1,
+
     getInitialState: function() {
         return { 
             scenes: [],
-            triggers: [] 
+            triggers: [],
+            groupedTriggers: []
         };
     },
 
@@ -38,46 +62,82 @@ var SceneTriggers = React.createClass({
 
     onSceneTriggersLoaded: function(triggersObj) {
         this.state.triggers = triggersObj.triggers;
-        this.setState({ triggers: this.state.triggers });
+
+        // Group by GroupId, or just Id for non-grouped triggers
+        var grouped = _.groupBy(triggersObj.triggers, (trigger) => {
+            return trigger.groupId || trigger.id;
+        });
+
+        var array = [];
+
+        _.forOwn(grouped, (group, name) => {
+            array.push({
+                name: name,
+                triggers: group
+            });
+        });
+
+        this.setState({ 
+            triggers: this.state.triggers,
+            groupedTriggers: array
+        });
     },
 
     addNew: function() {
-        this.state.triggers.push(_.clone(this.newTrigger, true));
-        this.setState({ triggers: this.state.triggers });
+
+        var newGroup = [];
+
+        this.minimoteTemplate.triggers.forEach((trigger) => {
+            var t = _.clone(this.newTrigger, true);
+            newGroup.push( _.extend(t, trigger));
+        });
+
+        this.state.groupedTriggers.push({ name: 'New Trigger Group ' + this.newGroupId++, triggers: newGroup });
+
+        this.setState({ groupedTriggers: this.state.groupedTriggers });
     },
 
-    handleTriggerChange: function(trigger, index) {
-        this.state.triggers[index] = trigger;
-        this.setState({ triggers: this.state.triggers });
+    handleTriggerChange: function(groupName, triggers, index) {
+
+        this.state.groupedTriggers[index].name = groupName;
+        this.state.groupedTriggers[index].triggers = triggers;
+
+        this.setState({ 
+            groupedTriggers: this.state.groupedTriggers
+        });
     },
 
     handleTriggerDelete: function(index) {
-        this.state.triggers.splice(index, 1);
-        this.setState({ triggers: this.state.triggers });
+        this.state.groupedTriggers.splice(index, 1);
+        this.setState({ groupedTriggers: this.state.groupedTriggers });
     },
 
     handleSave: function(e) {
         e.preventDefault();
 
-        actions.saveSceneTriggers(this.state.triggers);
-        this.setState({ triggers: this.state.triggers });
-        // this.history.pushState(null, '/');
+        var allTriggers = _.reduce(this.state.groupedTriggers, (result, value) => {
+            return result.concat(value.triggers);
+        }, []);
+
+        actions.saveSceneTriggers(allTriggers);
+        this.history.pushState(null, '/scenes');
     },
 
     handleCancel: function(e) {
         e.preventDefault();
-        this.history.pushState(null, '/');
+        this.history.pushState(null, '/scenes');
     },
 
     render: function () {
 
-        var items = (this.state.triggers || []).map((item, index) => {
+        var items = _.map(this.state.groupedTriggers || [], (group, index) => {
             return (
-                <div>
-                    <SceneTriggerItem sceneTrigger={item} scenes={this.state.scenes} index={index} onUpdate={this.handleTriggerChange} />
+                <div key={index}>
+                    <SceneTriggerGroup name={group.name} triggers={group.triggers} scenes={this.state.scenes} index={index} onUpdate={this.handleTriggerChange} />
                     <a className="btn btn-link" onClick={this.handleTriggerDelete.bind(this, index)}>
                         <i className="fa fa-times" /> Delete
                     </a>
+                    <hr />
                 </div>
             );
         });
