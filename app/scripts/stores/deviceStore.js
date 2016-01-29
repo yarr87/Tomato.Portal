@@ -56,11 +56,12 @@ var deviceStore = Reflux.createStore({
 
     // local version shared between single and multiple versions
     _setDeviceState: function(device, state, doTrigger) {
+        deviceRepo.sendCommand(device.internalName, state);
+
         var localDevice = _.find(this.devices, { id: device.id });
 
         if (localDevice) {
-            deviceRepo.sendCommand(localDevice, state);
-
+            
             localDevice.state = state;
 
             if (doTrigger) {

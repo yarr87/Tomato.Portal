@@ -4,6 +4,7 @@ var _ = require('lodash');
 var classNames = require('classnames');
 var actions = require('actions/actions');
 var deviceStore = require('stores/deviceStore');
+var thermostatStore = require('stores/thermostatStore');
 var userStore = require('stores/userStore');
 var EditRuleAction = require('components/rules/editRuleAction/editRuleAction');
 
@@ -11,7 +12,8 @@ var EditRuleAction = require('components/rules/editRuleAction/editRuleAction');
 var EditRuleActionList = React.createClass({
     
     mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded'),
-             Reflux.listenTo(userStore, 'onUsersLoaded')],
+             Reflux.listenTo(userStore, 'onUsersLoaded'),
+             Reflux.listenTo(thermostatStore, 'onThermostatsLoaded')],
 
     ruleActionTypes: [
         { 
@@ -50,12 +52,14 @@ var EditRuleActionList = React.createClass({
     getInitialState: function() {
         return {
             devices: [],
+            thermostats: [],
             users: []
         };
     },
 
     componentWillMount: function() {
         actions.loadDevices();
+        actions.loadThermostats();
         actions.loadUsers();
     },
 
@@ -64,6 +68,14 @@ var EditRuleActionList = React.createClass({
         this.ruleActionTypes[0].deviceState.internalName = devices[0].internalName;
         this.state.devices = devices;
         this.setState({ devices: this.state.devices });
+    },
+
+    onThermostatsLoaded: function(thermostatsObj) {
+        // Default for adding a new row and not changing anything
+        // TODO: make this work for AC or Heat
+        this.ruleActionTypes[2].deviceState.internalName = thermostatsObj.thermostats[0].heatSetPoint.internalName;
+        this.state.thermostats = thermostatsObj.thermostats;
+        this.setState({ thermostats: this.state.thermostats });
     },
 
     onUsersLoaded: function(usersObj) {
@@ -102,7 +114,8 @@ var EditRuleActionList = React.createClass({
                         </a>
                     </div>
                     <div className="rule-action-edit">
-                        <EditRuleAction devices={this.state.devices} users={this.state.users} ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
+                        <EditRuleAction devices={this.state.devices} thermostats={this.state.thermostats} users={this.state.users} 
+                                        ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
                     </div>
                 </div>
             );

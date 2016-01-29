@@ -25,12 +25,7 @@ var EditRuleAction = React.createClass({
             markup = (<EditEmailAsTextAction users={this.props.users} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
         }
         else if (ruleAction.actionType === 'Temperature') {
-            // TODO: handle multiple thermostats
-            var hvac = _.find(this.props.devices, { type: 'Temperature' });
-            if (hvac) {
-                ruleAction.deviceState.internalName = hvac.internalName;
-            }
-            markup = (<EditTemperatureAction device={hvac} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
+            markup = (<EditTemperatureAction thermostats={this.props.thermostats} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
         }
         else {
             markup = (<div>{ruleAction.actionType}</div>);

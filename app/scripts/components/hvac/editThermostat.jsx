@@ -72,7 +72,7 @@ var EditThermostat = React.createClass({
                 </div>
                 <div className="form-group">
                     <label>Internal Name Prefix
-                    <input className="form-control" type="text" ref="internalNamePrefix" value={this.state.thermostat.description} onChange={this.handleInternalNameChange} />
+                    <input className="form-control" type="text" ref="internalNamePrefix" value={this.state.thermostat.internalNamePrefix} onChange={this.handleInternalNameChange} />
                     </label>
                 </div>
                 <div className="form-group btn-toolbar">

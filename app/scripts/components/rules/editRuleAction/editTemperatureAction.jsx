@@ -24,16 +24,32 @@ var EditTemperatureAction = React.createClass({
         this.props.onUpdate(ruleAction);
     },
 
+    handleThermostatChange: function(newThermostatInternalName) {
+        var ruleAction = this.props.ruleAction;
+
+        ruleAction.deviceState.internalName = newThermostatInternalName;    
+
+        this.props.onUpdate(ruleAction);
+    },
+
     render: function () {
 
         var selectedTemp = this.props.ruleAction.deviceState.state;
+        var selectedThermostat = this.props.ruleAction.deviceState.internalName;
+
+        var thermostatSelections = (this.props.thermostats || []).map((thermostat) => {
+            // TODO: handle coolSetPoint too
+            return { value: thermostat.heatSetPoint.internalName, label: thermostat.name };
+        });
 
         var tempOptions = this.getTemperatureOptions();
 
         return (
             <div className="row">
                 <div className="col-xs-12 form-inline">
-                    Set temp to
+                    Set 
+                    <Picker options={thermostatSelections} selectedValue={selectedThermostat} onChange={this.handleThermostatChange} />
+                    to
                     <Picker options={tempOptions} selectedValue={selectedTemp} onChange={this.handleTempChange} />
                 </div>
             </div>
