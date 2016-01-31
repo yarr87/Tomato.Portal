@@ -49,6 +49,14 @@ var EditRuleDefinitionList = React.createClass({
                 text: 'Time',
                 icon: 'fa-clock-o'
             }
+        },
+        {
+            ruleType: 'Day',
+            days: [],
+            config: {
+                text: 'Day',
+                icon: 'fa-calendar'
+            }
         }
     ],
 
