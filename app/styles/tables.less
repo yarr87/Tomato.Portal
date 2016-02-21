@@ -1,0 +1,30 @@
+@media (max-width: @screen-sm) { 
+	
+	table.responsive {
+
+		/* Force table to not be like tables anymore */
+		thead, tbody, th, td, tr { 
+			display: block; 
+		}
+		
+		/* Hide table headers (but not display: none;, for accessibility) */
+		thead tr {  
+			display: none;
+		}
+		
+		tr { 
+			position: relative; 
+			min-height: 70px;
+		}
+		
+		td { 
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee; 
+			position: relative;
+		}
+	
+
+	}
+
+}

@@ -78,3 +78,45 @@
         margin-right: 4px;
     }
 }
+
+.rule-table-enable {
+    display: none;
+}
+
+.enable-link {
+
+    padding: 10px;
+    display: none;
+    text-decoration: none !important;
+
+    &.disabled {
+        color: @brand-danger;
+    }
+
+    &.enabled {
+        color: @brand-success;
+    }
+
+    i {
+        padding-right: 5px;
+    }
+}
+
+@media (max-width: @screen-sm) {  
+
+    .enable-link {
+        display: inline;
+    }
+
+    table.responsive {
+        td.rule-table-enable, td.rule-table-edit {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        td.rule-table-enable {
+            top: 50%;
+        }
+    }
+}

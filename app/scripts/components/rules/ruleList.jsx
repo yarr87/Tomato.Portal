@@ -27,7 +27,7 @@ var RuleList = React.createClass({
         return (
             <div>
                 <Link to="/rules/add">Add Rule</Link>
-                <table className="table table-striped table-hover">
+                <table className="table table-striped table-hover responsive">
                     <thead>
                     <tr>
                         <th>Name</th>
