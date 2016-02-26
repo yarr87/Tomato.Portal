@@ -38,7 +38,14 @@ var actions = Reflux.createActions([
     // thermostat actions
     'loadThermostats',
     'saveThermostat',
-    'deleteThermostat'
+    'deleteThermostat',
+
+    // sonos actions
+    'loadSonoses',
+    'saveSonos',
+    'deleteSonos',
+    'playSonos',
+    'pauseSonos'
 ]);
 
 module.exports = actions;

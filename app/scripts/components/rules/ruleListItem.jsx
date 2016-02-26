@@ -44,8 +44,7 @@ var RuleListItem = React.createClass({
                     <a className="hidden-xs" href="#" onClick={this.handleDelete}>Delete</a>
                     
                     <a href="#" onClick={this.handleEnableDisable} className={this.props.rule.isDisabled ? 'enable-link disabled' : 'enable-link enabled'}>
-                        <i className={this.props.rule.isDisabled ? 'fa fa-times' : 'fa fa-check'} />
-                        {this.props.rule.isDisabled ? 'Disabled' : 'Enabled'}
+                        <i className={this.props.rule.isDisabled ? 'fa fa-2x fa-times' : 'fa fa-2x fa-check'} />
                     </a>
 
                     <button className="visible-xs-inline btn btn-default" onClick={this.handleDelete}>

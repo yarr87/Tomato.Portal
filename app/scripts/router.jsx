@@ -22,6 +22,8 @@ var RuleList = require('components/rules/ruleList');
 var EditRule = require('components/rules/editRule');
 var ThermostatList = require('components/hvac/thermostatList');
 var EditThermostat = require('components/hvac/editThermostat');
+var SonosList = require('components/sonos/sonosList');
+var EditSonos = require('components/sonos/editSonos');
 
 var routes = (
   <Route path="/" component={Layout}>
@@ -52,6 +54,10 @@ var routes = (
     <Route path="thermostats" component={ThermostatList} />
     <Route path="thermostats/add" component={EditThermostat} />
     <Route path="thermostats/edit/:id" component={EditThermostat} />
+
+    <Route path="sonos" component={SonosList} />
+    <Route path="sonos/add" component={EditSonos} />
+    <Route path="sonos/edit/:id" component={EditSonos} />
 
     <DefaultRoute component={Main}/>
   </Route>

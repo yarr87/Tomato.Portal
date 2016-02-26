@@ -12,22 +12,6 @@ var ThermostatList = React.createClass({
     getInitialState: function() {
         return {
             thermostats: []
-            // thermostat: {
-            //     heatSetPoint: {
-            //         state: "60"
-            //     },
-            //     coolSetPoint: {},
-            //     temperature: {
-            //         state: "65"
-            //     },
-            //     humidity: {},
-            //     mode: {},
-            //     fanMode: {},
-            //     operatingState: {},
-            //     fanState: {},
-            //     battery: {}
-            // },
-            // setTemp: -1
         };
     },
 
