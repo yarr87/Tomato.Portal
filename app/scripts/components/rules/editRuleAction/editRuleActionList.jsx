@@ -101,7 +101,7 @@ var EditRuleActionList = React.createClass({
 
     onSonosesLoaded: function(sonosObj) {
         this.ruleActionTypes[3].name = sonosObj.sonoses[0].name;
-        this.ruleActionTypes[3].favorite = sonosObj.sonoses[0].favorites[0];
+        this.ruleActionTypes[3].parameter = sonosObj.sonoses[0].favorites[0];
         this.state.sonoses = sonosObj.sonoses;
         this.setState({ sonoses: this.state.sonoses });
     },

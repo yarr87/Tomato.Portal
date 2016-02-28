@@ -6,74 +6,74 @@ var Picker = require('components/picker/picker');
 // Edit a single sonos action for a rule
 var EditSonosAction = React.createClass({
 
-    handleDeviceChange: function(newDeviceInternalName) {
+    availablePlayTypes: [
+        { value: 'Favorite', label: 'favorite' },
+        { value: 'Playlist', label: 'playlist' }
+    ],
+
+    handleSonosChange: function(newSonosName) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.internalName = newDeviceInternalName;    
+        ruleAction.name = newSonosName;
+        this.props.onUpdate(ruleAction);
+    },
 
-        var device = _.find(this.props.devices || [], (d) => { return d.internalName === ruleAction.deviceState.internalName });
+    handleCommandChange: function(newCommandType) {
+        var ruleAction = this.props.ruleAction;
 
-        // If changing from a dimmer to a switch, make sure the state is valid
-        if (device && device.type !== 'Dimmer' && ruleAction.deviceState.state !== 'ON' && ruleAction.deviceState.state !== 'OFF') {
-            ruleAction.deviceState.state = 'ON';
-        }
-        else if (device && device.type === 'Dimmer' && (ruleAction.deviceState.state === 'ON' || ruleAction.deviceState.state === 'OFF')) {
-            ruleAction.deviceState.state = '0';
-        }
+        ruleAction.commandType = newCommandType;
 
         this.props.onUpdate(ruleAction);
     },
 
-    handleDimmerLevelChange: function(newDimmerLevel) {
+    handleParameterChange: function(newParameter) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.state = newDimmerLevel;
+        ruleAction.parameter = newParameter;
 
         this.props.onUpdate(ruleAction);
     },
 
-    handleStateChange: function(newStateId) {
-        var ruleAction = this.props.ruleAction;
-
-        var selectedState = _.find(this.availableStates, { id: newStateId });
-
-        ruleAction.deviceState.state = selectedState.state;
-
-        this.props.onUpdate(ruleAction);
-    },
 
     render: function () {
 
         var selectedSonosName = this.props.ruleAction.name;
-        var selectedcommand = this.props.ruleAction.commandType;
+        var selectedCommand = this.props.ruleAction.commandType;
         var selectedParameter = this.props.ruleAction.parameter;
 
-        var selectedState = _.find(this.availableStates, (availableState) => {
-            return this.props.ruleAction.deviceState.state === availableState.state;
-        }) || this.availableStates[0]; 
+        var selectedSonos = _.find(this.props.sonoses || [], { name: selectedSonosName }) || {};
 
-        var stateSelections = this.availableStates.map((availableState) => {
-            return { value: availableState.id, label: availableState.name }
+        var sonosOptions = (this.props.sonoses || []).map((sonos) => {
+            return { value: sonos.name, label: sonos.name };
         });
 
-        var deviceSelections = (this.props.devices || []).map((device) => {
-            return { value: device.internalName, label: device.name };
+        var playOptions = this.availablePlayTypes;
+
+        var parameterList;
+
+        if (selectedCommand === 'Favorite') {
+            parameterList = selectedSonos.favorites;
+        }
+        else if (selectedCommand === 'Playlist') {
+            parameterList = selectedSonos.playlists;
+        }
+
+        var parameterOptions = (parameterList || []).map((param) => {
+            return { value: param, label: param };
         });
-
-        var device = _.find(this.props.devices || [], (d) => { return d.internalName === selectedLight });
-
-        var isDimmer = device && device.type === 'Dimmer';
-        var dimmerState = this.props.ruleAction.deviceState.state;
 
         return (
             <div className="row">
                 <div className="col-xs-12 form-inline">
-                    <Picker options={stateSelections} selectedValue={selectedState.id} onChange={this.handleStateChange} />
-                    <Picker options={deviceSelections} selectedValue={selectedLight} onChange={this.handleDeviceChange} />
-                    {isDimmer ? <Picker options={this.getDimmerLevels()} selectedValue={dimmerState} onChange={this.handleDimmerLevelChange} /> : '' }
+                    On 
+                    <Picker options={sonosOptions} selectedValue={selectedSonosName} onChange={this.handleSonosChange} />
+                    play
+                    <Picker options={playOptions} selectedValue={selectedCommand} onChange={this.handleCommandChange} />
+                    named
+                    <Picker options={parameterOptions} selectedValue={selectedParameter} onChange={this.handleParameterChange} />
                 </div>
             </div>
-            );
+        );  
     }
 });
 
