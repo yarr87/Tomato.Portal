@@ -67,6 +67,14 @@ var SonosRepository = (function () {
       return request.post(`${baseUrl}sonos/${sonos.name}/pause`)
                     .send()
                     .promise();
+    };
+
+    var playFavorite = function(sonos, favorite) {
+      // In query string because it might have weird characters
+      return request.post(`${baseUrl}sonos/${sonos.name}/favorite`)
+                    .query({ favorite: favorite })
+                    .send()
+                    .promise();
     }
 
     return {
@@ -75,7 +83,8 @@ var SonosRepository = (function () {
         saveSonos: saveSonos,
         deleteSonos: deleteSonos,
         play: play,
-        pause: pause
+        pause: pause,
+        playFavorite: playFavorite
     };
 
 })();

@@ -72,6 +72,10 @@ var sonosStore = Reflux.createStore({
 
     onPauseSonos: function(sonos) {
         sonosRepo.pause(sonos);
+    },
+
+    onPlaySonosFavorite: function(sonos, favorite) {
+        sonosRepo.playFavorite(sonos, favorite);
     }
 
 });

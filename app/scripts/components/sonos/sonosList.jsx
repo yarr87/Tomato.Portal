@@ -21,7 +21,7 @@ var SonosList = React.createClass({
     },
 
     handleSonosClick: function(sonos) {
-
+        this.setState( { selectedSonos: sonos });
     },
 
     render: function () {

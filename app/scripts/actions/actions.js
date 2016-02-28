@@ -45,7 +45,8 @@ var actions = Reflux.createActions([
     'saveSonos',
     'deleteSonos',
     'playSonos',
-    'pauseSonos'
+    'pauseSonos',
+    'playSonosFavorite'
 ]);
 
 module.exports = actions;

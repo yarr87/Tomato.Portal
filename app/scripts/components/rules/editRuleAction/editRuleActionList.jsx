@@ -6,6 +6,7 @@ var actions = require('actions/actions');
 var deviceStore = require('stores/deviceStore');
 var thermostatStore = require('stores/thermostatStore');
 var userStore = require('stores/userStore');
+var sonosStore = require('stores/sonosStore');
 var EditRuleAction = require('components/rules/editRuleAction/editRuleAction');
 
 // List of editable rule actions for edit rule page
@@ -13,7 +14,8 @@ var EditRuleActionList = React.createClass({
     
     mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded'),
              Reflux.listenTo(userStore, 'onUsersLoaded'),
-             Reflux.listenTo(thermostatStore, 'onThermostatsLoaded')],
+             Reflux.listenTo(thermostatStore, 'onThermostatsLoaded'),
+             Reflux.listenTo(sonosStore, 'onSonosesLoaded')],
 
     ruleActionTypes: [
         { 
@@ -46,6 +48,16 @@ var EditRuleActionList = React.createClass({
                 text: 'Temp',
                 icon: 'fa-fire'
             }
+        },
+        {
+            actionType: 'Sonos',
+            name: '',
+            commandType: 'Favorite',
+            parameter: '',
+            config: {
+                text: 'Sonos',
+                icon: 'fa-music'
+            }
         }
     ],
 
@@ -53,7 +65,8 @@ var EditRuleActionList = React.createClass({
         return {
             devices: [],
             thermostats: [],
-            users: []
+            users: [],
+            sonoses: []
         };
     },
 
@@ -61,6 +74,7 @@ var EditRuleActionList = React.createClass({
         actions.loadDevices();
         actions.loadThermostats();
         actions.loadUsers();
+        actions.loadSonoses();
     },
 
     onDevicesLoaded: function(devices) {
@@ -83,6 +97,13 @@ var EditRuleActionList = React.createClass({
         this.ruleActionTypes[1].userId = usersObj.users[0].id;
         this.state.users = usersObj.users;
         this.setState({ users: this.state.users });
+    },
+
+    onSonosesLoaded: function(sonosObj) {
+        this.ruleActionTypes[3].name = sonosObj.sonoses[0].name;
+        this.ruleActionTypes[3].favorite = sonosObj.sonoses[0].favorites[0];
+        this.state.sonoses = sonosObj.sonoses;
+        this.setState({ sonoses: this.state.sonoses });
     },
 
     addNew: function(ruleAction) {
@@ -114,7 +135,7 @@ var EditRuleActionList = React.createClass({
                         </a>
                     </div>
                     <div className="rule-action-edit">
-                        <EditRuleAction devices={this.state.devices} thermostats={this.state.thermostats} users={this.state.users} 
+                        <EditRuleAction devices={this.state.devices} thermostats={this.state.thermostats} users={this.state.users} sonoses={this.state.sonoses}
                                         ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
                     </div>
                 </div>

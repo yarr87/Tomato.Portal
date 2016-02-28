@@ -4,6 +4,7 @@ var _ = require('lodash');
 var EditLightAction = require('components/rules/editRuleAction/editLightAction');
 var EditEmailAsTextAction = require('components/rules/editRuleAction/editEmailAsTextAction');
 var EditTemperatureAction = require('components/rules/editRuleAction/editTemperatureAction');
+var EditSonosAction = require('components/rules/editRuleAction/editSonosAction');
 
 // Edit a single rule action.  Most of the logic will be done in a specific subclass (EditLightAction, etc)
 var EditRuleAction = React.createClass({
@@ -26,6 +27,9 @@ var EditRuleAction = React.createClass({
         }
         else if (ruleAction.actionType === 'Temperature') {
             markup = (<EditTemperatureAction thermostats={this.props.thermostats} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
+        }
+        else if (ruleAction.actionType === 'Sonos') {
+            markup = (<EditSonosAction sonoses={this.props.sonoses} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
         }
         else {
             markup = (<div>{ruleAction.actionType}</div>);
