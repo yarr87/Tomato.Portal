@@ -1,0 +1,47 @@
+.navbar {
+	min-height: 0px;
+}
+
+.navbar-default {
+	background-color: @gray;
+}
+
+@media (max-width: @screen-sm) { 
+	
+	/* hide the main tabs on small screen */
+	.nav > li.secondary-nav {
+		display: none;
+	}
+
+	/* still show in the tab dropdown */
+	.nav.navbar-nav > li.secondary-nav {
+		display: block; 
+	}
+
+	.nav.navbar-nav .nav-text {
+		display: inline;
+	}
+
+	.nav-icon {
+		display: block;
+	}
+
+	.nav-text {
+		display: none;
+	}
+
+	.main-content {
+	    margin-top: 10px;
+	}
+
+}
+
+@media (min-width: @screen-sm) {
+	.nav-icon { 
+		display: none;
+	}
+
+	.nav.navbar-nav {
+		display: none;
+	}
+}
