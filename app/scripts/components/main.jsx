@@ -74,10 +74,12 @@ var Main = React.createClass({
             );
         });
 
+        /* TODO: tag search might not be worth it.  If brought back, at least make it smaller */
+
         return (
             <div>
-                <div className="row">
-                    <div className="col-sm-8 col-md-9 clearfix">
+                <div className="row">                    
+                    <div className="col-sm-8 col-md-9 clearfix" style={{display: 'none'}}>
                         <TagSearch onTagSelect={this.onTagSelect} />
                     </div>
                     <div className="col-sm-4 col-md-3 on-off-buttons clearfix">

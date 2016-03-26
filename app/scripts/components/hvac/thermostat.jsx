@@ -5,7 +5,6 @@ var Link = require('globals').Router.Link;
 var actions = require('actions/actions');
 var classNames = require('classnames');
 
-// Edit a single rule action.  Most of the logic will be done in a specific subclass (EditLightAction, etc)
 var Thermostat = React.createClass({
 
     getInitialState: function() {

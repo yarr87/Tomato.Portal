@@ -69,6 +69,13 @@ body { padding-top: 70px; }
             color: @text-color;
         }
     }
+
+    @media (max-width: @screen-sm) {
+        .tag-search {
+            float: right;
+        }
+    }
+
 }
 
 /* All on/off buttons on dashboard */
@@ -99,11 +106,24 @@ body { padding-top: 70px; }
 @media (max-width: @screen-xs-max) {
     .on-off-buttons {
         text-align: center;
-        margin: 10px 0px;
+        margin: 0px;
+
+        button {
+            border-radius: 0px;
+            border-color: transparent;
+        }
+
+        .on-button {
+            background-color: #34599a;
+        }
+
+        .off-button {
+            background-color: #12477a;
+        }
     }
 
     .on-button, .off-button {
-        width: 48%;
+        width: 50%;
     }
 
     .on-button {
