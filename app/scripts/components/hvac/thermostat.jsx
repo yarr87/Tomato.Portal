@@ -44,8 +44,6 @@ var Thermostat = React.createClass({
             return;
         }
 
-        
-
         this.setState({ setTemp: setTemp });
     },
 

@@ -3,8 +3,10 @@ var _ = require('lodash');
 // Per-environment constants
 var envConstants = {
 	dev: {
-		ServerUrl: 'http://localhost:49310/', //'http://192.168.0.2:49310/',
-		ApiBaseUrl: 'http://localhost:49310/api/'
+		// ServerUrl: 'http://localhost:49310/', //'http://192.168.0.2:49310/',
+		// ApiBaseUrl: 'http://localhost:49310/api/'
+		ServerUrl: 'http://automato:81/',// 'http://localhost:49310/', //'http://192.168.0.2:49310/',
+		ApiBaseUrl: 'http://automato:81/api/' //'http://localhost:49310/api/'
 	},
 	prod: {
 		ServerUrl: 'http://automato:81/',// 'http://localhost:49310/', //'http://192.168.0.2:49310/',
