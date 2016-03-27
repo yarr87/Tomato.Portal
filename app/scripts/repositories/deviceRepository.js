@@ -13,7 +13,7 @@ var DeviceRepository = (function () {
     var _devices = [];
     var _devicePromise;
 
-    var getDevices = function (callback) {
+    var getDevices = function () {
 
         if (_devices.length) {
           return Promise.resolve(_devices);

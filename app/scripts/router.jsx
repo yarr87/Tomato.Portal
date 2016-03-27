@@ -67,6 +67,6 @@ var routes = (
 
 exports.start = function() {
 
-  ReactDOM.render(<RRouter routes={routes}/>, document.getElementById('content'));
+  ReactDOM.render(<Router routes={routes}/>, document.getElementById('content'));
 
 }

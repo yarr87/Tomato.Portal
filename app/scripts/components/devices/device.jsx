@@ -1,6 +1,6 @@
 var React = require('react');
-var LightSwitch = require('components/devices/lightSwitch');
-var Dimmer = require('components/devices/dimmer');
+import LightSwitch from './lightSwitch'
+// var Dimmer = require('components/devices/dimmer');
 
 var Device = React.createClass({
 
@@ -22,9 +22,10 @@ var Device = React.createClass({
             );
         }
         else if (this.props.item.type === 'Dimmer') {
-            device = (
-                <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
-            );
+            device = (<div>dimmer</div>);
+            // device = (
+            //     <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
+            // );
         }
         else {
             device = (
