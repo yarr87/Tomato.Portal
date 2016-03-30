@@ -5,10 +5,10 @@ import { connect } from 'react-redux'
 var classNames = require('classnames');
 //var actions = require('actions/actions');
 var _ = require('lodash');
-import { setDeviceState } from '../../actions'
+//import { setDeviceState } from '../../actions'
 
 
-class LightSwitch extends Component {
+export default class LightSwitch extends Component {
   constructor(props) {
     super(props)
     // this.handleChange = this.handleChange.bind(this)
@@ -55,15 +55,8 @@ class LightSwitch extends Component {
         // Able to turn off via a property for cases like scene edits.
         if (this.props.doNotBroadcastStateChanges !== true) {
             //actions.setDeviceState(this.props.item, state);
-            dispatch(setDeviceState(this.props.item.internalName, state));
-        }
-        else {
-            this.setState({
-                switchState: state
-            });
-        }
+            //dispatch(setDeviceState(this.props.item.internalName, state));
 
-        if (this.props.onStateChange) {
             this.props.onStateChange(this.props.item, state);
         }
     }
@@ -111,12 +104,4 @@ class LightSwitch extends Component {
     }
 }
 
-function mapStateToProps(state) {//, ownProps) {
-  const devices = state.devices;
-  return {
-    isFetching: devices.isFetching,
-    devices: devices.items
-  }
-}
-
-export default connect(mapStateToProps)(LightSwitch)
+//export default connect(mapStateToProps)(LightSwitch)

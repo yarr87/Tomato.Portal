@@ -1,18 +1,22 @@
-var React = require('react');
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
 import LightSwitch from './lightSwitch'
 // var Dimmer = require('components/devices/dimmer');
+import { setDeviceState } from '../../actions'
+import _ from 'lodash'
 
-var Device = React.createClass({
+class Device extends Component {
 
-    handleStateChange: function(device, state) {
+    constructor(props) {
+        super(props);
+        this.handleStateChange = this.handleStateChange.bind(this);
+    }
 
-        if (this.props.onStateChange) {
-            this.props.onStateChange(device, state);
-        }
+    handleStateChange(device, state) {
+        this.props.setDeviceState(device.internalName, state);
+    }
 
-    },
-
-    render: function () {
+    render() {
 
         var device;
 
@@ -39,6 +43,8 @@ var Device = React.createClass({
           </div>
         );
     }
-});
+}
 
-module.exports = Device;
+export default connect(undefined, {
+  setDeviceState
+})(Device)
