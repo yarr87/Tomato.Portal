@@ -38,9 +38,13 @@ function deviceStateSetMultiple(devices, deviceState) {
   }
 }
 
-export function setDeviceState(deviceInternalName, deviceState) {
+export function setDeviceState(deviceInternalName, deviceState, doNotBroadcast) {
   return dispatch => {
-    deviceRepository.sendCommand(deviceInternalName, deviceState);
+    // doNotBroadcast indicates we're setting the local device state but not updating via the api.  Used on dimmers to update
+    // local state immediately even though the api call is debounced.
+    if (!doNotBroadcast) {
+      deviceRepository.sendCommand(deviceInternalName, deviceState);
+    }
     dispatch(deviceStateSet(deviceInternalName, deviceState));
   }
 }

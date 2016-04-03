@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import LightSwitch from './lightSwitch'
-// var Dimmer = require('components/devices/dimmer');
+import Dimmer from './dimmer'
 import { setDeviceState } from '../../actions'
 import _ from 'lodash'
 
@@ -12,8 +12,8 @@ class Device extends Component {
         this.handleStateChange = this.handleStateChange.bind(this);
     }
 
-    handleStateChange(device, state) {
-        this.props.setDeviceState(device.internalName, state);
+    handleStateChange(device, state, doNotBroadcast) {
+        this.props.setDeviceState(device.internalName, state, doNotBroadcast);
     }
 
     render() {
@@ -21,15 +21,15 @@ class Device extends Component {
         var device;
 
         if (this.props.item.type === 'LightSwitch') {
+            // TODO: I do't think doNotBroadcastStateChange or isCompact are used...they are from old scene pages that were changed.
             device = (
                 <LightSwitch item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
             );
         }
         else if (this.props.item.type === 'Dimmer') {
-            device = (<div>dimmer</div>);
-            // device = (
-            //     <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
-            // );
+            device = (
+                <Dimmer item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
+            );
         }
         else {
             device = (

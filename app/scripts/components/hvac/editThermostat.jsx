@@ -1,82 +1,73 @@
 var globals = require('globals');
-var React = globals.React;
 var ReactRouter = globals.Router;
-var Reflux = require('reflux');
-var thermostatStore = require('stores/thermostatStore');
-var actions = require('actions/actions');
-var _ = require('lodash');
+import React, { Component, PropTypes } from 'react'
+import {reduxForm} from 'redux-form';
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchThermostats } from '../../actions/thermostat.actions'
+import { updateThermostat } from '../../actions/thermostat.actions'
+import { hashHistory } from 'react-router'
 
-var EditThermostat = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.History,
-             Reflux.connectFilter(thermostatStore, "thermostat", function(thermostatObj) {
+class EditThermostat extends Component {
+    // mixins: [ReactRouter.State, ReactRouter.History,
+    //          Reflux.connectFilter(thermostatStore, "thermostat", function(thermostatObj) {
 
-                var thermostat = _.find(thermostatObj.thermostats, { id: this.props.params.id });
+    //             var thermostat = _.find(thermostatObj.thermostats, { id: this.props.params.id });
 
-                return _.clone(thermostat, true) || this.getInitialState().thermostat;
-            })
-    ],
+    //             return _.clone(thermostat, true) || this.getInitialState().thermostat;
+    //         })
+    // ],
 
+    constructor(props) {
+        super(props)
 
-    getInitialState: function() {
-        return {
-            thermostat: {
-                id: '',
-                name: '',
-                internalNamePrefix: ''                
-            }
-        };
-    },
+        this.handleSave = this.handleSave.bind(this);
+    }
 
-    componentWillMount: function() {
-        actions.loadThermostats();
-    },
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(fetchThermostats())
+    }
 
-    handleNameChange: function(e) {
-        this.state.thermostat.name = e.target.value;
-        this.setState({thermostat: this.state.thermostat});
-    },
-
-    handleInternalNameChange: function(e) {
-        this.state.thermostat.internalNamePrefix = e.target.value;
-        this.setState({thermostat: this.state.thermostat});
-    },
-
-    handleSave: function(e) {
-        e.preventDefault();
+    handleSave(values) {
 
         var thermostat = {
-            id: this.state.thermostat.id,
-            name: this.refs.name.value.trim(),
-            internalNamePrefix: this.refs.internalNamePrefix.value.trim()
+            id: this.props.routeParams.id,
+            name: values.name.trim(),
+            internalNamePrefix: values.internalNamePrefix.trim()
         };
 
-        actions.saveThermostat(thermostat);
-        this.history.pushState(null, '/thermostats');
-    },
+        this.props.dispatch(updateThermostat(thermostat));
+        hashHistory.push('/thermostats');
+    }
 
-    handleCancel: function(e) {
+    handleCancel(e) {
         e.preventDefault();
-        this.history.pushState(null, '/thermostats');
-    },
+        // TODO: what if i want to change to html5 mode and need browesrHistor?  Maybe I should wrap this.
+        hashHistory.push('/thermostats');
+    }
 
-    render: function () {
+    render () {
+
+        const {fields: {name, internalNamePrefix}, handleSubmit} = this.props;
 
         return (
             <div className="row">
             <div className="col-md-6">
-            <form>
+            <form onSubmit={handleSubmit(this.handleSave)}>
                 <div className="form-group">
                     <label>Name
-                    <input className="form-control" type="text" ref="name" value={this.state.thermostat.name} onChange={this.handleNameChange} required />
+                    <input className="form-control" type="text" required {...name} />
                     </label>
                 </div>
                 <div className="form-group">
                     <label>Internal Name Prefix
-                    <input className="form-control" type="text" ref="internalNamePrefix" value={this.state.thermostat.internalNamePrefix} onChange={this.handleInternalNameChange} />
+                    <input className="form-control" type="text" {...internalNamePrefix} />
                     </label>
                 </div>
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
+                    <button type="submit" className="btn btn-primary">Save</button>
                     <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </form>
@@ -85,6 +76,14 @@ var EditThermostat = React.createClass({
         );
     }
 
-});
+}
 
-module.exports = EditThermostat;
+EditThermostat = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
+  form: 'thermostat',                           // a unique name for this form
+  fields: ['name', 'internalNamePrefix'] // all the fields in your form
+},
+(state, ownProps) => ({
+    initialValues: _.find(state.thermostats.items, { id: ownProps.routeParams.id })
+}))(EditThermostat);
+
+export default EditThermostat

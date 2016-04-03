@@ -1,12 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-var Reflux = require('reflux');
-import { connect } from 'react-redux'
-//var deviceStore = require('stores/deviceStore');
 var classNames = require('classnames');
-//var actions = require('actions/actions');
 var _ = require('lodash');
-//import { setDeviceState } from '../../actions'
-
 
 export default class LightSwitch extends Component {
   constructor(props) {
@@ -103,5 +97,3 @@ export default class LightSwitch extends Component {
         );
     }
 }
-
-//export default connect(mapStateToProps)(LightSwitch)

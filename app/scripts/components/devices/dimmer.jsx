@@ -1,37 +1,46 @@
-var React = require('react');
-var Reflux = require('reflux');
-var deviceStore = require('stores/deviceStore');
+import React, { Component, PropTypes } from 'react'
 var classNames = require('classnames');
-var actions = require('actions/actions');
+var classNames = require('classnames');
 var _ = require('lodash');
-//var InputSlider = require('react-input-slider');
 var Hammer = require('react-hammerjs');
 
-var Dimmer = React.createClass({
-    mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
+export default class Dimmer extends Component {
+    // mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
 
-        // During panning, don't update from the stores.  This prevents weird cases where we are panning and then getting
-        // sigalr updates that don't match the current pan state.
-        if (this.panStartState) {
-            return this.state.switchState;
-        }
+    //     // During panning, don't update from the stores.  This prevents weird cases where we are panning and then getting
+    //     // sigalr updates that don't match the current pan state.
+    //     if (this.panStartState) {
+    //         return this.state.switchState;
+    //     }
 
-        // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
-        // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
-        if (this.props.doNotBroadcastStateChanges) {
-            return this.props.item.state;
-        }
-        else {
-            var device = _.find(devices, { id: this.props.item.id });
+    //     // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
+    //     // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
+    //     if (this.props.doNotBroadcastStateChanges) {
+    //         return this.props.item.state;
+    //     }
+    //     else {
+    //         var device = _.find(devices, { id: this.props.item.id });
 
-            return device && device.state;
-        }
-    })],
+    //         return device && device.state;
+    //     }
+    // })],
 
-    getInitialState: function() {
+    constructor(props) {
+        super(props)
+        // this.handleChange = this.handleChange.bind(this)
+        // this.handleDismissClick = this.handleDismissClick.bind(this)
+        this.clickHandler = this.clickHandler.bind(this)
+        this.onPan = this.onPan.bind(this);
+        this.onPanStart = this.onPanStart(this);
+        this.onPanEnd = this.onPanEnd(this);
 
         this.delayedAction = _.debounce(this.updateState, 100);
 
+        // Keep a local version of the state that updates immediately, even though we debounce the actual value
+        this.dimmerState = this.getNormalizedSwitchState();
+    }
+
+    getNormalizedSwitchState() {
         var state = this.props.item.state;
 
         if (state === 'ON') state = 100;
@@ -40,62 +49,28 @@ var Dimmer = React.createClass({
         // Sometimes state is "uninitialized" if z-wave isn't ready yet
         state = parseInt(state, 10) || 0;
 
-
-        return {
-            // TODO: this is an 'anti-pattern' according to the docs.  State should be passed in.
-            // But why would't a component own its own state?  The examples have it just bubble up the state change to the
-            // top, then push it down from there.  That seems stupid.  Maybe a flux-style action system would help.
-            switchState: state 
-        }
-    },
-
-    getNormalizedSwitchState: function() {
-        var state = this.state.switchState;
-
-        if (state === 'ON') state = 100;
-        else if (state === 'OFF') state = 0;
-
         // Makes sure this is a number
         return Math.floor(state);
-    },
+    }
 
-    clickHandler: function() {
-        var state = this.state.switchState;
+    clickHandler() {
+        var state = this.getNormalizedSwitchState();
 
-        // TODO: normalize state so it always comes back as an int or a string
-        if (state === 'ON' || state === 100 || state === '100') state = 0;
+        if (state === 100) state = 0;
         else state = 100;
 
-        this.setState({
-                switchState: state
-            });
-
-        // Broadcast the change, which updates the global device list and sends a command to the server.
+        // Broadcast the change, which updates the global device list and sends a command to the sever.
         // Able to turn off via a property for cases like scene edits.
         if (this.props.doNotBroadcastStateChanges !== true) {
-            actions.setDeviceState(this.props.item, state);
+             this.props.onStateChange(this.props.item, state);
         }
-        else {
-            this.setState({
-                switchState: state
-            });
-        }
-    },
-    updateState: function(value) {
-        actions.setDeviceState(this.props.item, value);
-    },
-    onChange: function(value) {
+    }
 
-        var switchState = 100 - parseInt(value.y, 10);
+    updateState(value, doNotBroadcast) {
+        this.props.onStateChange(this.props.item, value, doNotBroadcast);
+    }
 
-        this.setState({ switchState: switchState });
-
-        if (this.props.doNotBroadcastStateChanges !== true) {
-            // Delay broadcast so we don't flood the light with update requests
-            this.delayedAction(switchState);
-        }
-    },
-    onPan: function(e) {
+    onPan(e) {
 
         // If you start panning then hold it, this event keeps firing but velocityX is zero.  Don't update in this case
         // because it's annoying.
@@ -116,35 +91,30 @@ var Dimmer = React.createClass({
         if (state < 0) state = 0;
         else if (state > 100) state = 100;
 
-        this.setState({
-            switchState: state
-        });
-
         if (this.props.doNotBroadcastStateChanges !== true) {
             // Delay broadcast so we don't flood the light with update requests
             this.delayedAction(state);
         }
 
-        if (this.props.onStateChange) {
-            this.props.onStateChange(this.props.item, state);
-        }
+        // Update immediately without calling the api so the UI stays in sync.  The debounced version will handle setting the api.
+        this.updateState(state, true);
 
         if (e.isFinal) {
             this.panStartState = undefined;
         }
 
         e.cancel = true;
-    },
+    }
 
-    onPanStart: function(e) {
+    onPanStart(e) {
         this.panStartState = this.getNormalizedSwitchState();
-    },
+    }
 
-    onPanEnd: function(e) {
+    onPanEnd(e) {
         this.panStartState = undefined;
-    },
+    }
 
-    render: function () {
+    render() {
 
         var state = this.getNormalizedSwitchState() || 0;
 
@@ -172,31 +142,19 @@ var Dimmer = React.createClass({
             backgroundColor: "rgba(237, 213, 35, " + state / 100 + ")"
          };
 
-         /*
-         <InputSlider
-                    className="slider slider-y"
-                    axis='y'
-                    y={100 - state}
-                    ymax={100}
-                    onChange={this.onChange}
-                  />
-                  */
-
-            return (
-                <Hammer onPan={this.onPan} onPanStart={this.onPanStart} onPanEnd={this.onPanEnd} onTap={this.clickHandler}>
-                    <div className={classes}>
-                        <div className="device-icon" style={style}>
-                            <div>{state}%</div>
-                        </div>
-                        <div className="device-content">
-                            <div className="device-type">Light Switch</div>
-                            <div className="device-name"><h3>{this.props.item.name}</h3></div>
-                            <div className="device-tags">{tagMarkup}</div>
-                        </div>
+        return (
+            <Hammer onPan={this.onPan} onPanStart={this.onPanStart} onPanEnd={this.onPanEnd} onTap={this.clickHandler}>
+                <div className={classes}>
+                    <div className="device-icon" style={style}>
+                        <div>{state}%</div>
                     </div>
-                </Hammer>
-              );
+                    <div className="device-content">
+                        <div className="device-type">Light Switch</div>
+                        <div className="device-name"><h3>{this.props.item.name}</h3></div>
+                        <div className="device-tags">{tagMarkup}</div>
+                    </div>
+                </div>
+            </Hammer>
+          );
     }
-});
-
-module.exports = Dimmer;
+}

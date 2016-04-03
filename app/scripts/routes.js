@@ -2,6 +2,8 @@ import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 import App from './containers/App'
 import Layout from './components/Layout'
+import ThermostatList from './components/hvac/thermostatList'
+import EditThermostat from './components/hvac/editThermostat'
 // import UserPage from './containers/UserPage'
 // import RepoPage from './containers/RepoPage'
 
@@ -17,5 +19,8 @@ import Layout from './components/Layout'
 export default (
   <Route path="/" component={Layout}>
   	<IndexRoute component={App} />
+
+  	<Route path="thermostats" component={ThermostatList} />
+  	<Route path="thermostats/edit/:id" component={EditThermostat} />
   </Route>
 )
