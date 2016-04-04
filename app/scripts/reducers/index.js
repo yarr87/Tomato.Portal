@@ -2,6 +2,7 @@ import { routerReducer as routing } from 'react-router-redux'
 import { combineReducers } from 'redux'
 import {reducer as formReducer} from 'redux-form';
 import thermostats from './thermostat.reducers'
+import sonoses from './sonos.reducers'
 import _ from 'lodash'
 
 import {
@@ -80,6 +81,7 @@ function devices(state = { isFetching: false, items: [] }, action) {
 const rootReducer = combineReducers({
   devices,
   thermostats,
+  sonoses,
   routing,
   form: formReducer // from redux-form
 })

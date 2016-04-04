@@ -1,70 +1,65 @@
 var globals = require('globals');
-var React = globals.React;
 var ReactRouter = globals.Router;
-var Reflux = require('reflux');
-var sonosStore = require('stores/sonosStore');
-var actions = require('actions/actions');
-var _ = require('lodash');
+import React, { Component, PropTypes } from 'react'
+import {reduxForm} from 'redux-form';
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchSonoses, updateSonos } from '../../actions/sonos.actions'
+import { hashHistory } from 'react-router'
 
-var EditSonos = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.History,
-             Reflux.connectFilter(sonosStore, "sonos", function(sonosObj) {
+class EditSonos extends Component {
 
-                var sonos = _.find(sonosObj.sonoses, { id: this.props.params.id });
+    constructor(props) {
+        super(props);
 
-                return _.clone(sonos, true) || this.getInitialState().sonos;
-            })
-    ],
-
-
-    getInitialState: function() {
-        return {
+        this.state = {
             sonos: {
                 id: '',
                 name: ''
             }
         };
-    },
 
-    componentWillMount: function() {
-        actions.loadSonoses();
-    },
+        this.handleSave = this.handleSave.bind(this);
+    }
+    
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(fetchSonoses())
+    }
 
-    handleNameChange: function(e) {
-        this.state.sonos.name = e.target.value;
-        this.setState({sonos: this.state.sonos});
-    },
-
-    handleSave: function(e) {
-        e.preventDefault();
+    handleSave(values) {
 
         var sonos = {
-            id: this.state.sonos.id,
-            name: this.refs.name.value.trim()
+            id: this.props.routeParams.id,
+            name: values.name.trim()
         };
 
-        actions.saveSonos(sonos);
-        this.history.pushState(null, '/sonos');
-    },
+        this.props.dispatch(updateSonos(sonos));
+        hashHistory.push('/sonos');
+    }
 
-    handleCancel: function(e) {
+    handleCancel(e) {
         e.preventDefault();
-        this.history.pushState(null, '/sonos');
-    },
+        // TODO: what if i want to change to html5 mode and need browesrHistor?  Maybe I should wrap this.
+        hashHistory.push('/sonos');
+    }
 
-    render: function () {
+    render() {
+
+         const {fields: { name }, handleSubmit} = this.props;
 
         return (
             <div className="row">
             <div className="col-md-6">
-            <form>
+             <form onSubmit={handleSubmit(this.handleSave)}>
                 <div className="form-group">
                     <label>Name
-                    <input className="form-control" type="text" ref="name" value={this.state.sonos.name} onChange={this.handleNameChange} required />
+                    <input className="form-control" type="text" required {...name} />
                     </label>
                 </div>
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
+                    <button type="submit" className="btn btn-primary">Save</button>
                     <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </form>
@@ -72,7 +67,15 @@ var EditSonos = React.createClass({
             </div>
         );
     }
+}
 
-});
+EditSonos = reduxForm({
+  form: 'sonos',                          
+  fields: ['name'] 
+},
+// TODO: something is weird here, when i save then come back it shows the old value, not sure why
+(state, ownProps) => ({
+    initialValues: _.find(state.sonoses.items, { id: ownProps.routeParams.id })
+}))(EditSonos);
 
-module.exports = EditSonos;
+export default EditSonos

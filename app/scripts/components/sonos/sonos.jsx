@@ -1,37 +1,43 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
-var classNames = require('classnames');
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { playSonos, pauseSonos, playSonosFavorite } from '../../actions/sonos.actions'
 var Picker = require('components/picker/picker');
 
 // View a specific sonos and interact with it
-var Sonos = React.createClass({
+class Sonos extends Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+
+        this.handlePlay = this.handlePlay.bind(this);
+        this.handlePause = this.handlePause.bind(this);
+        this.handleFavoriteChange = this.handleFavoriteChange.bind(this);
+        this.handleFavoritePlay = this.handleFavoritePlay.bind(this);
+
+        this.state = {
             selectedFavorite: ''
         };
-    },
+    }
 
-    handlePlay: function() {
-        actions.playSonos(this.props.sonos);
-    },
+    handlePlay() {
+        this.props.playSonos(this.props.sonos);
+    }
 
-    handlePause: function() {
-        actions.pauseSonos(this.props.sonos);
-    },
+    handlePause() {
+        this.props.pauseSonos(this.props.sonos);
+    }
 
-    handleFavoritePlay: function(favorite) {
-        actions.playSonosFavorite(this.props.sonos, favorite);
-    },
+    handleFavoritePlay(favorite) {
+        this.props.playSonosFavorite(this.props.sonos, favorite);
+    }
 
-    handleFavoriteChange: function(newFavorite) {
+    handleFavoriteChange(newFavorite) {
         this.setState({ selectedFavorite: newFavorite });
-    },
+    }
     
-    render: function () {
+    render() {
 
         var sonos = this.props.sonos || {};
 
@@ -58,6 +64,17 @@ var Sonos = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = Sonos;
+function mapStateToProps(state, ownProps) {
+    return {
+        sonos: ownProps.sonos
+    };
+}
+
+export default connect(mapStateToProps, 
+{
+  playSonos, 
+  pauseSonos, 
+  playSonosFavorite
+})(Sonos)

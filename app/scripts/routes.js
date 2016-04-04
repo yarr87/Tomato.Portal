@@ -4,23 +4,20 @@ import App from './containers/App'
 import Layout from './components/Layout'
 import ThermostatList from './components/hvac/thermostatList'
 import EditThermostat from './components/hvac/editThermostat'
-// import UserPage from './containers/UserPage'
-// import RepoPage from './containers/RepoPage'
 
-// export default (
-//   <Route path="/" component={App}>
-//     <Route path="/:login/:name"
-//            component={RepoPage} />
-//     <Route path="/:login"
-//            component={UserPage} />
-//   </Route>
-// )
+import SonosList from './components/sonos/sonosList'
+import EditSonos from './components/sonos/editSonos'
 
 export default (
   <Route path="/" component={Layout}>
   	<IndexRoute component={App} />
 
   	<Route path="thermostats" component={ThermostatList} />
+  	<Route path="thermostats/add" component={EditThermostat} />
   	<Route path="thermostats/edit/:id" component={EditThermostat} />
+
+  	<Route path="sonos" component={SonosList} />
+  	<Route path="sonos/add" component={EditSonos} />
+  	<Route path="sonos/edit/:id" component={EditSonos} />
   </Route>
 )

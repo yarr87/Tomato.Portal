@@ -82,6 +82,7 @@ EditThermostat = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
   form: 'thermostat',                           // a unique name for this form
   fields: ['name', 'internalNamePrefix'] // all the fields in your form
 },
+// TODO: something is weird here, when i save then come back it shows the old value, not sure why
 (state, ownProps) => ({
     initialValues: _.find(state.thermostats.items, { id: ownProps.routeParams.id })
 }))(EditThermostat);

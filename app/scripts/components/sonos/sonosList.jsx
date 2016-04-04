@@ -1,34 +1,36 @@
-var React = require('react');
-var Reflux = require('reflux');
 var Link = require('globals').Router.Link;
-var sonosStore = require('stores/sonosStore');
-var actions = require('actions/actions');
-var _ = require('lodash');
-var Sonos = require('components/sonos/sonos');
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchSonoses } from '../../actions/sonos.actions'
+import Sonos from './sonos'
 
-var SonosList = React.createClass({
-    mixins: [Reflux.connect(sonosStore)],
+class SonosList extends Component {
 
-    getInitialState: function() {
-        return {
-            sonoses: [],
+    constructor(props) {
+        super(props);
+
+        this.handleSonosClick = this.handleSonosClick.bind(this);
+
+        this.state = {
             selectedSonos: null
         };
-    },
+    }
 
-    componentWillMount: function() {
-        actions.loadSonoses();
-    },
+    componentWillMount() {
+        this.props.dispatch(fetchSonoses());
+    }
 
-    handleSonosClick: function(sonos) {
+    handleSonosClick(sonos) {
         this.setState( { selectedSonos: sonos });
-    },
+    }
 
-    render: function () {
+    render() {
 
-        var selected = this.state.selectedSonos || (this.state.sonoses && this.state.sonoses[0]);
+        var selected = this.state.selectedSonos || (this.props.sonoses && this.props.sonoses[0]);
 
-        var list = (this.state.sonoses || []).map(function(sonos) {
+        var list = (this.props.sonoses || []).map(function(sonos) {
             var cn = "block-grid-item sonos";
             if (selected === sonos) {
                 cn += " active";
@@ -54,6 +56,14 @@ var SonosList = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = SonosList;
+function mapStateToProps(state) {
+  const sonoses = state.sonoses;
+  return {
+    isFetching: sonoses.isFetching,
+    sonoses: sonoses.items
+  }
+}
+
+export default connect(mapStateToProps)(SonosList)
