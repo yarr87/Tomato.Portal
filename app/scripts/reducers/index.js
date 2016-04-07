@@ -3,6 +3,7 @@ import { combineReducers } from 'redux'
 import {reducer as formReducer} from 'redux-form';
 import thermostats from './thermostat.reducers'
 import sonoses from './sonos.reducers'
+import rules from './rule.reducers'
 import _ from 'lodash'
 
 import {
@@ -82,6 +83,7 @@ const rootReducer = combineReducers({
   devices,
   thermostats,
   sonoses,
+  rules,
   routing,
   form: formReducer // from redux-form
 })

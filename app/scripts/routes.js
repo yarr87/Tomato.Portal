@@ -8,6 +8,8 @@ import EditThermostat from './components/hvac/editThermostat'
 import SonosList from './components/sonos/sonosList'
 import EditSonos from './components/sonos/editSonos'
 
+import RuleList from './components/rules/ruleList'
+
 export default (
   <Route path="/" component={Layout}>
   	<IndexRoute component={App} />
@@ -19,5 +21,7 @@ export default (
   	<Route path="sonos" component={SonosList} />
   	<Route path="sonos/add" component={EditSonos} />
   	<Route path="sonos/edit/:id" component={EditSonos} />
+
+  	<Route path="rules" component={RuleList} />
   </Route>
 )
