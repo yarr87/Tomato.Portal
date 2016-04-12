@@ -1,132 +1,103 @@
-var globals = require('globals');
-var React = globals.React;
-var ReactRouter = globals.Router;
-var Reflux = require('reflux');
-var ruleStore = require('stores/ruleStore');
-var actions = require('actions/actions');
-var _ = require('lodash');
+var Link = require('globals').Router.Link;
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm } from 'redux-form';
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchRules, updateRule } from '../../actions/rule.actions'
+import { initializeRuleDetails } from '../../actions/ruleDetails.actions'
+import { hashHistory } from 'react-router'
 var EditRuleDefinitionList = require('components/rules/editRuleDefinition/editRuleDefinitionList');
 var EditRuleActionList = require('components/rules/editRuleAction/editRuleActionList');
 
-var EditRule = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.History,
-             Reflux.connectFilter(ruleStore, "rule", function(rulesObj) {
+class EditRule extends Component {
 
-                var rule = _.find(rulesObj.rules, { id: this.props.params.id });
+    constructor(props) {
+        super(props);
 
-                return _.clone(rule, true) || this.getInitialState().rule;
-            })
-    ],
+        this.handleSave = this.handleSave.bind(this);
+    }
 
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(fetchRules())
+        dispatch(initializeRuleDetails(this.props.routeParams.id))
+    }
 
-    getInitialState: function() {
-        return {
-            rule: {
-                id: '',
-                name: '',
-                description: '',
-                ruleDefinitions: [],
-                actions: []
-            }
-        };
-    },
-
-    componentWillMount: function() {
-        actions.loadRules();
-    },
-
-    // This totally sucks, because once you bind a value react forces it to always be that value and ignores input.  The way to update
-    // the textbox is to catch the change event and update the underlying data.
-    // Tried just setting defaultValue, but that gets set before the data is loaded and then doesn't update again.
-    handleNameChange: function(e) {
-        this.state.rule.name = e.target.value;
-        this.setState({rule: this.state.rule});
-    },
-
-    handleDescriptionChange: function(e) {
-        this.state.rule.description = e.target.value;
-        this.setState({rule: this.state.rule});
-    },
-
-    handleSave: function(e) {
-        e.preventDefault();
+     handleSave(values) {
 
         var rule = {
-            id: this.state.rule.id,
-            name: this.refs.name.value.trim(),
-            description: this.refs.description.value.trim(),
-            ruleDefinitions: this.state.rule.ruleDefinitions,
-            actions: this.state.rule.actions,
-            isDisabled: this.state.rule.isDisabled
+            id: this.props.routeParams.id,
+            name: values.name.trim(),
+            description: values.description.trim(),
+            isDisabled: !values.isDisabled,
+            ruleDefinitions: this.props.rule.ruleDefinitions,
+            actions: this.props.rule.actions
         };
 
-        actions.saveRule(rule);
-        this.history.pushState(null, '/rules');
-    },
+        this.props.dispatch(updateRule(rule));
+        hashHistory.push('/rules');
+    }
 
-    handleCancel: function(e) {
+    handleCancel(e) {
         e.preventDefault();
-        this.history.pushState(null, '/rules');
-    },
-
-    handleDisabledChange: function(e) {
-        var checked = e.target.checked;
-        this.state.rule.isDisabled = !checked;
-        this.setState({ rule: this.state.rule });
-    },
+        hashHistory.push('/rules');
+    }
 
     // According to react, the state should be managed by a common parent.  So, this component has to handle all updates, even those that come from
     // individual rule definitions.  Not sure how I feel about this, but trying.
-    handleRuleDefinitionUpdate: function(ruleDefinitions) {
+    handleRuleDefinitionUpdate(ruleDefinitions) {
         this.state.rule.ruleDefinitions = ruleDefinitions;
         this.setState({ rule: this.state.rule });
-    },
+    }
 
-    handleRuleDefinitionAdd: function(newRuleDef) {
+    handleRuleDefinitionAdd(newRuleDef) {
         this.state.rule.ruleDefinitions.push(newRuleDef);
         this.setState({ rule: this.state.rule });
-    },
+    }
 
-    handleRuleActionUpdate: function(ruleActions) {
+    handleRuleActionUpdate(ruleActions) {
         this.state.rule.actions = ruleActions;
         this.setState({ rule: this.state.rule });
-    },
+    }
 
-    handleRuleActionAdd: function(newRuleAction) {
+    handleRuleActionAdd(newRuleAction) {
         if (!this.state.rule.actions) this.state.rule.actions = [];
         this.state.rule.actions.push(newRuleAction);
         this.setState({ rule: this.state.rule });
-    },
+    }
 
-    render: function () {
+    render () {
+
+        const {fields: {name, description, isDisabled }, handleSubmit} = this.props;
 
         return (
             <div className="row">
             <div className="col-md-6">
-            <form>
+            <form onSubmit={ handleSubmit(this.handleSave) }>
                 <div className="form-group">
                     <label>Name
-                    <input className="form-control" type="text" ref="name" value={this.state.rule.name} onChange={this.handleNameChange} required />
+                    <input className="form-control" type="text" required {...name} />
                     </label>
                 </div>
                 <div className="form-group">
                     <label>Description
-                    <textarea className="form-control" type="text" ref="description"  value={this.state.rule.description} onChange={this.handleDescriptionChange} />
+                    <textarea className="form-control" type="text" ref="description"  {...description} />
                     </label>
                 </div>
                 <div className="form-group">
                     <label for="chkDisabled">Enabled? &nbsp;
-                    <input id="chkDisabled" type="checkbox" checked={!this.state.rule.isDisabled} onChange={this.handleDisabledChange} />
+                    <input id="chkDisabled" type="checkbox" {...isDisabled} checked={isDisabled.value ? '' : 'checked'} value={!isDisabled.value} />
                     </label>
                 </div>
                 <div>
-                    <EditRuleDefinitionList ruleDefinitions={this.state.rule.ruleDefinitions} onUpdate={this.handleRuleDefinitionUpdate} onAdd={this.handleRuleDefinitionAdd} />
+                    <EditRuleDefinitionList ruleDefinitions={this.props.rule.ruleDefinitions || []} onUpdate={this.handleRuleDefinitionUpdate} onAdd={this.handleRuleDefinitionAdd} />
                 </div>
                 <div>
-                    <EditRuleActionList ruleActions={this.state.rule.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
+                    <EditRuleActionList ruleActions={this.props.rule.actions || []} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
                 </div>
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
+                    <button type="submit" className="btn btn-primary">Save</button>
                     <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </form>
@@ -135,6 +106,22 @@ var EditRule = React.createClass({
         );
     }
 
-});
+}
 
-module.exports = EditRule;
+EditRule = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
+  form: 'rule',                           // a unique name for this form
+  fields: ['name', 'description', 'isDisabled'] // all the fields in your form
+},
+// TODO: use ruleDetails in state instead, hook it up to child components
+(state, ownProps) => ({
+    initialValues: _.find(state.rules.items, { id: ownProps.routeParams.id }),
+    rule: _.find(state.rules.items, { id: ownProps.routeParams.id }) || {
+                id: '',
+                name: '',
+                description: '',
+                ruleDefinitions: [],
+                actions: []
+            }
+}))(EditRule);
+
+export default EditRule

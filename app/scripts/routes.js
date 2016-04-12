@@ -9,6 +9,7 @@ import SonosList from './components/sonos/sonosList'
 import EditSonos from './components/sonos/editSonos'
 
 import RuleList from './components/rules/ruleList'
+import EditRule from './components/rules/editRule'
 
 export default (
   <Route path="/" component={Layout}>
@@ -23,5 +24,7 @@ export default (
   	<Route path="sonos/edit/:id" component={EditSonos} />
 
   	<Route path="rules" component={RuleList} />
+  	<Route path="rules/add" component={EditRule} />
+  	<Route path="rules/edit/:id" component={EditRule} />
   </Route>
 )

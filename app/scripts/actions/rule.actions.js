@@ -1,5 +1,6 @@
 import ruleRepository from '../repositories/RuleRepository'
 import _ from 'lodash'
+import promise from 'bluebird'
 
 export const REQUEST_RULES = 'REQUEST_RULES'
 export const RECEIVE_RULES = 'RECEIVE_RULES'
@@ -58,7 +59,15 @@ export function deleteRule(rule) {
 }
 
 export function fetchRules() {
-  return dispatch => {
+  return (dispatch, getState) => {
+
+    var state = getState();
+
+    // Already loaded, don't reload
+    if (state.rules.items.length) {
+      return promise.resolve(); 
+    }
+
     dispatch(requestRules())
     return ruleRepository.getRules()
       .then(rules => dispatch(receiveRules(rules)))
