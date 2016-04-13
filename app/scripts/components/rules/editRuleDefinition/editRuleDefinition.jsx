@@ -9,7 +9,7 @@ var EditDayRule = require('components/rules/editRuleDefinition/editDayRule');
 var EditRuleDefinition = React.createClass({
     
     handleRuleDefinitionChange: function(ruleDef) {
-        this.props.onUpdate(ruleDef, this.props.index);
+        this.props.onUpdate(ruleDef, this.props.ruleIndex);
     },
 
     render: function () {

@@ -5,8 +5,10 @@ import promise from 'bluebird'
 // Actions related to editing a single rule's actions and triggers
 
 export const ADD_RULE_DEFINITION = 'ADD_RULE_DEFINITION'
+export const DELETE_RULE_DEFINITION = 'DELETE_RULE_DEFINITION'
 export const EDIT_RULE_DEFINITION = 'EDIT_RULE_DEFINITION'
 export const ADD_RULE_ACTION = 'ADD_RULE_ACTION'
+export const DELETE_RULE_ACTION = 'DELETE_RULE_ACTION'
 export const EDIT_RULE_ACTION = 'EDIT_RULE_ACTION'
 export const INITIALIZE_RULE_DETAILS = 'INITIALIZE_RULE_DETAILS'
 
@@ -31,17 +33,24 @@ export function initializeRuleDetails(ruleId) {
   
 }
 
-export function addRuleAction(ruleAction) {
+export function addRuleAction(action) {
   return {
     type: ADD_RULE_ACTION,
-    ruleAction
+    action
   }
 }
 
-export function editRuleAction(ruleAction, index) {
+export function deleteRuleAction(index) {
+  return {
+    type: DELETE_RULE_ACTION,
+    index
+  }
+}
+
+export function editRuleAction(action, index) {
   return {
     type: EDIT_RULE_ACTION,
-    ruleAction,
+    action,
     index
   }
 }
@@ -50,6 +59,13 @@ export function addRuleDefinition(ruleDefinition) {
   return {
     type: ADD_RULE_DEFINITION,
     ruleDefinition
+  }
+}
+
+export function deleteRuleDefinition(index) {
+  return {
+    type: DELETE_RULE_DEFINITION,
+    index
   }
 }
 

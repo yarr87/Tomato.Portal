@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import { fetchRules, updateRule } from '../../actions/rule.actions'
 import { initializeRuleDetails } from '../../actions/ruleDetails.actions'
 import { hashHistory } from 'react-router'
-var EditRuleDefinitionList = require('components/rules/editRuleDefinition/editRuleDefinitionList');
+import EditRuleDefinitionList from './editRuleDefinition/editRuleDefinitionList'
 var EditRuleActionList = require('components/rules/editRuleAction/editRuleActionList');
 
 class EditRule extends Component {
@@ -20,8 +20,8 @@ class EditRule extends Component {
 
     componentDidMount() {
         const { dispatch } = this.props
-        dispatch(fetchRules())
-        dispatch(initializeRuleDetails(this.props.routeParams.id))
+        this.props.fetchRules();
+        this.props.initializeRuleDetails(this.props.routeParams.id);
     }
 
      handleSave(values) {
@@ -31,8 +31,8 @@ class EditRule extends Component {
             name: values.name.trim(),
             description: values.description.trim(),
             isDisabled: !values.isDisabled,
-            ruleDefinitions: this.props.rule.ruleDefinitions,
-            actions: this.props.rule.actions
+            ruleDefinitions: this.props.ruleDetails.ruleDefinitions,
+            actions: this.props.ruleDetails.actions
         };
 
         this.props.dispatch(updateRule(rule));
@@ -42,18 +42,6 @@ class EditRule extends Component {
     handleCancel(e) {
         e.preventDefault();
         hashHistory.push('/rules');
-    }
-
-    // According to react, the state should be managed by a common parent.  So, this component has to handle all updates, even those that come from
-    // individual rule definitions.  Not sure how I feel about this, but trying.
-    handleRuleDefinitionUpdate(ruleDefinitions) {
-        this.state.rule.ruleDefinitions = ruleDefinitions;
-        this.setState({ rule: this.state.rule });
-    }
-
-    handleRuleDefinitionAdd(newRuleDef) {
-        this.state.rule.ruleDefinitions.push(newRuleDef);
-        this.setState({ rule: this.state.rule });
     }
 
     handleRuleActionUpdate(ruleActions) {
@@ -69,7 +57,7 @@ class EditRule extends Component {
 
     render () {
 
-        const {fields: {name, description, isDisabled }, handleSubmit} = this.props;
+        const {fields: {name, description, isDisabled }, handleSubmit, ruleDetails} = this.props;
 
         return (
             <div className="row">
@@ -91,10 +79,10 @@ class EditRule extends Component {
                     </label>
                 </div>
                 <div>
-                    <EditRuleDefinitionList ruleDefinitions={this.props.rule.ruleDefinitions || []} onUpdate={this.handleRuleDefinitionUpdate} onAdd={this.handleRuleDefinitionAdd} />
+                    <EditRuleDefinitionList ruleDefinitions={ruleDetails.ruleDefinitions} />
                 </div>
                 <div>
-                    <EditRuleActionList ruleActions={this.props.rule.actions || []} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
+                    <EditRuleActionList ruleActions={ruleDetails.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
                 </div>
                 <div className="form-group btn-toolbar">
                     <button type="submit" className="btn btn-primary">Save</button>
@@ -115,13 +103,11 @@ EditRule = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
 // TODO: use ruleDetails in state instead, hook it up to child components
 (state, ownProps) => ({
     initialValues: _.find(state.rules.items, { id: ownProps.routeParams.id }),
-    rule: _.find(state.rules.items, { id: ownProps.routeParams.id }) || {
-                id: '',
-                name: '',
-                description: '',
-                ruleDefinitions: [],
-                actions: []
-            }
-}))(EditRule);
+    ruleDetails: state.ruleDetails
+}),
+{
+    fetchRules,
+    initializeRuleDetails
+})(EditRule);
 
 export default EditRule

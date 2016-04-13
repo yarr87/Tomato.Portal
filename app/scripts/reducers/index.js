@@ -5,38 +5,12 @@ import thermostats from './thermostat.reducers'
 import sonoses from './sonos.reducers'
 import rules from './rule.reducers'
 import ruleDetails from './ruleDetails.reducers'
+import users from './user.reducers'
 import _ from 'lodash'
 
 import {
   REQUEST_DEVICES, RECEIVE_DEVICES, DEVICE_STATE_SET, DEVICE_STATE_SET_MULTIPLE
 } from '../actions'
-
-// function posts(state = {
-//   isFetching: false,
-//   didInvalidate: false,
-//   items: []
-// }, action) {
-//   switch (action.type) {
-//     case INVALIDATE_REDDIT:
-//       return Object.assign({}, state, {
-//         didInvalidate: true
-//       })
-//     case REQUEST_POSTS:
-//       return Object.assign({}, state, {
-//         isFetching: true,
-//         didInvalidate: false
-//       })
-//     case RECEIVE_POSTS:
-//       return Object.assign({}, state, {
-//         isFetching: false,
-//         didInvalidate: false,
-//         items: action.posts,
-//         lastUpdated: action.receivedAt
-//       })
-//     default:
-//       return state
-//   }
-// }
 
 function devices(state = { isFetching: false, items: [] }, action) {
   switch (action.type) {
@@ -86,6 +60,7 @@ const rootReducer = combineReducers({
   sonoses,
   rules,
   ruleDetails,
+  users,
   routing,
   form: formReducer // from redux-form
 })

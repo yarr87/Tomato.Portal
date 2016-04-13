@@ -3,7 +3,8 @@ import _ from 'lodash'
 // The ruleDetails state tracks the edits for a single rule's actions and definitions
 
 import {
-  ADD_RULE_DEFINITION, EDIT_RULE_DEFINITION, ADD_RULE_ACTION, EDIT_RULE_ACTION, INITIALIZE_RULE_DETAILS
+  ADD_RULE_DEFINITION, DELETE_RULE_DEFINITION, EDIT_RULE_DEFINITION, 
+  ADD_RULE_ACTION, DELETE_RULE_ACTION, EDIT_RULE_ACTION, INITIALIZE_RULE_DETAILS
 } from '../actions/ruleDetails.actions'
 
 function ruleDetails(state = { actions: [], ruleDefinitions: [] }, action) {
@@ -15,22 +16,32 @@ function ruleDetails(state = { actions: [], ruleDefinitions: [] }, action) {
       });
     case ADD_RULE_DEFINITION:
       return Object.assign({}, state, {
-        ruleDefinitions: [...state.ruleDefinitions, action.ruleDetails.ruleDefinition]
+        ruleDefinitions: [...state.ruleDefinitions, action.ruleDefinition]
+      });
+    case DELETE_RULE_DEFINITION:
+      return Object.assign({}, state, {
+        ruleDefinitions: state.ruleDefinitions.slice(0, action.index)
+                                              .concat(state.ruleDefinitions.slice(action.index + 1))
       });
     case EDIT_RULE_DEFINITION: 
       return Object.assign({}, state, {
         ruleDefinitions: state.ruleDefinitions.slice(0, action.index)
-                                              .concat([action.ruleDetails.ruleDefinition])
+                                              .concat([action.ruleDefinition])
                                               .concat(state.ruleDefinitions.slice(action.index + 1))
       });
     case ADD_RULE_ACTION:
       return Object.assign({}, state, {
-        actions: [...state.actions, action.ruleDetails.actions]
+        actions: [...state.actions, action.actions]
+      });
+    case DELETE_RULE_ACTION:
+      return Object.assign({}, state, {
+        ruleDefinitions: state.actions.slice(0, action.index)
+                                      .concat(state.actions.slice(action.index + 1))
       });
     case EDIT_RULE_ACTION: 
       return Object.assign({}, state, {
         actions: state.actions.slice(0, action.index)
-                              .concat([action.ruleDetails.actions])
+                              .concat([action.actions])
                               .concat(state.actions.slice(action.index + 1))
       });
     default:
