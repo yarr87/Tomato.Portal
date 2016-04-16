@@ -1,4 +1,4 @@
-var Link = require('globals').Router.Link;
+import { Link } from 'react-router'
 import Thermostat from './thermostat';
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'

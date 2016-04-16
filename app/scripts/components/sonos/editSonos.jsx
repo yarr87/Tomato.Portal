@@ -1,5 +1,3 @@
-var globals = require('globals');
-var ReactRouter = globals.Router;
 import React, { Component, PropTypes } from 'react'
 import {reduxForm} from 'redux-form';
 import { connect } from 'react-redux'

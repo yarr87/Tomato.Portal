@@ -1,19 +1,23 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var EditLightAction = require('components/rules/editRuleAction/editLightAction');
-var EditEmailAsTextAction = require('components/rules/editRuleAction/editEmailAsTextAction');
-var EditTemperatureAction = require('components/rules/editRuleAction/editTemperatureAction');
-var EditSonosAction = require('components/rules/editRuleAction/editSonosAction');
+import React, { Component } from 'react'
+import EditLightAction from './editLightAction'
+import EditEmailAsTextAction from './editEmailAsTextAction'
+import EditTemperatureAction from './editTemperatureAction'
+import EditSonosAction from './editSonosAction'
 
 // Edit a single rule action.  Most of the logic will be done in a specific subclass (EditLightAction, etc)
-var EditRuleAction = React.createClass({
-    
-    handleActionChange: function(ruleAction) {
-        this.props.onUpdate(ruleAction, this.props.index);
-    },
+export default class EditRuleAction extends Component {
 
-    render: function () {
+    constructor(props) {
+        super(props);
+
+        this.handleActionChange = this.handleActionChange.bind(this);
+    }
+    
+    handleActionChange(ruleAction) {
+        this.props.onUpdate(ruleAction, this.props.ruleIndex);
+    }
+
+    render() {
 
         var ruleAction = this.props.ruleAction;
 
@@ -37,6 +41,4 @@ var EditRuleAction = React.createClass({
 
         return markup;
     }
-});
-
-module.exports = EditRuleAction;
+}

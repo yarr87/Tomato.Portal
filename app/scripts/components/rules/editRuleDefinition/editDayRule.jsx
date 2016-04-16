@@ -1,10 +1,16 @@
-var React = require('react');
+import React, { Component } from 'react'
 var _ = require('lodash');
 
 // Edit a single day  rule definition
-var EditDayRule = React.createClass({
+export default class EditDayRule extends Component {
 
-    handleCheckChange: function(e) {
+    constructor(props) {
+        super(props);
+
+        this.handleCheckChange = this.handleCheckChange.bind(this);
+    }
+
+    handleCheckChange(e) {
         var checked = e.target.checked;
         var selectedDay = e.target.value;
 
@@ -18,9 +24,9 @@ var EditDayRule = React.createClass({
         }
 
         this.props.onUpdate(dayRule);
-    },
+    }
 
-    render: function () {
+    render() {
 
         var allDays = [
             { label: 'Sat', value: 'Saturday' },
@@ -51,6 +57,4 @@ var EditDayRule = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditDayRule;
+}

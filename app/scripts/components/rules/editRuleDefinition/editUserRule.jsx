@@ -1,27 +1,35 @@
-var React = require('react');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var constants = require('appConstants');
 var Picker = require('components/picker/picker');
 
 // Edit a single user rule definition
-var EditUserRule = React.createClass({
+export default class EditUserRule extends Component {
 
-    availableStates: [
-        { id: "state_home", name: "is home", isHome: true, isTriggered: false },
-        { id: "state_not_home", name: "is not home", isHome: false, isTriggered: false },
-        { id: "state_comes_home", name: "comes home", isHome: true, isTriggered: true },
-        { id: "state_leaves_home", name: "leaves home", isHome: false, isTriggered: true }
-    ],
+    constructor(props) {
+        super(props)
+
+        this.handleUserChange = this.handleUserChange.bind(this);
+        this.handleStateChange = this.handleStateChange.bind(this);
+
+        this.availableStates = [
+            { id: "state_home", name: "is home", isHome: true, isTriggered: false },
+            { id: "state_not_home", name: "is not home", isHome: false, isTriggered: false },
+            { id: "state_comes_home", name: "comes home", isHome: true, isTriggered: true },
+            { id: "state_leaves_home", name: "leaves home", isHome: false, isTriggered: true }
+        ];
+    }
+
     
-    handleUserChange: function(newUserId) {
+    handleUserChange(newUserId) {
         var userRule = this.props.userRule;
 
         userRule.userState.userId = newUserId;
 
         this.props.onUpdate(userRule);
-    },
+    }
 
-    handleStateChange: function(newStateId) {
+    handleStateChange(newStateId) {
         var userRule = this.props.userRule;
 
         var selectedState = _.find(this.availableStates, { id: newStateId });
@@ -30,9 +38,9 @@ var EditUserRule = React.createClass({
         userRule.isTriggered = selectedState.isTriggered; 
 
         this.props.onUpdate(userRule);
-    },
+    }
 
-    render: function () {
+    render () {
 
         var selectedUserId = this.props.userRule.userState.userId;
 
@@ -61,6 +69,4 @@ var EditUserRule = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditUserRule;
+}

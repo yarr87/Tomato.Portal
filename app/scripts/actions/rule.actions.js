@@ -1,4 +1,4 @@
-import ruleRepository from '../repositories/RuleRepository'
+import ruleRepository from '../repositories/ruleRepository'
 import _ from 'lodash'
 import promise from 'bluebird'
 

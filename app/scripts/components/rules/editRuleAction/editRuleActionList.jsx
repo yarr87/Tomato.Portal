@@ -1,129 +1,113 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var classNames = require('classnames');
-var actions = require('actions/actions');
-var deviceStore = require('stores/deviceStore');
-var thermostatStore = require('stores/thermostatStore');
-var userStore = require('stores/userStore');
-var sonosStore = require('stores/sonosStore');
-var EditRuleAction = require('components/rules/editRuleAction/editRuleAction');
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm } from 'redux-form';
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchDevices } from '../../../actions'
+import { fetchUsers } from '../../../actions/user.actions'
+import { fetchThermostats } from '../../../actions/thermostat.actions'
+import { fetchSonoses } from '../../../actions/sonos.actions'
+import { addRuleAction, deleteRuleAction, editRuleAction } from '../../../actions/ruleDetails.actions'
+import EditRuleAction from './editRuleAction'
 
 // List of editable rule actions for edit rule page
-var EditRuleActionList = React.createClass({
+class EditRuleActionList extends Component {
     
-    mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded'),
-             Reflux.listenTo(userStore, 'onUsersLoaded'),
-             Reflux.listenTo(thermostatStore, 'onThermostatsLoaded'),
-             Reflux.listenTo(sonosStore, 'onSonosesLoaded')],
+    constructor(props) {
+        super(props);
 
-    ruleActionTypes: [
-        { 
-            actionType: 'Light',
-            deviceState: {
-                internalName: '',
-                state: 'OFF'
+        this.handleRuleActionChange = this.handleRuleActionChange.bind(this);
+        this.handleRuleActionDelete = this.handleRuleActionDelete.bind(this);
+
+        this.ruleActionTypes = [
+            {
+                actionType: 'Light',
+                deviceState: {
+                    internalName: '',
+                    state: 'OFF'
+                },
+                config: {
+                    text: 'Light',
+                    icon: 'fa-lightbulb-o'
+                }
             },
-            config: {
-                text: 'Light',
-                icon: 'fa-lightbulb-o'
-            }
-        },
-        {
-            actionType: 'EmailAsText',
-            userId: '',
-            message: '',
-            config: {
-                text: 'Text',
-                icon: 'fa-mobile'
-            }
-        },
-        {
-            actionType: 'Temperature',
-            deviceState: {
-                internalName: '',
-                state: '65'
+            {
+                actionType: 'EmailAsText',
+                userId: '',
+                message: '',
+                config: {
+                    text: 'Text',
+                    icon: 'fa-mobile'
+                }
             },
-            config: {
-                text: 'Temp',
-                icon: 'fa-fire'
+            {
+                actionType: 'Temperature',
+                deviceState: {
+                    internalName: '',
+                    state: '65'
+                },
+                config: {
+                    text: 'Temp',
+                    icon: 'fa-fire'
+                }
+            },
+            {
+                actionType: 'Sonos',
+                name: '',
+                commandType: 'Favorite',
+                parameter: '',
+                config: {
+                    text: 'Sonos',
+                    icon: 'fa-music'
+                }
             }
-        },
-        {
-            actionType: 'Sonos',
-            name: '',
-            commandType: 'Favorite',
-            parameter: '',
-            config: {
-                text: 'Sonos',
-                icon: 'fa-music'
-            }
+        ];
+    }
+
+    componentWillMount() {
+        this.props.fetchDevices();
+        this.props.fetchUsers();
+        this.props.fetchThermostats();
+        this.props.fetchSonoses();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // Default for adding a new row and not changing anything
+        if (nextProps.devices.length) {
+            this.ruleActionTypes[0].deviceState.internalName = nextProps.devices[0].internalName;
         }
-    ],
 
-    getInitialState: function() {
-        return {
-            devices: [],
-            thermostats: [],
-            users: [],
-            sonoses: []
-        };
-    },
+        if (nextProps.users.length) {
+            this.ruleActionTypes[1].userId = nextProps.users[0].id;
+        }
 
-    componentWillMount: function() {
-        actions.loadDevices();
-        actions.loadThermostats();
-        actions.loadUsers();
-        actions.loadSonoses();
-    },
+        if (nextProps.thermostats.length) {
+            // TODO: make this work for AC or Heat
+            this.ruleActionTypes[2].deviceState.internalName = nextProps.thermostats[0].heatSetPoint.internalName;
+        }
 
-    onDevicesLoaded: function(devices) {
-        // Default for adding a new row and not changing anything
-        this.ruleActionTypes[0].deviceState.internalName = devices[0].internalName;
-        this.state.devices = devices;
-        this.setState({ devices: this.state.devices });
-    },
+        if (nextProps.sonoses.length) {
+            this.ruleActionTypes[3].name = nextProps.sonoses[0].name;
+            this.ruleActionTypes[3].parameter = nextProps.sonoses[0].favorites[0];
+        }
+    }
 
-    onThermostatsLoaded: function(thermostatsObj) {
-        // Default for adding a new row and not changing anything
-        // TODO: make this work for AC or Heat
-        this.ruleActionTypes[2].deviceState.internalName = thermostatsObj.thermostats[0].heatSetPoint.internalName;
-        this.state.thermostats = thermostatsObj.thermostats;
-        this.setState({ thermostats: this.state.thermostats });
-    },
-
-    onUsersLoaded: function(usersObj) {
-        // Default for adding a new row and not changing anything
-        this.ruleActionTypes[1].userId = usersObj.users[0].id;
-        this.state.users = usersObj.users;
-        this.setState({ users: this.state.users });
-    },
-
-    onSonosesLoaded: function(sonosObj) {
-        this.ruleActionTypes[3].name = sonosObj.sonoses[0].name;
-        this.ruleActionTypes[3].parameter = sonosObj.sonoses[0].favorites[0];
-        this.state.sonoses = sonosObj.sonoses;
-        this.setState({ sonoses: this.state.sonoses });
-    },
-
-    addNew: function(ruleAction) {
+    addNew(ruleAction) {
         var newAction = _.clone(ruleAction, true);
         delete newAction.config;
 
-        this.props.onAdd(newAction);
-    },
+        this.props.addRuleAction(newAction);
+    }
 
-    handleRuleActionChange: function(ruleAction, index) {
-        this.props.ruleActions[index] = ruleAction;
-        this.props.onUpdate(this.props.ruleActions);
-    },
+    handleRuleActionChange(ruleAction, index) {
+        this.props.editRuleAction(ruleAction, index);
+    }
 
-    handleRuleActionDelete: function(index) {
-        this.props.ruleActions.splice(index, 1);
-        this.props.onUpdate(this.props.ruleActions);
-    },
+    handleRuleActionDelete(index) {
+        this.props.deleteRuleAction(index);
+    }
 
-    render: function () {
+    render () {
 
         var markup = (this.props.ruleActions || []).map((ruleAction, index) => {
 
@@ -135,7 +119,7 @@ var EditRuleActionList = React.createClass({
                         </a>
                     </div>
                     <div className="rule-action-edit">
-                        <EditRuleAction devices={this.state.devices} thermostats={this.state.thermostats} users={this.state.users} sonoses={this.state.sonoses}
+                        <EditRuleAction devices={this.props.devices} thermostats={this.props.thermostats} users={this.props.users} sonoses={this.props.sonoses}
                                         ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
                     </div>
                 </div>
@@ -172,6 +156,20 @@ var EditRuleActionList = React.createClass({
             </div>
             );
     }
-});
+}
 
-module.exports = EditRuleActionList;
+
+export default connect((state) => ({
+    devices: state.devices.items,
+    users: state.users.items,
+    thermostats: state.thermostats.items,
+    sonoses: state.sonoses.items
+}), {
+    addRuleAction,
+    deleteRuleAction,
+    editRuleAction,
+    fetchDevices,
+    fetchUsers,
+    fetchThermostats,
+    fetchSonoses
+})(EditRuleActionList)

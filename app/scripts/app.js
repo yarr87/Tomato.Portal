@@ -1,4 +1,7 @@
-require('jQuery');
+require('jquery');
+
+// Adds a promise method to superagent requests
+require('superagent-bluebird-promise');
 require('bootstrap');
 
 require('appConstants');

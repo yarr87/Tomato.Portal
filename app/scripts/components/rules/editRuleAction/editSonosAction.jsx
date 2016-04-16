@@ -1,41 +1,48 @@
-var React = require('react');
-var Reflux = require('reflux');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
 
 // Edit a single sonos action for a rule
-var EditSonosAction = React.createClass({
+export default class EditSonosAction extends Component {
 
-    availablePlayTypes: [
-        { value: 'Favorite', label: 'favorite' },
-        { value: 'Playlist', label: 'playlist' }
-    ],
+    constructor(props) {
+        super(props);
 
-    handleSonosChange: function(newSonosName) {
+        this.handleSonosChange = this.handleSonosChange.bind(this);
+        this.handleCommandChange = this.handleCommandChange.bind(this);
+        this.handleParameterChange = this.handleParameterChange.bind(this);
+
+        this.availablePlayTypes = [
+            {value: 'Favorite', label: 'favorite'},
+            {value: 'Playlist', label: 'playlist'}
+        ];
+    }
+
+    handleSonosChange(newSonosName) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.name = newSonosName;
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleCommandChange: function(newCommandType) {
+    handleCommandChange(newCommandType) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.commandType = newCommandType;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleParameterChange: function(newParameter) {
+    handleParameterChange(newParameter) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.parameter = newParameter;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
 
-    render: function () {
+    render () {
 
         var selectedSonosName = this.props.ruleAction.name;
         var selectedCommand = this.props.ruleAction.commandType;
@@ -75,6 +82,4 @@ var EditSonosAction = React.createClass({
             </div>
         );  
     }
-});
-
-module.exports = EditSonosAction;
+}

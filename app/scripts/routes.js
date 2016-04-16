@@ -11,6 +11,8 @@ import EditSonos from './components/sonos/editSonos'
 import RuleList from './components/rules/ruleList'
 import EditRule from './components/rules/editRule'
 
+import DeviceList from './components/device_list/deviceList'
+
 export default (
   <Route path="/" component={Layout}>
   	<IndexRoute component={App} />
@@ -26,5 +28,7 @@ export default (
   	<Route path="rules" component={RuleList} />
   	<Route path="rules/add" component={EditRule} />
   	<Route path="rules/edit/:id" component={EditRule} />
+
+		<Route path="devices" component={DeviceList} />
   </Route>
 )

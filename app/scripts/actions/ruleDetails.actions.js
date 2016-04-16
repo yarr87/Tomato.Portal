@@ -1,4 +1,4 @@
-import ruleRepository from '../repositories/RuleRepository'
+import ruleRepository from '../repositories/ruleRepository'
 import _ from 'lodash'
 import promise from 'bluebird'
 
@@ -19,9 +19,26 @@ export function initializeRuleDetails(ruleId) {
 
     // Already loaded, don't reload
     if (state.rules.items.length) {
+
+      var ruleDetails;
+
+      // Add
+      if (!ruleId) {
+        ruleDetails = {
+          name: '',
+          description: '',
+          isDisabled: false,
+          ruleDefinitions: [],
+          actions: []
+        };
+      }
+      else {
+        ruleDetails = _.find(state.rules.items, { id: ruleId });
+      }
+
       return dispatch({
         type: INITIALIZE_RULE_DETAILS,
-        ruleDetails: _.find(state.rules.items, { id: ruleId })
+        ruleDetails: ruleDetails
       });
     }
 

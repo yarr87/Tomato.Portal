@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "gulp-less": "^3.0.0",
+    "jquery": "^2.1.0",
     "react": "^0.14.7",
     "react-redux": "^4.4.1",
     "react-router": "2.0.0",
@@ -23,7 +24,7 @@
     "microplugin": "./app/bower_components/microplugin/src/microplugin.js"
   },
   "browserify-shim": {
-    "jQuery": "global:jQuery",
+    "jQuery": "global:$",
     "bootstrap": {
       "exports": "bootstrap",
       "depends": [

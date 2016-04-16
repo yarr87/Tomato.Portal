@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 var _ = require('lodash');
-var Link = require('globals').Router.Link;
+import { Link } from 'react-router'
 var classNames = require('classnames');
 import { hashHistory } from 'react-router'
 

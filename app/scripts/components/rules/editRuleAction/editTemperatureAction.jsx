@@ -1,12 +1,18 @@
-var React = require('react');
-var Reflux = require('reflux');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
 
 // Edit temperature action for a rule
-var EditTemperatureAction = React.createClass({
+export default class EditTemperatureAction extends Component {
 
-    getTemperatureOptions: function() {
+    constructor(props) {
+        super(props);
+
+        this.handleTempChange = this.handleTempChange.bind(this);
+        this.handleThermostatChange = this.handleThermostatChange.bind(this);
+    }
+
+    getTemperatureOptions() {
         var temps = [];
 
         for(var i = 55; i <= 75; i ++) {
@@ -14,25 +20,25 @@ var EditTemperatureAction = React.createClass({
         }
 
         return temps;
-    },
+    }
     
-    handleTempChange: function(newTemp) {
+    handleTempChange(newTemp) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.deviceState.state = newTemp;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleThermostatChange: function(newThermostatInternalName) {
+    handleThermostatChange(newThermostatInternalName) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.deviceState.internalName = newThermostatInternalName;    
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    render: function () {
+    render () {
 
         var selectedTemp = this.props.ruleAction.deviceState.state;
         var selectedThermostat = this.props.ruleAction.deviceState.internalName;
@@ -55,6 +61,4 @@ var EditTemperatureAction = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditTemperatureAction;
+}

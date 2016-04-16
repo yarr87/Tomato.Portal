@@ -1,4 +1,4 @@
-var Link = require('globals').Router.Link;
+import { Link } from 'react-router'
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form';
@@ -8,7 +8,7 @@ import { fetchRules, updateRule } from '../../actions/rule.actions'
 import { initializeRuleDetails } from '../../actions/ruleDetails.actions'
 import { hashHistory } from 'react-router'
 import EditRuleDefinitionList from './editRuleDefinition/editRuleDefinitionList'
-var EditRuleActionList = require('components/rules/editRuleAction/editRuleActionList');
+import EditRuleActionList from './editRuleAction/editRuleActionList'
 
 class EditRule extends Component {
 
@@ -19,7 +19,6 @@ class EditRule extends Component {
     }
 
     componentDidMount() {
-        const { dispatch } = this.props
         this.props.fetchRules();
         this.props.initializeRuleDetails(this.props.routeParams.id);
     }
@@ -42,17 +41,6 @@ class EditRule extends Component {
     handleCancel(e) {
         e.preventDefault();
         hashHistory.push('/rules');
-    }
-
-    handleRuleActionUpdate(ruleActions) {
-        this.state.rule.actions = ruleActions;
-        this.setState({ rule: this.state.rule });
-    }
-
-    handleRuleActionAdd(newRuleAction) {
-        if (!this.state.rule.actions) this.state.rule.actions = [];
-        this.state.rule.actions.push(newRuleAction);
-        this.setState({ rule: this.state.rule });
     }
 
     render () {
@@ -86,7 +74,7 @@ class EditRule extends Component {
                     <EditRuleDefinitionList ruleDefinitions={ruleDetails.ruleDefinitions} />
                 </div>
                 <div>
-                    <EditRuleActionList ruleActions={ruleDetails.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
+                    <EditRuleActionList ruleActions={ruleDetails.actions} />
                 </div>
                 <div className="form-group btn-toolbar">
                     <button type="submit" className="btn btn-primary">Save</button>

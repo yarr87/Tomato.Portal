@@ -1,4 +1,4 @@
-import sonosRepository from '../repositories/SonosRepository'
+import sonosRepository from '../repositories/sonosRepository'
 import _ from 'lodash'
 
 export const REQUEST_SONOSES = 'REQUEST_SONOSES'

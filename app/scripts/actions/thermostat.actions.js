@@ -1,4 +1,4 @@
-import thermostatRepository from '../repositories/ThermostatRepository'
+import thermostatRepository from '../repositories/thermostatRepository'
 import _ from 'lodash'
 
 export const REQUEST_THERMOSTATS = 'REQUEST_THERMOSTATS'

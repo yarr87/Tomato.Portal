@@ -9,7 +9,7 @@ import users from './user.reducers'
 import _ from 'lodash'
 
 import {
-  REQUEST_DEVICES, RECEIVE_DEVICES, DEVICE_STATE_SET, DEVICE_STATE_SET_MULTIPLE
+  REQUEST_DEVICES, RECEIVE_DEVICES, DEVICE_STATE_SET, DEVICE_STATE_SET_MULTIPLE, DELETE_DEVICE
 } from '../actions'
 
 function devices(state = { isFetching: false, items: [] }, action) {
@@ -48,7 +48,11 @@ function devices(state = { isFetching: false, items: [] }, action) {
 
           return device
         })
-      })
+      });
+    case DELETE_DEVICE:
+      return Object.assign({}, state, {
+        items: state.items.filter(device => device.id !== action.device.id)
+      });
     default:
       return state
   }

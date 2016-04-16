@@ -1,4 +1,4 @@
-import userRepository from '../repositories/UserRepository'
+import userRepository from '../repositories/userRepository'
 import _ from 'lodash'
 import promise from 'bluebird'
 

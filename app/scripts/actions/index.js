@@ -1,12 +1,11 @@
-import deviceRepository from '../repositories/DeviceRepository'
+import deviceRepository from '../repositories/deviceRepository'
 import _ from 'lodash'
 
 export const REQUEST_DEVICES = 'REQUEST_DEVICES'
 export const RECEIVE_DEVICES = 'RECEIVE_DEVICES'
 export const DEVICE_STATE_SET = 'DEVICE_STATE_SET';
 export const DEVICE_STATE_SET_MULTIPLE = 'DEVICE_STATE_SET_MULTIPLE';
-//export const SELECT_REDDIT = 'SELECT_REDDIT'
-//export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT'
+export const DELETE_DEVICE = 'DELETE_DEVICE';
 
 function requestDevices() {
   return {
@@ -65,6 +64,16 @@ export function fetchDevices() {
     dispatch(requestDevices())
     return deviceRepository.getDevices()
       .then(devices => dispatch(receiveDevices(devices)))
+  }
+}
+
+export function deleteDevice(device) {
+  return dispatch => {
+    dispatch({
+      type: DELETE_DEVICE,
+      device
+    });
+    return deviceRepository.deleteDevice(device);
   }
 }
 

@@ -31,17 +31,17 @@ function ruleDetails(state = { actions: [], ruleDefinitions: [] }, action) {
       });
     case ADD_RULE_ACTION:
       return Object.assign({}, state, {
-        actions: [...state.actions, action.actions]
+        actions: [...state.actions, action.action]
       });
     case DELETE_RULE_ACTION:
       return Object.assign({}, state, {
-        ruleDefinitions: state.actions.slice(0, action.index)
-                                      .concat(state.actions.slice(action.index + 1))
+        actions: state.actions.slice(0, action.index)
+                              .concat(state.actions.slice(action.index + 1))
       });
     case EDIT_RULE_ACTION: 
       return Object.assign({}, state, {
         actions: state.actions.slice(0, action.index)
-                              .concat([action.actions])
+                              .concat([action.action])
                               .concat(state.actions.slice(action.index + 1))
       });
     default:
