@@ -7,9 +7,8 @@ import classNames from 'classnames'
 import { fetchDevices } from '../../../actions'
 import { fetchUsers } from '../../../actions/user.actions'
 import { addRuleDefinition, deleteRuleDefinition, editRuleDefinition } from '../../../actions/ruleDetails.actions'
-var EditRuleDefinition = require('components/rules/editRuleDefinition/editRuleDefinition');
+import EditRuleDefinition from './editRuleDefinition'
 
-// TODO: individual rule definitions, rule actions
 class EditRuleDefinitionList extends Component {
 
     constructor(props) {

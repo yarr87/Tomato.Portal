@@ -30,7 +30,7 @@ class EditRule extends Component {
             id: this.props.routeParams.id,
             name: values.name.trim(),
             description: values.description.trim(),
-            isDisabled: !values.isDisabled,
+            isDisabled: values.isDisabled,
             ruleDefinitions: this.props.ruleDetails.ruleDefinitions,
             actions: this.props.ruleDetails.actions
         };
@@ -59,6 +59,10 @@ class EditRule extends Component {
 
         const {fields: {name, description, isDisabled }, handleSubmit, ruleDetails} = this.props;
 
+        var isEnabled = Object.assign({}, isDisabled);
+        isEnabled.value = !isDisabled.value;
+        isEnabled.checked = !isDisabled.checked;
+
         return (
             <div className="row">
             <div className="col-md-6">
@@ -75,7 +79,7 @@ class EditRule extends Component {
                 </div>
                 <div className="form-group">
                     <label for="chkDisabled">Enabled? &nbsp;
-                    <input id="chkDisabled" type="checkbox" {...isDisabled} checked={isDisabled.value ? '' : 'checked'} value={!isDisabled.value} />
+                    <input id="chkDisabled" type="checkbox" {...isEnabled} />
                     </label>
                 </div>
                 <div>
