@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import {
-  REQUEST_USERS, RECEIVE_USERS, UPDATE_USER
+  REQUEST_USERS, RECEIVE_USERS, UPDATE_USER, DELETE_USER
 } from '../actions/user.actions'
 
 function users(state = { isFetching: false, items: [] }, action) {
@@ -33,6 +33,10 @@ function users(state = { isFetching: false, items: [] }, action) {
       }
 
       return updatedState;
+    case DELETE_USER:
+      return Object.assign({}, state, {
+        items: state.items.filter(user => user.id !== action.user.id)
+      });
     default:
       return state
   }

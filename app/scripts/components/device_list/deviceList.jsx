@@ -3,22 +3,24 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import classNames from 'classnames'
-import { fetchDevices, deleteRule } from '../../actions'
+import { fetchDevices, deleteDevice } from '../../actions/device.actions'
 import DeviceListItem from './deviceListItem'
 
 class DeviceList extends Component {
 
     constructor(props) {
         super(props);
+
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     componentWillMount() {
         this.props.fetchDevices();
     }
 
-    handleDelete(rule) {
+    handleDelete(device) {
         if (confirm('really delete?')) {
-            this.props.deleteRule(rule);
+            this.props.deleteDevice(device);
         }
     }
 
@@ -28,7 +30,7 @@ class DeviceList extends Component {
             return (<div>Loading...</div>);
         }
 
-        var items = this.props.devices.map(function(item) {
+        var items = this.props.devices.map((item) => {
             return (
                 <DeviceListItem device={item} onDelete={this.handleDelete} />
             );
@@ -59,10 +61,11 @@ function mapStateToProps(state) {
     const devices = state.devices;
     return {
         isFetching: devices.isFetching,
-        devices: devices.items
+        devices: _.filter(devices.items, (item) => item.type === 'LightSwitch' || item.type === 'Dimmer')
     }
 }
 
 export default connect(mapStateToProps, {
-    fetchDevices
+    fetchDevices,
+    deleteDevice
 })(DeviceList)

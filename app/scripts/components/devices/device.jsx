@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import LightSwitch from './lightSwitch'
 import Dimmer from './dimmer'
-import { setDeviceState } from '../../actions'
+import { setDeviceState } from '../../actions/device.actions'
 import _ from 'lodash'
 
 class Device extends Component {

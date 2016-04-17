@@ -1,35 +1,34 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var userStore = require('stores/userStore');
- var UserListItem = require('components/users/userList/userListItem');
-var actions = require('actions/actions');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchUsers, deleteUser } from '../../../actions/user.actions'
+import UserListItem from './userListItem'
 
-var UserList = React.createClass({
-    mixins: [Reflux.connect(userStore)],
+class UserList extends Component {
 
-    getInitialState: function() {
-        return { users: [] };
-    },
+    constructor(props) {
+        super(props);
 
-    componentWillMount: function() {
-        actions.loadUsers();
-    },
+        this.handleDelete = this.handleDelete.bind(this);
+    }
 
+    componentWillMount() {
+        this.props.fetchUsers();
+    }
 
-    handleDelete: function(e) {
-        e.preventDefault();
-
+    handleDelete(user) {
         if (confirm('really delete?')) {
-            actions.deleteUser(this.props.rule);
+            this.props.deleteUser(user);
         }
-    },
+    }
 
-    render: function () {
+    render () {
 
-        var items = this.state.users.map(function(item) {
+        var items = this.props.users.map((item) => {
             return (
-                <UserListItem user={item} />
+                <UserListItem user={item} onDelete={this.handleDelete} />
             );
         });
 
@@ -51,6 +50,17 @@ var UserList = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = UserList;
+function mapStateToProps(state) {
+    const users = state.users;
+    return {
+        isFetching: users.isFetching,
+        users: users.items
+    }
+}
+
+export default connect(mapStateToProps, {
+    fetchUsers,
+    deleteUser
+})(UserList)

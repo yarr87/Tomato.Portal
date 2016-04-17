@@ -1,26 +1,34 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var tagStore = require('stores/tagStore');
-var TagListItem = require('components/tags/tag_list/tagListItem');
-var actions = require('actions/actions');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchTags, deleteTag } from '../../../actions/tag.actions'
+import TagListItem from './tagListItem'
 
-var TagList = React.createClass({
-    mixins: [Reflux.connect(tagStore)],
+class TagList extends Component {
 
-    getInitialState: function() {
-        return {tags: []};
-    },
+    constructor(props) {
+        super(props);
 
-    componentWillMount: function() {
-        actions.loadTags();
-    },
+        this.handleDelete = this.handleDelete.bind(this);
+    }
 
-    render: function () {
+    componentWillMount() {
+        this.props.fetchTags();
+    }
 
-        var items = this.state.tags.map(function(item) {
+    handleDelete(tag) {
+        if (confirm('really delete?')) {
+            this.props.deleteTag(tag);
+        }
+    }
+
+    render () {
+
+        var items = this.props.tags.map((item) => {
             return (
-                <TagListItem tag={item} />
+                <TagListItem tag={item} onDelete={this.handleDelete} />
             );
         });
 
@@ -41,6 +49,17 @@ var TagList = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = TagList;
+function mapStateToProps(state) {
+    const tags = state.tags;
+    return {
+        isFetching: tags.isFetching,
+        tags: tags.items
+    }
+}
+
+export default connect(mapStateToProps, {
+    fetchTags,
+    deleteTag
+})(TagList)

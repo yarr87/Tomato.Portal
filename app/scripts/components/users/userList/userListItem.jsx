@@ -1,22 +1,22 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
 
-var UserListItem = React.createClass({
-    
-    getInitialState: function() {
-        return {};
-    },
+export default class UserListItem extends Component {
 
-    handleDelete: function(e) {
-        e.preventDefault();
+    constructor(props) {
+      super(props);
 
-        if (confirm('really delete?')) {
-            actions.deleteUser(this.props.user);
-        }
-    },
+      this.handleDelete = this.handleDelete.bind(this);
+    }
 
-    render: function () {
+    handleDelete(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.props.onDelete(this.props.user);
+    }
+
+    render () {
 
         return (
             <tr key={this.props.user.id}>
@@ -28,6 +28,4 @@ var UserListItem = React.createClass({
             </tr>
         );
     }
-});
-
-module.exports = UserListItem;
+}

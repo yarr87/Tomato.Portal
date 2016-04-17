@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
-import { fetchDevices } from '../actions'
+import { fetchDevices } from '../actions/device.actions'
 import Device from '../components/devices/device'
 import _ from 'lodash'
 import classNames from 'classnames'
-import { setMultipleDeviceStates } from '../actions'
+import { setMultipleDeviceStates } from '../actions/device.actions'
 
 class App extends Component {
   constructor(props) {

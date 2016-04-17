@@ -92,7 +92,6 @@ EditRule = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
   form: 'rule',                           // a unique name for this form
   fields: ['name', 'description', 'isDisabled'] // all the fields in your form
 },
-// TODO: use ruleDetails in state instead, hook it up to child components
 (state, ownProps) => ({
     initialValues: _.find(state.rules.items, { id: ownProps.routeParams.id }),
     ruleDetails: state.ruleDetails

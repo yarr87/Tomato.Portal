@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import classNames from 'classnames'
 import { fetchThermostats } from '../../actions/thermostat.actions'
-import { setDeviceState } from '../../actions'
+import { setDeviceState } from '../../actions/device.actions'
 
 class ThermostatList extends Component {
     constructor(props) {

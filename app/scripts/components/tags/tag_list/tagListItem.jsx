@@ -1,22 +1,22 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
 
-var TagListItem = React.createClass({
-    
-    getInitialState: function() {
-        return {search: ''};
-    },
+export default class TagListItem extends Component {
 
-    handleDelete: function(e) {
+    constructor(props) {
+        super(props);
+
+        this.handleDelete = this.handleDelete.bind(this);
+    }
+
+    handleDelete(e) {
         e.preventDefault();
+        e.stopPropagation();
 
-        if (confirm('really delete?')) {
-            actions.deleteTag(this.props.tag);
-        }
-    },
+        this.props.onDelete(this.props.tag);
+    }
 
-    render: function () {
+    render () {
 
         return (
             <tr>
@@ -27,6 +27,4 @@ var TagListItem = React.createClass({
             </tr>
         );
     }
-});
-
-module.exports = TagListItem;
+}

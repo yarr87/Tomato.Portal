@@ -1,16 +1,8 @@
-import { routerReducer as routing } from 'react-router-redux'
-import { combineReducers } from 'redux'
-import {reducer as formReducer} from 'redux-form';
-import thermostats from './thermostat.reducers'
-import sonoses from './sonos.reducers'
-import rules from './rule.reducers'
-import ruleDetails from './ruleDetails.reducers'
-import users from './user.reducers'
 import _ from 'lodash'
 
 import {
-  REQUEST_DEVICES, RECEIVE_DEVICES, DEVICE_STATE_SET, DEVICE_STATE_SET_MULTIPLE, DELETE_DEVICE
-} from '../actions'
+  REQUEST_DEVICES, RECEIVE_DEVICES, DEVICE_STATE_SET, DEVICE_STATE_SET_MULTIPLE, DELETE_DEVICE, UPDATE_DEVICE
+} from '../actions/device.actions'
 
 function devices(state = { isFetching: false, items: [] }, action) {
   switch (action.type) {
@@ -53,20 +45,26 @@ function devices(state = { isFetching: false, items: [] }, action) {
       return Object.assign({}, state, {
         items: state.items.filter(device => device.id !== action.device.id)
       });
+    case UPDATE_DEVICE:
+      var updatedState = Object.assign({}, state, {
+        items: state.items.map(device => {
+          if (device.id === action.device.id) {
+            return Object.assign({}, device, action.device);
+          }
+
+          return device;
+        })
+      });
+
+      // Add new device
+      if (!_.some(updatedState.items, { id: action.device.id })) {
+        updatedState.items.push(action.device);
+      }
+
+      return updatedState;
     default:
       return state
   }
 }
 
-const rootReducer = combineReducers({
-  devices,
-  thermostats,
-  sonoses,
-  rules,
-  ruleDetails,
-  users,
-  routing,
-  form: formReducer // from redux-form
-})
-
-export default rootReducer
+export default devices

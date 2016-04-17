@@ -1,11 +1,13 @@
 import deviceRepository from '../repositories/deviceRepository'
 import _ from 'lodash'
+import promise from 'bluebird'
 
 export const REQUEST_DEVICES = 'REQUEST_DEVICES'
 export const RECEIVE_DEVICES = 'RECEIVE_DEVICES'
 export const DEVICE_STATE_SET = 'DEVICE_STATE_SET';
 export const DEVICE_STATE_SET_MULTIPLE = 'DEVICE_STATE_SET_MULTIPLE';
 export const DELETE_DEVICE = 'DELETE_DEVICE';
+export const UPDATE_DEVICE = 'UPDATE_DEVICE';
 
 function requestDevices() {
   return {
@@ -60,7 +62,16 @@ export function setMultipleDeviceStates(devices, deviceState) {
 }
 
 export function fetchDevices() {
-  return dispatch => {
+
+  return (dispatch, getState) => {
+
+    var state = getState();
+
+    // Already loaded, don't reload
+    if (state.devices.items.length) {
+      return promise.resolve();
+    }
+
     dispatch(requestDevices())
     return deviceRepository.getDevices()
       .then(devices => dispatch(receiveDevices(devices)))
@@ -74,6 +85,19 @@ export function deleteDevice(device) {
       device
     });
     return deviceRepository.deleteDevice(device);
+  }
+}
+
+export function updateDevice(device) {
+  return dispatch => {
+
+    return deviceRepository.addDevice(device)
+      .then(updatedDevice => {
+        dispatch({
+          type: UPDATE_DEVICE,
+          device: updatedDevice
+        });
+      });
   }
 }
 

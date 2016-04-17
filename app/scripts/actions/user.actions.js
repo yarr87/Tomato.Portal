@@ -5,6 +5,7 @@ import promise from 'bluebird'
 export const REQUEST_USERS = 'REQUEST_USERS'
 export const RECEIVE_USERS = 'RECEIVE_USERS'
 export const UPDATE_USER = 'UPDATE_USER'
+export const DELETE_USER = 'DELETE_USER'
 
 function requestUsers() {
   return {
@@ -30,6 +31,16 @@ export function updateUser(user) {
           user: updatedUser
         });
       });
+  }
+}
+
+export function deleteUser(user) {
+  return dispatch => {
+    dispatch({
+      type: DELETE_USER,
+      user
+    });
+    return userRepository.deleteUser(user);
   }
 }
 

@@ -12,6 +12,13 @@ import RuleList from './components/rules/ruleList'
 import EditRule from './components/rules/editRule'
 
 import DeviceList from './components/device_list/deviceList'
+import EditDevice from './components/device_edit/editDevice'
+
+import TagList from './components/tags/tag_list/tagList'
+import EditTag from './components/tags/tag_edit/editTag'
+
+import UserList from './components/users/userList/userList'
+import EditUser from './components/users/userEdit/editUser'
 
 export default (
   <Route path="/" component={Layout}>
@@ -30,5 +37,15 @@ export default (
   	<Route path="rules/edit/:id" component={EditRule} />
 
 		<Route path="devices" component={DeviceList} />
+		<Route path="devices/add" component={EditDevice} />
+		<Route path="devices/edit/:id" component={EditDevice} />
+
+		<Route path="tags" component={TagList} />
+		<Route path="tags/add" component={EditTag} />
+		<Route path="tags/edit/:id" component={EditTag} />
+
+		<Route path="users" component={UserList} />
+		<Route path="users/add" component={EditUser} />
+		<Route path="users/edit/:id" component={EditUser} />
   </Route>
 )

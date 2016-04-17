@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form';
 import _ from 'lodash'
 import classNames from 'classnames'
-import { fetchDevices } from '../../../actions'
+import { fetchDevices } from '../../../actions/device.actions'
 import { fetchUsers } from '../../../actions/user.actions'
 import { addRuleDefinition, deleteRuleDefinition, editRuleDefinition } from '../../../actions/ruleDetails.actions'
 import EditRuleDefinition from './editRuleDefinition'

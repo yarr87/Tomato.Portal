@@ -13,7 +13,7 @@ export default class DeviceListItem extends Component {
       e.preventDefault();
       e.stopPropagation();
 
-      this.props.onDelete(this.props.rule);
+      this.props.onDelete(this.props.device);
     }
 
     render () {
