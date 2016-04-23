@@ -1,26 +1,34 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var sceneStore = require('stores/sceneStore');
-var SceneListItem = require('components/scenes/sceneListItem');
-var actions = require('actions/actions');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchScenes, deleteScene } from '../../actions/scene.actions'
+import SceneListItem from './sceneListItem'
 
-var SceneList = React.createClass({
-    mixins: [Reflux.connect(sceneStore)],
+class SceneList extends Component {
 
-    getInitialState: function() {
-        return { scenes: [] };
-    },
+    constructor(props) {
+        super(props);
 
-    componentWillMount: function() {
-        actions.loadScenes();
-    },
+        this.handleDelete = this.handleDelete.bind(this);
+    }
 
-    render: function () {
+    componentWillMount() {
+        this.props.fetchScenes();
+    }
 
-        var items = this.state.scenes.map(function(item) {
+    handleDelete(scene) {
+        if (confirm('really delete?')) {
+            this.props.deleteScene(scene);
+        }
+    }
+
+    render () {
+
+        var items = this.props.scenes.map((item) => {
             return (
-                <SceneListItem scene={item} />
+                <SceneListItem key={item.id} scene={item} onDelete={this.handleDelete} />
             );
         });
 
@@ -42,6 +50,17 @@ var SceneList = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = SceneList;
+function mapStateToProps(state) {
+    const scenes = state.scenes;
+    return {
+        isFetching: scenes.isFetching,
+        scenes: scenes.items
+    }
+}
+
+export default connect(mapStateToProps, {
+    fetchScenes,
+    deleteScene
+})(SceneList)

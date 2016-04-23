@@ -1,114 +1,82 @@
-var globals = require('globals');
-var React = globals.React;
-var ReactRouter = globals.Router;
-var Reflux = require('reflux');
-var sceneStore = require('stores/sceneStore');
-var actions = require('actions/actions');
-var _ = require('lodash');
-var EditRuleActionList = require('components/rules/editRuleAction/editRuleActionList');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm } from 'redux-form';
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchScenes, testScene, updateScene } from '../../actions/scene.actions'
+import { hashHistory } from 'react-router'
+import EditRuleActionList from '../rules/editRuleAction/editRuleActionList'
 
-var EditScene = React.createClass({
-    mixins: [ReactRouter.State, ReactRouter.History,
-             Reflux.connectFilter(sceneStore, "scene", function(sceneObj) {
+class EditScene extends Component {
 
-                var scene = _.find(sceneObj.scenes, { id: this.props.params.id });
+    constructor(props) {
+        super(props);
 
-                return _.clone(scene, true) || this.getInitialState().scene;
-            })
-    ],
+        this.handleSave = this.handleSave.bind(this);
+        this.testScene = this.testScene.bind(this);
+    }
 
+    componentWillMount() {
+        this.props.fetchScenes();
+    }
 
-    getInitialState: function() {
-        return {
-            scene: {
-                id: '',
-                name: '',
-                description: '',
-                actions: []
-            }
+    handleSave(values) {
+
+        var scene = {
+            id: this.props.routeParams.id,
+            name: values.name.trim(),
+            description: values.description,
+            actions: values.actions
         };
-    },
 
-    componentWillMount: function() {
-        actions.loadScenes();
-    },
+        this.props.updateScene(scene);
+        hashHistory.push('/scenes/list');
+    }
 
-    handleNameChange: function(e) {
-        this.state.scene.name = e.target.value;
-        this.setState({scene: this.state.scene});
-    },
+    handleCancel(e) {
+        e.preventDefault();
+        hashHistory.push('/scenes/list');
+    }
 
-    handleDescriptionChange: function(e) {
-        this.state.scene.description = e.target.value;
-        this.setState({scene: this.state.scene});
-    },
-
-    handleSave: function(e) {
+    testScene(e) {
         e.preventDefault();
 
         var scene = {
-            id: this.state.scene.id,
-            name: this.refs.name.value.trim(),
-            description: this.refs.description.value.trim(),
-            actions: this.state.scene.actions
+            id: this.props.routeParams.id,
+            name: this.props.fields.name.value,
+            description: this.props.fields.description.value,
+            actions: this.props.fields.actions.value
         };
 
-        actions.saveScene(scene);
-        this.history.pushState(null, '/scenes');
-    },
+        this.props.testScene(scene);
+    }
 
-    handleCancel: function(e) {
-        e.preventDefault();
-        this.history.pushState(null, '/scenes');
-    },
+    render () {
 
-    handleRuleActionUpdate: function(actions) {
-        this.state.scene.actions = actions;
-        this.setState({ scene: this.state.scene });
-    },
-
-    handleRuleActionAdd: function(newAction) {
-        if (!this.state.scene.actions) this.state.scene.actions = [];
-        this.state.scene.actions.push(newAction);
-        this.setState({ scene: this.state.scene });
-    },
-
-    testScene: function(e) {
-        e.preventDefault();
-
-        var scene = {
-            id: this.state.scene.id,
-            name: this.refs.name.value.trim(),
-            description: this.refs.description.value.trim(),
-            actions: this.state.scene.actions
-        };
-
-        actions.testScene(scene);
-    },
-
-    render: function () {
+        const { fields: { name, description, actions }, handleSubmit } = this.props;
 
         return (
             <div className="row">
             <div className="col-md-6">
-            <form>
+                <form onSubmit={ handleSubmit(this.handleSave) }>
                 <div className="form-group">
                     <label>Name
-                    <input className="form-control" type="text" ref="name" value={this.state.scene.name} onChange={this.handleNameChange} required />
+                    <input className="form-control" type="text" required {...name} />
                     </label>
                 </div>
                 <div className="form-group">
                     <label>Description
-                    <textarea className="form-control" type="text" ref="description"  value={this.state.scene.description} onChange={this.handleDescriptionChange} />
+                    <textarea className="form-control" type="text" {...description} />
                     </label>
                 </div>
                 <div>
-                    <EditRuleActionList ruleActions={this.state.scene.actions} onUpdate={this.handleRuleActionUpdate} onAdd={this.handleRuleActionAdd} />
+                    <EditRuleActionList ruleActions={actions.value} {...actions} />
                 </div>
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
-                    <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
-                    <button className="btn btn-info" onClick={this.testScene}>Test</button>
+                    <button type="submit" className="btn btn-primary">Save</button>
+                    <button type="button" className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
+                    <button type="button" className="btn btn-info" onClick={this.testScene}>Test</button>
                 </div>
             </form>
             </div>
@@ -116,6 +84,19 @@ var EditScene = React.createClass({
         );
     }
 
-});
+}
 
-module.exports = EditScene;
+EditScene = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
+      form: 'scene',                           // a unique name for this form
+      fields: ['name', 'description', 'actions'] // all the fields in your form
+  },
+  (state, ownProps) => ({
+      initialValues: _.find(state.scenes.items, { id: ownProps.routeParams.id })
+  }),
+  {
+      fetchScenes,
+      testScene,
+      updateScene
+  })(EditScene);
+
+export default EditScene

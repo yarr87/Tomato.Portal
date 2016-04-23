@@ -1,29 +1,33 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var sceneStore = require('stores/sceneStore');
-var SceneListItem = require('components/scenes/sceneListItem');
-var actions = require('actions/actions');
-var classNames = require('classnames');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchScenes, triggerScene } from '../../actions/scene.actions'
 
-var SceneDashboard = React.createClass({
-    mixins: [Reflux.connect(sceneStore)],
+class SceneDashboard extends Component {
 
-    getInitialState: function() {
-        return { scenes: [] };
-    },
+    constructor(props) {
+        super(props);
+    }
 
-    componentWillMount: function() {
-        actions.loadScenes();
-    },
+    componentWillMount() {
+        this.props.fetchScenes();
+    }
 
-    handleSceneClick: function(scene) {
-        actions.triggerScene(scene);
-    },
+    handleSceneClick(scene) {
+        this.props.triggerScene(scene);
+    }
 
-    render: function () {
+    render() {
 
-        var markup = this.state.scenes.map((item, index) => {
+        const { isFetching, scenes } = this.props;
+
+        if (isFetching) {
+            return (<div>Loading...</div>);
+        }
+
+        var markup = scenes.map((item, index) => {
 
             var classObj = {
                 'block-grid-item': true,
@@ -53,6 +57,14 @@ var SceneDashboard = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = SceneDashboard;
+function mapStateToProps(state) {
+    const scenes = state.scenes;
+    return {
+        isFetching: scenes.isFetching,
+        scenes: scenes.items
+    }
+}
+
+export default connect(mapStateToProps, { fetchScenes, triggerScene })(SceneDashboard)

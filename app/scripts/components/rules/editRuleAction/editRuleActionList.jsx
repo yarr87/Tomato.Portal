@@ -7,7 +7,6 @@ import { fetchDevices } from '../../../actions/device.actions'
 import { fetchUsers } from '../../../actions/user.actions'
 import { fetchThermostats } from '../../../actions/thermostat.actions'
 import { fetchSonoses } from '../../../actions/sonos.actions'
-import { addRuleAction, deleteRuleAction, editRuleAction } from '../../../actions/ruleDetails.actions'
 import EditRuleAction from './editRuleAction'
 
 // List of editable rule actions for edit rule page
@@ -16,6 +15,7 @@ class EditRuleActionList extends Component {
     constructor(props) {
         super(props);
 
+        this.addNew = this.addNew.bind(this);
         this.handleRuleActionChange = this.handleRuleActionChange.bind(this);
         this.handleRuleActionDelete = this.handleRuleActionDelete.bind(this);
 
@@ -73,6 +73,8 @@ class EditRuleActionList extends Component {
 
     componentWillReceiveProps(nextProps) {
         // Default for adding a new row and not changing anything
+
+        // TODO: when you add an item for the first time, this hasn't fired yet and it doesn't preselect.
         if (nextProps.devices.length) {
             this.ruleActionTypes[0].deviceState.internalName = nextProps.devices[0].internalName;
         }
@@ -96,15 +98,25 @@ class EditRuleActionList extends Component {
         var newAction = _.clone(ruleAction, true);
         delete newAction.config;
 
-        this.props.addRuleAction(newAction);
+        var existing = this.props.ruleActions || [];
+
+        // Assuming we are using the onChange property from redux-form
+        this.props.onChange([...existing, newAction]);
     }
 
     handleRuleActionChange(ruleAction, index) {
-        this.props.editRuleAction(ruleAction, index);
+        let ruleActions = this.props.ruleActions.slice(0, index)
+          .concat([ruleAction])
+          .concat(this.props.ruleActions.slice(index + 1));
+
+        this.props.onChange(ruleActions);
     }
 
     handleRuleActionDelete(index) {
-        this.props.deleteRuleAction(index);
+        let ruleActions = this.props.ruleActions.slice(0, index)
+          .concat(this.props.ruleActions.slice(index + 1));
+
+        this.props.onChange(ruleActions);
     }
 
     render () {
@@ -165,9 +177,6 @@ export default connect((state) => ({
     thermostats: state.thermostats.items,
     sonoses: state.sonoses.items
 }), {
-    addRuleAction,
-    deleteRuleAction,
-    editRuleAction,
     fetchDevices,
     fetchUsers,
     fetchThermostats,

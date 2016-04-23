@@ -28,10 +28,10 @@ class EditRule extends Component {
         var rule = {
             id: this.props.routeParams.id,
             name: values.name.trim(),
-            description: values.description.trim(),
+            description: (values.description || '').trim(),
             isDisabled: values.isDisabled,
             ruleDefinitions: this.props.ruleDetails.ruleDefinitions,
-            actions: this.props.ruleDetails.actions
+            actions: values.actions
         };
 
         this.props.dispatch(updateRule(rule));
@@ -45,7 +45,7 @@ class EditRule extends Component {
 
     render () {
 
-        const {fields: {name, description, isDisabled }, handleSubmit, ruleDetails} = this.props;
+        const {fields: {name, description, isDisabled, actions }, handleSubmit, ruleDetails} = this.props;
 
         var isEnabled = Object.assign({}, isDisabled);
         isEnabled.value = !isDisabled.value;
@@ -74,7 +74,7 @@ class EditRule extends Component {
                     <EditRuleDefinitionList ruleDefinitions={ruleDetails.ruleDefinitions} />
                 </div>
                 <div>
-                    <EditRuleActionList ruleActions={ruleDetails.actions} />
+                    <EditRuleActionList ruleActions={actions.value} {...actions} />
                 </div>
                 <div className="form-group btn-toolbar">
                     <button type="submit" className="btn btn-primary">Save</button>
@@ -90,7 +90,7 @@ class EditRule extends Component {
 
 EditRule = reduxForm({ // <----- THIS IS THE IMPORTANT PART!
   form: 'rule',                           // a unique name for this form
-  fields: ['name', 'description', 'isDisabled'] // all the fields in your form
+  fields: ['name', 'description', 'isDisabled', 'actions'] // all the fields in your form
 },
 (state, ownProps) => ({
     initialValues: _.find(state.rules.items, { id: ownProps.routeParams.id }),

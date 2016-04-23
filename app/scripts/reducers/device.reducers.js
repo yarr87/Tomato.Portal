@@ -13,7 +13,6 @@ function devices(state = { isFetching: false, items: [] }, action) {
         lastUpdated: action.receivedAt
       })
     case REQUEST_DEVICES:
-      console.log('request devices!');
       return Object.assign({}, state, {
         isFetching: true
       })

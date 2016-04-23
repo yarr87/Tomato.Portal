@@ -1,12 +1,9 @@
-var $ = require('jquery');
+import request  from 'superagent'
+import promise from 'bluebird'
 var constants = require('appConstants');
-var globals = require('globals');
-var request = require('globals').request;
-var promise2 = require('bluebird').promise;
-var Promise = require('bluebird');
 var _ = require('lodash');
 
-var SceneRepository = (function () {
+export default (function () {
 
     var baseUrl = constants.ApiBaseUrl;
 
@@ -79,5 +76,3 @@ var SceneRepository = (function () {
     };
 
 })();
-
-module.exports = SceneRepository;

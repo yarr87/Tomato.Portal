@@ -20,6 +20,10 @@ import EditTag from './components/tags/tag_edit/editTag'
 import UserList from './components/users/userList/userList'
 import EditUser from './components/users/userEdit/editUser'
 
+import SceneDashboard from './components/scenes/sceneDashboard'
+import SceneList from './components/scenes/sceneList'
+import EditScene from './components/scenes/editScene'
+
 export default (
   <Route path="/" component={Layout}>
   	<IndexRoute component={App} />
@@ -47,5 +51,10 @@ export default (
 		<Route path="users" component={UserList} />
 		<Route path="users/add" component={EditUser} />
 		<Route path="users/edit/:id" component={EditUser} />
+
+		<Route path="scenes" component={SceneDashboard} />
+		<Route path="scenes/list" component={SceneList} />
+		<Route path="scenes/add" component={EditScene} />
+		<Route path="scenes/edit/:id" component={EditScene} />
   </Route>
 )

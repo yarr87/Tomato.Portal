@@ -3,6 +3,7 @@ import { combineReducers } from 'redux'
 import { reducer as formReducer} from 'redux-form';
 import devices from './device.reducers'
 import thermostats from './thermostat.reducers'
+import scenes from './scene.reducers'
 import sonoses from './sonos.reducers'
 import rules from './rule.reducers'
 import ruleDetails from './ruleDetails.reducers'
@@ -12,6 +13,7 @@ import users from './user.reducers'
 const rootReducer = combineReducers({
   devices,
   thermostats,
+  scenes,
   sonoses,
   rules,
   ruleDetails,

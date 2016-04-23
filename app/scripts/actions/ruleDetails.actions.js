@@ -7,9 +7,6 @@ import promise from 'bluebird'
 export const ADD_RULE_DEFINITION = 'ADD_RULE_DEFINITION'
 export const DELETE_RULE_DEFINITION = 'DELETE_RULE_DEFINITION'
 export const EDIT_RULE_DEFINITION = 'EDIT_RULE_DEFINITION'
-export const ADD_RULE_ACTION = 'ADD_RULE_ACTION'
-export const DELETE_RULE_ACTION = 'DELETE_RULE_ACTION'
-export const EDIT_RULE_ACTION = 'EDIT_RULE_ACTION'
 export const INITIALIZE_RULE_DETAILS = 'INITIALIZE_RULE_DETAILS'
 
 export function initializeRuleDetails(ruleId) {
@@ -50,27 +47,7 @@ export function initializeRuleDetails(ruleId) {
   
 }
 
-export function addRuleAction(action) {
-  return {
-    type: ADD_RULE_ACTION,
-    action
-  }
-}
-
-export function deleteRuleAction(index) {
-  return {
-    type: DELETE_RULE_ACTION,
-    index
-  }
-}
-
-export function editRuleAction(action, index) {
-  return {
-    type: EDIT_RULE_ACTION,
-    action,
-    index
-  }
-}
+// TODO: got rid of the action version by just using redux-form (see editRuleActionList).  Could do the same here.
 
 export function addRuleDefinition(ruleDefinition) {
   return {
