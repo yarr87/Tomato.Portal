@@ -23,6 +23,7 @@ import EditUser from './components/users/userEdit/editUser'
 import SceneDashboard from './components/scenes/sceneDashboard'
 import SceneList from './components/scenes/sceneList'
 import EditScene from './components/scenes/editScene'
+import SceneTriggers from './components/scenes/triggers/sceneTriggers'
 
 export default (
   <Route path="/" component={Layout}>
@@ -56,5 +57,6 @@ export default (
 		<Route path="scenes/list" component={SceneList} />
 		<Route path="scenes/add" component={EditScene} />
 		<Route path="scenes/edit/:id" component={EditScene} />
+		<Route path="scenes/triggers" component={SceneTriggers} />
   </Route>
 )

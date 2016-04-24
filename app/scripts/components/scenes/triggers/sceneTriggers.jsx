@@ -1,109 +1,79 @@
-var React = require('react');
-var Reflux = require('reflux');
-var ReactRouter = require('globals').Router;
-var Link = require('globals').Router.Link;
-var sceneStore = require('stores/sceneStore');
-var sceneTriggerStore = require('stores/sceneTriggerStore');
-var SceneTriggerGroup = require('components/scenes/triggers/sceneTriggerGroup');
-var actions = require('actions/actions');
-var _ = require('lodash');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm } from 'redux-form';
+import _ from 'lodash'
+import classNames from 'classnames'
+import { hashHistory } from 'react-router'
+import { fetchScenes } from '../../../actions/scene.actions'
+import { fetchSceneTriggers, updateLocalSceneTriggers, updateSceneTriggers } from '../../../actions/sceneTrigger.actions'
+import SceneTriggerGroup from './sceneTriggerGroup'
 
-var SceneTriggers = React.createClass({
-    mixins: [ReactRouter.History,
-             Reflux.listenTo(sceneStore, 'onScenesLoaded'),
-             Reflux.listenTo(sceneTriggerStore, 'onSceneTriggersLoaded')],
+class SceneTriggers extends Component {
 
-    newTrigger: {
-        id: '',
-        name: '',
-        groupId: '',
-        subId: '',
-        triggerInternalName: '',
-        sceneId: ''
-    },
+    constructor(props) {
+        super(props);
 
-    minimoteTemplate: {
-        triggers: [
-            {
-                name: 'Button 1',
-                subId: '_1'
-            },
-            {
-                name: 'Button 1 Long',
-                subId: '_1_long'
-            },
-            {
-                name: 'Button 2',
-                subId: '_2'
-            },
-            {
-                name: 'Button 2 Long',
-                subId: '_2_long'
-            },
-            {
-                name: 'Button 3',
-                subId: '_3'
-            },
-            {
-                name: 'Button 3 Long',
-                subId: '_3_long'
-            },
-            {
-                name: 'Button 4',
-                subId: '_4'
-            },
-            {
-                name: 'Button 4 Long',
-                subId: '_4_long'
-            }
-        ]
-    },  
+        this.addNew = this.addNew.bind(this);
+        this.handleSave = this.handleSave.bind(this);
+        this.handleTriggerChange = this.handleTriggerChange.bind(this);
+        this.handleTriggerDelete = this.handleTriggerDelete.bind(this);
 
-    newGroupId: 1,
+        this.newGroupId = 1;
 
-    getInitialState: function() {
-        return { 
-            scenes: [],
-            triggers: [],
-            groupedTriggers: []
+        this.newTrigger = {
+            id: '',
+            name: '',
+            groupId: '',
+            subId: '',
+            triggerInternalName: '',
+            sceneId: ''
         };
-    },
 
-    componentWillMount: function() {
-        actions.loadScenes();
-        actions.loadSceneTriggers();
-    },
+        this.minimoteTemplate = {
+            triggers: [
+                {
+                    name: 'Button 1',
+                    subId: '_1'
+                },
+                {
+                    name: 'Button 1 Long',
+                    subId: '_1_long'
+                },
+                {
+                    name: 'Button 2',
+                    subId: '_2'
+                },
+                {
+                    name: 'Button 2 Long',
+                    subId: '_2_long'
+                },
+                {
+                    name: 'Button 3',
+                    subId: '_3'
+                },
+                {
+                    name: 'Button 3 Long',
+                    subId: '_3_long'
+                },
+                {
+                    name: 'Button 4',
+                    subId: '_4'
+                },
+                {
+                    name: 'Button 4 Long',
+                    subId: '_4_long'
+                }
+            ]
+        };
+    }
 
-    onScenesLoaded: function(scenesObj) {
-        this.state.scenes = scenesObj.scenes;
-        this.newTrigger.sceneId = this.state.scenes[0].id;
-        this.setState({ scenes: this.state.scenes });
-    },
+    componentWillMount() {
+        this.props.fetchScenes();
+        this.props.fetchSceneTriggers();
+    }
 
-    onSceneTriggersLoaded: function(triggersObj) {
-        this.state.triggers = triggersObj.triggers;
-
-        // Group by GroupId, or just Id for non-grouped triggers
-        var grouped = _.groupBy(triggersObj.triggers, (trigger) => {
-            return trigger.groupId || trigger.id;
-        });
-
-        var array = [];
-
-        _.forOwn(grouped, (group, name) => {
-            array.push({
-                name: name,
-                triggers: group
-            });
-        });
-
-        this.setState({ 
-            triggers: this.state.triggers,
-            groupedTriggers: array
-        });
-    },
-
-    addNew: function() {
+    addNew() {
 
         var newGroup = [];
         var groupId = 'New Trigger Group ' + this.newGroupId++;
@@ -114,48 +84,48 @@ var SceneTriggers = React.createClass({
             newGroup.push( _.extend(t, trigger));
         });
 
-        this.state.groupedTriggers.push({ name: groupId, triggers: newGroup });
+        this.props.updateLocalSceneTriggers(this.props.localTriggers.concat(newGroup));
+    }
 
-        this.setState({ groupedTriggers: this.state.groupedTriggers });
-    },
+    handleTriggerChange(groupName, triggers, index) {
 
-    handleTriggerChange: function(groupName, triggers, index) {
+        this.props.groupedTriggers[index].name = groupName;
+        this.props.groupedTriggers[index].triggers = triggers;
 
-        this.state.groupedTriggers[index].name = groupName;
-        this.state.groupedTriggers[index].triggers = triggers;
+        this.props.updateLocalSceneTriggers(_.reduce(this.props.groupedTriggers, (array, group) => {
+            return array.concat(group.triggers)
+        }, []));
+    }
 
-        this.setState({ 
-            groupedTriggers: this.state.groupedTriggers
-        });
-    },
+    handleTriggerDelete(index) {
 
-    handleTriggerDelete: function(index) {
-        this.state.groupedTriggers.splice(index, 1);
-        this.setState({ groupedTriggers: this.state.groupedTriggers });
-    },
+        this.props.groupedTriggers.splice(index, 1);
 
-    handleSave: function(e) {
+        this.props.updateLocalSceneTriggers(_.reduce(this.props.groupedTriggers, (array, group) => {
+            return array.concat(group.triggers)
+        }, []));
+    }
+
+    handleSave(e) {
         e.preventDefault();
 
-        var allTriggers = _.reduce(this.state.groupedTriggers, (result, value) => {
-            return result.concat(value.triggers);
-        }, []);
+        this.props.updateSceneTriggers(this.props.localTriggers);
+        hashHistory.push('/scenes');
+    }
 
-        actions.saveSceneTriggers(allTriggers);
-        this.history.pushState(null, '/scenes');
-    },
-
-    handleCancel: function(e) {
+    handleCancel(e) {
         e.preventDefault();
-        this.history.pushState(null, '/scenes');
-    },
+        hashHistory.push('/scenes');
+    }
 
-    render: function () {
+    render () {
 
-        var items = _.map(this.state.groupedTriggers || [], (group, index) => {
+        const { groupedTriggers } = this.props;
+
+        var items = _.map(groupedTriggers, (group, index) => {
             return (
                 <div key={index}>
-                    <SceneTriggerGroup name={group.name} triggers={group.triggers} scenes={this.state.scenes} index={index} onUpdate={this.handleTriggerChange} />
+                    <SceneTriggerGroup name={group.name} triggers={group.triggers} scenes={this.props.scenes} index={index} onUpdate={this.handleTriggerChange} />
                     <a className="btn btn-link" onClick={this.handleTriggerDelete.bind(this, index)}>
                         <i className="fa fa-times" /> Delete
                     </a>
@@ -168,13 +138,40 @@ var SceneTriggers = React.createClass({
             <div>
                 {items}
                 <div className="form-group btn-toolbar">
-                    <button className="btn btn-info" onClick={this.addNew}>Add</button>
-                    <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
-                    <button className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
+                    <button type="button" className="btn btn-info" onClick={this.addNew}>Add</button>
+                    <button type="button" className="btn btn-primary" onClick={this.handleSave}>Save</button>
+                    <button type="button" className="btn btn-default" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </div>
         );
     }
-});
+}
 
-module.exports = SceneTriggers;
+function mapStateToProps(state) {
+    // Group by GroupId, or just Id for non-grouped triggers
+    var grouped = _.groupBy(state.sceneTriggers.local, (trigger) => {
+        return trigger.groupId || trigger.id;
+    });
+
+    var groupedTriggers = [];
+
+    _.forOwn(grouped, (group, name) => {
+        groupedTriggers.push({
+            name: name,
+            triggers: group
+        });
+    });
+
+    return {
+        groupedTriggers,
+        localTriggers: state.sceneTriggers.local,
+        scenes: state.scenes.items
+    }
+}
+
+export default connect(mapStateToProps, {
+    fetchScenes,
+    fetchSceneTriggers,
+    updateLocalSceneTriggers,
+    updateSceneTriggers
+})(SceneTriggers)
