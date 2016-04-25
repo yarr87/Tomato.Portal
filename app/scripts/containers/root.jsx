@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import routes from '../routes'
 //import DevTools from './DevTools'
 import { Router } from 'react-router'
+import DeviceStateHub from '../hubs/deviceState.hub'
 
 export default class Root extends Component {
   render() {
@@ -20,6 +21,7 @@ export default class Root extends Component {
       <Provider store={store}>
         <div>
           <Router history={history} routes={routes} />
+          <DeviceStateHub />
         </div>
       </Provider>
     )

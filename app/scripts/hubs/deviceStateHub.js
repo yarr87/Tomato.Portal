@@ -7,7 +7,11 @@ $.connection.hub.url = window._constants.ServerUrl + 'signalr';// 'http://localh
 
 // React to a signalR broadcast of status updates
 hub.client.broadcastStateUpdates = function (updates) {
-	window._actions.deviceStatesUpdated(updates);
+
+	updates.forEach(function(update) {
+		// TODO: need to hook into dispatch somehow
+		window._deviceStateSet(update.internalName, update.state);
+	});
 };
 
 hub.connection.start();

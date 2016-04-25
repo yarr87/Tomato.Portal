@@ -23,7 +23,7 @@ function receiveDevices(devices) {
   }
 }
 
-function deviceStateSet(deviceInternalName, deviceState) {
+export function deviceStateSet(deviceInternalName, deviceState) {
   return {
     type: DEVICE_STATE_SET,
     deviceInternalName,
@@ -101,21 +101,5 @@ export function updateDevice(device) {
   }
 }
 
-// function shouldFetchPosts(state, reddit) {
-//   const posts = state.postsByReddit[reddit]
-//   if (!posts) {
-//     return true
-//   }
-//   if (posts.isFetching) {
-//     return false
-//   }
-//   return posts.didInvalidate
-// }
-
-// export function fetchPostsIfNeeded(reddit) {
-//   return (dispatch, getState) => {
-//     if (shouldFetchPosts(getState(), reddit)) {
-//       return dispatch(fetchPosts(reddit))
-//     }
-//   }
-// }
+// Exposing globally for signalR
+//window._deviceStateSet = deviceStateSet;

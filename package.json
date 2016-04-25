@@ -21,12 +21,18 @@
     "bootstrap": "./app/bower_components/bootstrap/dist/js/bootstrap.js",
     "selectize": "./app/bower_components/selectize/dist/js/selectize.min.js",
     "sifter": "./app/bower_components/sifter/sifter.min.js",
-    "microplugin": "./app/bower_components/microplugin/src/microplugin.js"
+    "microplugin": "./app/bower_components/microplugin/src/microplugin.js",
+    "signalr": "./app/bower_components/signalr/jquery.signalR.min.js"
   },
   "browserify-shim": {
     "jQuery": "global:$",
     "bootstrap": {
       "exports": "bootstrap",
+      "depends": [
+        "jquery:jQuery"
+      ]
+    },
+    "signalr": {
       "depends": [
         "jquery:jQuery"
       ]
