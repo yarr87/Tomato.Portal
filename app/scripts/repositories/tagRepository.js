@@ -19,7 +19,7 @@ export default (function () {
           return _promise;
         }
 
-        var result = request.get(baseUrl + 'tags');
+        var result = request.get(baseUrl + 'tags').accept('application/json');
 
         _promise = result.promise().then(function(result) {
             _tags = result.body;

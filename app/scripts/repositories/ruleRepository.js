@@ -19,7 +19,7 @@ export default (function () {
           return _rulesPromise;
         }
 
-        var result = request.get(baseUrl + 'rules');
+        var result = request.get(baseUrl + 'rules').accept('application/json');
 
         _rulesPromise = result.promise().then(function(result) {
             _rules = result.body;

@@ -19,7 +19,7 @@ export default (function () {
           return _thermostatPromise;
         }
 
-        var result = request.get(baseUrl + 'thermostats');
+        var result = request.get(baseUrl + 'thermostats').accept('application/json');
 
         _thermostatPromise = result.promise().then(function(result) {
             _thermostats = result.body;

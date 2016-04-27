@@ -19,7 +19,7 @@ export default (function () {
           return _userPromise;
         }
 
-        var result = request.get(baseUrl + 'users');
+        var result = request.get(baseUrl + 'users').accept('application/json');
 
         _userPromise = result.promise().then(function(result) {
             _users = result.body;

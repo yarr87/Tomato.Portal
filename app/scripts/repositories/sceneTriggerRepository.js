@@ -19,7 +19,7 @@ var SceneTriggerRepository = (function () {
           return _promise;
         }
 
-        var result = request.get(baseUrl + 'scenes/triggers');
+        var result = request.get(baseUrl + 'scenes/triggers').accept('application/json');
 
         _promise = result.promise().then(function(result) {
             _sceneTriggers = result.body;

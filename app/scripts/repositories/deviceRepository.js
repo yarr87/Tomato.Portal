@@ -20,7 +20,8 @@ export default (function () {
           return _devicePromise;
         }
 
-        var result = request.get(baseUrl + 'devices');
+        // doesn't work in firefox without the accept application/json
+        var result = request.get(baseUrl + 'devices').accept('application/json');
 
         _devicePromise = result.promise().then(function(result) {
             _devices = result.body;

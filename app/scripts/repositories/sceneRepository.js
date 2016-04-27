@@ -19,7 +19,7 @@ export default (function () {
           return _scenePromise;
         }
 
-        var result = request.get(baseUrl + 'scenes');
+        var result = request.get(baseUrl + 'scenes').accept('application/json');
 
         _scenePromise = result.promise().then(function(result) {
             _scenes = result.body;

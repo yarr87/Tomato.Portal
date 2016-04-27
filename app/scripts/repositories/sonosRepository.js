@@ -19,7 +19,7 @@ export default (function () {
           return _sonosPromise;
         }
 
-        var result = request.get(baseUrl + 'sonos');
+        var result = request.get(baseUrl + 'sonos').accept('application/json');
 
         _sonosPromise = result.promise().then(function(result) {
             _sonos = result.body;
