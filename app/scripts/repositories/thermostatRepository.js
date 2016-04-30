@@ -54,11 +54,18 @@ export default (function () {
                     .promise();
     };
 
+    var setThermostatTemp = function (id, temperature) {
+      return request.post(`${baseUrl}thermostats/${id}/temperature`)
+                    .send({ temperature })
+                    .promise();
+    };
+
     return {
         getThermostats: getThermostats,
         getThermostatById: getThermostatById,
         saveThermostat: saveThermostat,
-        deleteThermostat: deleteThermostat
+        deleteThermostat: deleteThermostat,
+        setThermostatTemp
     };
 
 })();

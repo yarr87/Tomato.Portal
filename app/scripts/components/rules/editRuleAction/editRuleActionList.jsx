@@ -42,10 +42,8 @@ class EditRuleActionList extends Component {
             },
             {
                 actionType: 'Temperature',
-                deviceState: {
-                    internalName: '',
-                    state: '65'
-                },
+                thermostatId: '',
+                temperature: '65',
                 config: {
                     text: 'Temp',
                     icon: 'fa-fire'
@@ -84,8 +82,7 @@ class EditRuleActionList extends Component {
         }
 
         if (nextProps.thermostats.length) {
-            // TODO: make this work for AC or Heat
-            this.ruleActionTypes[2].deviceState.internalName = nextProps.thermostats[0].heatSetPoint.internalName;
+            this.ruleActionTypes[2].thermostatId = nextProps.thermostats[0].id;
         }
 
         if (nextProps.sonoses.length) {

@@ -19,7 +19,13 @@ export default class Thermostat extends Component {
     }
     
     getCurrentSetTemp() {
+        // We keep cool and heat set points in sync when updating via api, but for manual updates they can diverge.
+        // So if we're in A/C (mode === 2), show the cool set point, otherwise just use heat.
         var setTemp = this.props.thermostat.heatSetPoint.state;
+
+        if (this.props.thermostat.mode.state === '2') {
+            setTemp = this.props.thermostat.coolSetPoint.state;
+        }
         
         return setTemp ? (Math.floor(setTemp) || 65) : 65;// '?';
     }
@@ -65,6 +71,7 @@ export default class Thermostat extends Component {
 
         // This is probably not best practice, but I'm lazy.
         this.props.thermostat.heatSetPoint.state = temp;
+        this.props.thermostat.coolSetPoint.state = temp;
         this.state.setTemp = -1;
         this.setState({ setTemp: this.state.setTemp });
     }

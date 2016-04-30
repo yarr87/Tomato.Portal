@@ -25,27 +25,26 @@ export default class EditTemperatureAction extends Component {
     handleTempChange(newTemp) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.state = newTemp;
+        ruleAction.temperature = newTemp;
 
         this.props.onUpdate(ruleAction);
     }
 
-    handleThermostatChange(newThermostatInternalName) {
+    handleThermostatChange(newThermostatId) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.internalName = newThermostatInternalName;    
+        ruleAction.thermostatId = newThermostatId;    
 
         this.props.onUpdate(ruleAction);
     }
 
     render () {
 
-        var selectedTemp = this.props.ruleAction.deviceState.state;
-        var selectedThermostat = this.props.ruleAction.deviceState.internalName;
+        var selectedTemp = this.props.ruleAction.temperature;
+        var selectedThermostat = this.props.ruleAction.thermostatId;
 
         var thermostatSelections = (this.props.thermostats || []).map((thermostat) => {
-            // TODO: handle coolSetPoint too
-            return { value: thermostat.heatSetPoint.internalName, label: thermostat.name };
+            return { value: thermostat.id, label: thermostat.name };
         });
 
         var tempOptions = this.getTemperatureOptions();

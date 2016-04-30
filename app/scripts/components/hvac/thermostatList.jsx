@@ -4,8 +4,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import classNames from 'classnames'
-import { fetchThermostats } from '../../actions/thermostat.actions'
-import { setDeviceState } from '../../actions/device.actions'
+import { fetchThermostats, setThermostatTemperature } from '../../actions/thermostat.actions'
 
 class ThermostatList extends Component {
     constructor(props) {
@@ -21,7 +20,7 @@ class ThermostatList extends Component {
 
     onUpdateTemp(thermostat, temp) {
         const { dispatch } = this.props
-        dispatch(setDeviceState(thermostat.heatSetPoint.internalName, temp));
+        dispatch(setThermostatTemperature(thermostat.id, temp));
     }
 
     render () {

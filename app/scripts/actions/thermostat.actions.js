@@ -32,24 +32,13 @@ export function updateThermostat(thermostat) {
   }
 }
 
-// function deviceStateSet(deviceInternalName, deviceState) {
-//   return {
-//     type: DEVICE_STATE_SET,
-//     deviceInternalName,
-//     deviceState
-//   } 
-// }
+export function setThermostatTemperature(thermostatId, temperature) {
+  return dispatch => {
+    thermostatRepository.setThermostatTemp(thermostatId, temperature);
 
-// export function setDeviceState(deviceInternalName, deviceState, doNotBroadcast) {
-//   return dispatch => {
-//     // doNotBroadcast indicates we're setting the local device state but not updating via the api.  Used on dimmers to update
-//     // local state immediately even though the api call is debounced.
-//     if (!doNotBroadcast) {
-//       deviceRepository.sendCommand(deviceInternalName, deviceState);
-//     }
-//     dispatch(deviceStateSet(deviceInternalName, deviceState));
-//   }
-// }
+    // Not dispatching a real action, mostly out of laziness.  The thermostat component just updates its own local state.
+  }
+}
 
 export function fetchThermostats() {
   return dispatch => {
