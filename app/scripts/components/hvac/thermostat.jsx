@@ -51,7 +51,7 @@ export default class Thermostat extends Component {
 
         setTemp += diff;
 
-        if (setTemp < 55 || setTemp > 75) {
+        if (setTemp < 55 || setTemp > 85) {
             return;
         }
 

@@ -3,6 +3,7 @@ import EditLightAction from './editLightAction'
 import EditEmailAsTextAction from './editEmailAsTextAction'
 import EditTemperatureAction from './editTemperatureAction'
 import EditSonosAction from './editSonosAction'
+import EditDelayAction from './editDelayAction'
 import _ from 'lodash'
 
 // Edit a single rule action.  Most of the logic will be done in a specific subclass (EditLightAction, etc)
@@ -37,6 +38,9 @@ export default class EditRuleAction extends Component {
         }
         else if (ruleAction.actionType === 'Sonos') {
             markup = (<EditSonosAction sonoses={this.props.sonoses} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
+        }
+        else if (ruleAction.actionType === 'Delay') {
+             markup = (<EditDelayAction ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
         }
         else {
             markup = (<div>{ruleAction.actionType}</div>);

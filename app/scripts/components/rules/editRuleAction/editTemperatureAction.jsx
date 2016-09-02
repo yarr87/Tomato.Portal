@@ -15,7 +15,7 @@ export default class EditTemperatureAction extends Component {
     getTemperatureOptions() {
         var temps = [];
 
-        for(var i = 55; i <= 75; i ++) {
+        for(var i = 55; i <= 85; i ++) {
             temps.push({value: i.toString(), label: i });
         }
 

@@ -8,6 +8,7 @@ import { fetchUsers } from '../../../actions/user.actions'
 import { fetchThermostats } from '../../../actions/thermostat.actions'
 import { fetchSonoses } from '../../../actions/sonos.actions'
 import EditRuleAction from './editRuleAction'
+import Picker from '../../picker/picker'
 
 // List of editable rule actions for edit rule page
 class EditRuleActionList extends Component {
@@ -57,6 +58,14 @@ class EditRuleActionList extends Component {
                 config: {
                     text: 'Sonos',
                     icon: 'fa-music'
+                }
+            },
+            {
+                actionType: 'Delay',
+                delay: '00:00:00',
+                config: {
+                    text: 'Delay',
+                    icon: 'fa-pause'
                 }
             }
         ];
@@ -116,17 +125,69 @@ class EditRuleActionList extends Component {
         this.props.onChange(ruleActions);
     }
 
+    moveDown(index) {
+        let ruleActions = this.props.ruleActions.slice(0, index)
+            .concat([this.props.ruleActions[index + 1]])
+            .concat([this.props.ruleActions[index]])
+            .concat(this.props.ruleActions.slice(index + 2));
+
+        this.props.onChange(ruleActions);
+    }
+
+    moveUp(index) {
+        let ruleActions = this.props.ruleActions.slice(0, index - 1)
+            .concat([this.props.ruleActions[index]])
+            .concat([this.props.ruleActions[index - 1]])
+            .concat(this.props.ruleActions.slice(index + 1));
+
+        this.props.onChange(ruleActions);
+    }
+
+    handleAction(index, action) {
+        if (action === 'delete') {
+            this.handleRuleActionDelete(index);
+        }
+        else if (action === 'up') {
+            this.moveUp(index);
+        }
+        else if (action === 'down') {
+            this.moveDown(index);
+        }
+    }
+
     render () {
 
+        // Actions that can be done on each row (will be filtered per row so first row doesn't get 'up', etc).
+        // Bit of a hack, just using a <Picker> control with selectedValue='' as sort of a dropdown menu.
+        var actions = [
+            { label: 'delete', value: 'delete' },
+            { label: 'move up', value: 'up' },
+            { label: 'move down', value: 'down' },
+            { label: '', value: '' }
+        ];
+
+        var lastIndex = (this.props.ruleActions || []).length;
         var markup = (this.props.ruleActions || []).map((ruleAction, index) => {
+
+            // Remove up/down actions for first/last elements
+            var availableActions = _.filter(actions, action => {
+                if (action.value === 'up' && index === 0) {
+                    return false;
+                }
+                else if (action.value === 'down' && index >= lastIndex) {
+                    return false;
+                }
+
+                return true;
+            });
 
             return (
                 <div className="rule-action">
-                    <div className="rule-action-delete">
-                        <a className="btn btn-link" onClick={this.handleRuleActionDelete.bind(this, index)}>
-                            <i className="fa fa-times" />
-                        </a>
+                
+                    <div className="rule-action-dropdown">
+                        <Picker isAction={true} options={availableActions} selectedValue={''} onChange={this.handleAction.bind(this, index)} />
                     </div>
+
                     <div className="rule-action-edit">
                         <EditRuleAction devices={this.props.devices} thermostats={this.props.thermostats} users={this.props.users} sonoses={this.props.sonoses}
                                         ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
