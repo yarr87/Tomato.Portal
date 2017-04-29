@@ -14,7 +14,8 @@ export default class EditSonosAction extends Component {
 
         this.availablePlayTypes = [
             {value: 'Favorite', label: 'favorite'},
-            {value: 'Playlist', label: 'playlist'}
+            {value: 'Playlist', label: 'playlist'},
+            {value: 'Pause', label: 'pause'}
         ];
     }
 
