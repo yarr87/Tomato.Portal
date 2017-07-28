@@ -1,22 +1,22 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
 
-var DeviceListItem = React.createClass({
+export default class DeviceListItem extends Component {
     
-    getInitialState: function() {
-        return {search: ''};
-    },
+    constructor(props) {
+      super(props);
 
-    handleDelete: function(e) {
-        e.preventDefault();
+      this.handleDelete = this.handleDelete.bind(this);
+    }
 
-        if (confirm('really delete?')) {
-            actions.deleteDevice(this.props.device);
-        }
-    },
+    handleDelete(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-    render: function () {
+      this.props.onDelete(this.props.device);
+    }
+
+    render () {
 
         return (
             <tr>
@@ -29,6 +29,4 @@ var DeviceListItem = React.createClass({
             </tr>
         );
     }
-});
-
-module.exports = DeviceListItem;
+}

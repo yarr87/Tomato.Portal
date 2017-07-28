@@ -1,36 +1,46 @@
-var React = require('react');
-var Reflux = require('reflux');
-var deviceStore = require('stores/deviceStore');
+import React, { Component, PropTypes } from 'react'
 var classNames = require('classnames');
-var actions = require('actions/actions');
 var _ = require('lodash');
 
-var LightSwitch = React.createClass({
-    mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
+export default class LightSwitch extends Component {
+  constructor(props) {
+    super(props)
+    // this.handleChange = this.handleChange.bind(this)
+    // this.handleDismissClick = this.handleDismissClick.bind(this)
+    this.clickHandler = this.clickHandler.bind(this)
+  }
 
-        // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
-        // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
-        if (this.props.doNotBroadcastStateChanges) {
-            return this.props.item.state;
-        }
-        else {
-            var device = _.find(devices, { id: this.props.item.id });
+    // mixins: [Reflux.connectFilter(deviceStore, "switchState", function(devices) {
 
-            return device && device.state;
-        }
-    })],
+    //     // For cases light rule/scene edit, we don't want the live state of the device but the one passed in.
+    //     // TODO: move to somewhere common, this is repeated in lightSwitch and dimmer
+    //     if (this.props.doNotBroadcastStateChanges) {
+    //         return this.props.item.state;
+    //     }
+    //     else {
+    //         var device = _.find(devices, { id: this.props.item.id });
 
-    getInitialState: function() {
-        return {
-            // TODO: this is an 'anti-pattern' according to the docs.  State should be passed in.
-            // But why would't a component own its own state?  The examples have it just bubble up the state change to the
-            // top, then push it down from there.  That seems stupid.  Maybe a flux-style action system would help.
-            switchState: this.props.item.state 
-        }
-    },
+    //         return device && device.state;
+    //     }
+    // })],
+
+    // getInitialState() {
+    //     return {
+    //         // TODO: this is an 'anti-pattern' according to the docs.  State should be passed in.
+    //         // But why would't a component own its own state?  The examples have it just bubble up the state change to the
+    //         // top, then push it down from there.  That seems stupid.  Maybe a flux-style action system would help.
+    //         switchState: this.props.item.state 
+    //     }
+    // }
     
-    clickHandler: function() {
-        var state = this.state.switchState;
+    clickHandler() {
+        var state = this.props.item.state
+
+        const { dispatch } = this.props
+
+        // TODO: when dispatching an action, this component doesn't get notified of the result, probably because it's not subscribing
+        // to any of the state.  Might need to just pass it an id and have it know which device from the state to get using connect?  Maybe that
+        // happens in Device and just gets passed here via props.
 
         if (state === 'ON') state = 'OFF';
         else state = 'ON';
@@ -38,26 +48,21 @@ var LightSwitch = React.createClass({
         // Broadcast the change, which updates the global device list and sends a command to the sever.
         // Able to turn off via a property for cases like scene edits.
         if (this.props.doNotBroadcastStateChanges !== true) {
-            actions.setDeviceState(this.props.item, state);
-        }
-        else {
-            this.setState({
-                switchState: state
-            });
-        }
+            //actions.setDeviceState(this.props.item, state);
+            //dispatch(setDeviceState(this.props.item.internalName, state));
 
-        if (this.props.onStateChange) {
             this.props.onStateChange(this.props.item, state);
         }
-    },
-    render: function () {
+    }
+
+    render() {
 
         var classes =  classNames({
             'device': true,
             'lightSwitch': true,
             // Dimmer is 0/100, need to add a dimmer component
-            'on': this.state.switchState === 'ON',
-            'off': this.state.switchState === 'OFF',
+            'on': this.props.item.state === 'ON',
+            'off': this.props.item.state === 'OFF',
             'clearfix': true,
             'compact': !!this.props.isCompact
         });
@@ -91,6 +96,4 @@ var LightSwitch = React.createClass({
           </div>
         );
     }
-});
-
-module.exports = LightSwitch;
+}

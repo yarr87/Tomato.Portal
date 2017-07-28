@@ -1,37 +1,44 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var deviceStore = require('stores/deviceStore');
-var DeviceListItem = require('components/device_list/deviceListItem');
-var DeviceListSearch = require('components/device_list/DeviceListSearch');
-var actions = require('actions/actions');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchDevices, deleteDevice } from '../../actions/device.actions'
+import DeviceListItem from './deviceListItem'
 
-var DeviceList = React.createClass({
-    mixins: [Reflux.connect(deviceStore, 'devices')],
+class DeviceList extends Component {
 
-    getInitialState: function() {
-        return {devices: []};
-    },
+    constructor(props) {
+        super(props);
 
-    componentWillMount: function() {
-        actions.loadDevices();
-        // deviceStore.getDevices().then(function(devices) {
-        //     this.setState({devices: devices })
-        // }.bind(this));
-    },
+        this.handleDelete = this.handleDelete.bind(this);
+    }
 
-    render: function () {
+    componentWillMount() {
+        this.props.fetchDevices();
+    }
 
-        var items = this.state.devices.map(function(item) {
+    handleDelete(device) {
+        if (confirm('really delete?')) {
+            this.props.deleteDevice(device);
+        }
+    }
+
+    render () {
+
+        if (this.props.isFetching) {
+            return (<div>Loading...</div>);
+        }
+
+        var items = this.props.devices.map((item) => {
             return (
-                <DeviceListItem device={item} />
+                <DeviceListItem device={item} onDelete={this.handleDelete} />
             );
         });
 
         return (
             <div>
                 <Link to="/devices/add">Add Device</Link>
-                <DeviceListSearch />
                 <table className="table table-striped table-hover">
                     <thead>
                     <tr>
@@ -48,6 +55,17 @@ var DeviceList = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = DeviceList;
+function mapStateToProps(state) {
+    const devices = state.devices;
+    return {
+        isFetching: devices.isFetching,
+        devices: _.filter(devices.items, (item) => item.type === 'LightSwitch' || item.type === 'Dimmer')
+    }
+}
+
+export default connect(mapStateToProps, {
+    fetchDevices,
+    deleteDevice
+})(DeviceList)

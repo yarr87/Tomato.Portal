@@ -1,9 +1,6 @@
-var $ = require('jquery');
+import request  from 'superagent'
+import promise from 'bluebird'
 var constants = require('appConstants');
-var globals = require('globals');
-var request = require('globals').request;
-var promise2 = require('bluebird').promise;
-var Promise = require('bluebird');
 var _ = require('lodash');
 
 var SceneTriggerRepository = (function () {
@@ -22,7 +19,7 @@ var SceneTriggerRepository = (function () {
           return _promise;
         }
 
-        var result = request.get(baseUrl + 'scenes/triggers');
+        var result = request.get(baseUrl + 'scenes/triggers').accept('application/json');
 
         _promise = result.promise().then(function(result) {
             _sceneTriggers = result.body;

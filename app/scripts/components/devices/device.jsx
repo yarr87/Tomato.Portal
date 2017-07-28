@@ -1,22 +1,27 @@
-var React = require('react');
-var LightSwitch = require('components/devices/lightSwitch');
-var Dimmer = require('components/devices/dimmer');
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import LightSwitch from './lightSwitch'
+import Dimmer from './dimmer'
+import { setDeviceState } from '../../actions/device.actions'
+import _ from 'lodash'
 
-var Device = React.createClass({
+class Device extends Component {
 
-    handleStateChange: function(device, state) {
+    constructor(props) {
+        super(props);
+        this.handleStateChange = this.handleStateChange.bind(this);
+    }
 
-        if (this.props.onStateChange) {
-            this.props.onStateChange(device, state);
-        }
+    handleStateChange(device, state, doNotBroadcast) {
+        this.props.setDeviceState(device.internalName, state, doNotBroadcast);
+    }
 
-    },
-
-    render: function () {
+    render() {
 
         var device;
 
         if (this.props.item.type === 'LightSwitch') {
+            // TODO: I do't think doNotBroadcastStateChange or isCompact are used...they are from old scene pages that were changed.
             device = (
                 <LightSwitch item={this.props.item} doNotBroadcastStateChanges={this.props.doNotBroadcastStateChanges} isCompact={this.props.isCompact} onStateChange={this.handleStateChange} />
             );
@@ -38,6 +43,8 @@ var Device = React.createClass({
           </div>
         );
     }
-});
+}
 
-module.exports = Device;
+export default connect(undefined, {
+  setDeviceState
+})(Device)

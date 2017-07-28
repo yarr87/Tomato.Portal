@@ -1,141 +1,195 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var classNames = require('classnames');
-var actions = require('actions/actions');
-var deviceStore = require('stores/deviceStore');
-var thermostatStore = require('stores/thermostatStore');
-var userStore = require('stores/userStore');
-var sonosStore = require('stores/sonosStore');
-var EditRuleAction = require('components/rules/editRuleAction/editRuleAction');
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm } from 'redux-form';
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchDevices } from '../../../actions/device.actions'
+import { fetchUsers } from '../../../actions/user.actions'
+import { fetchThermostats } from '../../../actions/thermostat.actions'
+import { fetchSonoses } from '../../../actions/sonos.actions'
+import EditRuleAction from './editRuleAction'
+import Picker from '../../picker/picker'
 
 // List of editable rule actions for edit rule page
-var EditRuleActionList = React.createClass({
+class EditRuleActionList extends Component {
     
-    mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded'),
-             Reflux.listenTo(userStore, 'onUsersLoaded'),
-             Reflux.listenTo(thermostatStore, 'onThermostatsLoaded'),
-             Reflux.listenTo(sonosStore, 'onSonosesLoaded')],
+    constructor(props) {
+        super(props);
 
-    ruleActionTypes: [
-        { 
-            actionType: 'Light',
-            deviceState: {
-                internalName: '',
-                state: 'OFF'
+        this.addNew = this.addNew.bind(this);
+        this.handleRuleActionChange = this.handleRuleActionChange.bind(this);
+        this.handleRuleActionDelete = this.handleRuleActionDelete.bind(this);
+
+        this.ruleActionTypes = [
+            {
+                actionType: 'Light',
+                deviceState: {
+                    internalName: '',
+                    state: 'OFF'
+                },
+                config: {
+                    text: 'Light',
+                    icon: 'fa-lightbulb-o'
+                }
             },
-            config: {
-                text: 'Light',
-                icon: 'fa-lightbulb-o'
-            }
-        },
-        {
-            actionType: 'EmailAsText',
-            userId: '',
-            message: '',
-            config: {
-                text: 'Text',
-                icon: 'fa-mobile'
-            }
-        },
-        {
-            actionType: 'Temperature',
-            deviceState: {
-                internalName: '',
-                state: '65'
+            {
+                actionType: 'EmailAsText',
+                userId: '',
+                message: '',
+                config: {
+                    text: 'Text',
+                    icon: 'fa-mobile'
+                }
             },
-            config: {
-                text: 'Temp',
-                icon: 'fa-fire'
+            {
+                actionType: 'Temperature',
+                thermostatId: '',
+                temperature: '65',
+                config: {
+                    text: 'Temp',
+                    icon: 'fa-fire'
+                }
+            },
+            {
+                actionType: 'Sonos',
+                name: '',
+                commandType: 'Favorite',
+                parameter: '',
+                config: {
+                    text: 'Sonos',
+                    icon: 'fa-music'
+                }
+            },
+            {
+                actionType: 'Delay',
+                delay: '00:00:00',
+                config: {
+                    text: 'Delay',
+                    icon: 'fa-pause'
+                }
             }
-        },
-        {
-            actionType: 'Sonos',
-            name: '',
-            commandType: 'Favorite',
-            parameter: '',
-            config: {
-                text: 'Sonos',
-                icon: 'fa-music'
-            }
+        ];
+    }
+
+    componentWillMount() {
+        this.props.fetchDevices();
+        this.props.fetchUsers();
+        this.props.fetchThermostats();
+        this.props.fetchSonoses();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // Default for adding a new row and not changing anything
+
+        // TODO: when you add an item for the first time, this hasn't fired yet and it doesn't preselect.
+        if (nextProps.devices.length) {
+            this.ruleActionTypes[0].deviceState.internalName = nextProps.devices[0].internalName;
         }
-    ],
 
-    getInitialState: function() {
-        return {
-            devices: [],
-            thermostats: [],
-            users: [],
-            sonoses: []
-        };
-    },
+        if (nextProps.users.length) {
+            this.ruleActionTypes[1].userId = nextProps.users[0].id;
+        }
 
-    componentWillMount: function() {
-        actions.loadDevices();
-        actions.loadThermostats();
-        actions.loadUsers();
-        actions.loadSonoses();
-    },
+        if (nextProps.thermostats.length) {
+            this.ruleActionTypes[2].thermostatId = nextProps.thermostats[0].id;
+        }
 
-    onDevicesLoaded: function(devices) {
-        // Default for adding a new row and not changing anything
-        this.ruleActionTypes[0].deviceState.internalName = devices[0].internalName;
-        this.state.devices = devices;
-        this.setState({ devices: this.state.devices });
-    },
+        if (nextProps.sonoses.length) {
+            this.ruleActionTypes[3].name = nextProps.sonoses[0].name;
+            this.ruleActionTypes[3].parameter = nextProps.sonoses[0].favorites[0];
+        }
+    }
 
-    onThermostatsLoaded: function(thermostatsObj) {
-        // Default for adding a new row and not changing anything
-        // TODO: make this work for AC or Heat
-        this.ruleActionTypes[2].deviceState.internalName = thermostatsObj.thermostats[0].heatSetPoint.internalName;
-        this.state.thermostats = thermostatsObj.thermostats;
-        this.setState({ thermostats: this.state.thermostats });
-    },
-
-    onUsersLoaded: function(usersObj) {
-        // Default for adding a new row and not changing anything
-        this.ruleActionTypes[1].userId = usersObj.users[0].id;
-        this.state.users = usersObj.users;
-        this.setState({ users: this.state.users });
-    },
-
-    onSonosesLoaded: function(sonosObj) {
-        this.ruleActionTypes[3].name = sonosObj.sonoses[0].name;
-        this.ruleActionTypes[3].parameter = sonosObj.sonoses[0].favorites[0];
-        this.state.sonoses = sonosObj.sonoses;
-        this.setState({ sonoses: this.state.sonoses });
-    },
-
-    addNew: function(ruleAction) {
+    addNew(ruleAction) {
         var newAction = _.clone(ruleAction, true);
         delete newAction.config;
 
-        this.props.onAdd(newAction);
-    },
+        var existing = this.props.ruleActions || [];
 
-    handleRuleActionChange: function(ruleAction, index) {
-        this.props.ruleActions[index] = ruleAction;
-        this.props.onUpdate(this.props.ruleActions);
-    },
+        // Assuming we are using the onChange property from redux-form
+        this.props.onChange([...existing, newAction]);
+    }
 
-    handleRuleActionDelete: function(index) {
-        this.props.ruleActions.splice(index, 1);
-        this.props.onUpdate(this.props.ruleActions);
-    },
+    handleRuleActionChange(ruleAction, index) {
+        let ruleActions = this.props.ruleActions.slice(0, index)
+          .concat([ruleAction])
+          .concat(this.props.ruleActions.slice(index + 1));
 
-    render: function () {
+        this.props.onChange(ruleActions);
+    }
 
+    handleRuleActionDelete(index) {
+        let ruleActions = this.props.ruleActions.slice(0, index)
+          .concat(this.props.ruleActions.slice(index + 1));
+
+        this.props.onChange(ruleActions);
+    }
+
+    moveDown(index) {
+        let ruleActions = this.props.ruleActions.slice(0, index)
+            .concat([this.props.ruleActions[index + 1]])
+            .concat([this.props.ruleActions[index]])
+            .concat(this.props.ruleActions.slice(index + 2));
+
+        this.props.onChange(ruleActions);
+    }
+
+    moveUp(index) {
+        let ruleActions = this.props.ruleActions.slice(0, index - 1)
+            .concat([this.props.ruleActions[index]])
+            .concat([this.props.ruleActions[index - 1]])
+            .concat(this.props.ruleActions.slice(index + 1));
+
+        this.props.onChange(ruleActions);
+    }
+
+    handleAction(index, action) {
+        if (action === 'delete') {
+            this.handleRuleActionDelete(index);
+        }
+        else if (action === 'up') {
+            this.moveUp(index);
+        }
+        else if (action === 'down') {
+            this.moveDown(index);
+        }
+    }
+
+    render () {
+
+        // Actions that can be done on each row (will be filtered per row so first row doesn't get 'up', etc).
+        // Bit of a hack, just using a <Picker> control with selectedValue='' as sort of a dropdown menu.
+        var actions = [
+            { label: 'delete', value: 'delete' },
+            { label: 'move up', value: 'up' },
+            { label: 'move down', value: 'down' },
+            { label: '', value: '' }
+        ];
+
+        var lastIndex = (this.props.ruleActions || []).length;
         var markup = (this.props.ruleActions || []).map((ruleAction, index) => {
+
+            // Remove up/down actions for first/last elements
+            var availableActions = _.filter(actions, action => {
+                if (action.value === 'up' && index === 0) {
+                    return false;
+                }
+                else if (action.value === 'down' && index >= lastIndex) {
+                    return false;
+                }
+
+                return true;
+            });
 
             return (
                 <div className="rule-action">
-                    <div className="rule-action-delete">
-                        <a className="btn btn-link" onClick={this.handleRuleActionDelete.bind(this, index)}>
-                            <i className="fa fa-times" />
-                        </a>
+                
+                    <div className="rule-action-dropdown">
+                        <Picker isAction={true} options={availableActions} selectedValue={''} onChange={this.handleAction.bind(this, index)} />
                     </div>
+
                     <div className="rule-action-edit">
-                        <EditRuleAction devices={this.state.devices} thermostats={this.state.thermostats} users={this.state.users} sonoses={this.state.sonoses}
+                        <EditRuleAction devices={this.props.devices} thermostats={this.props.thermostats} users={this.props.users} sonoses={this.props.sonoses}
                                         ruleAction={ruleAction} ruleIndex={index} onUpdate={this.handleRuleActionChange} />
                     </div>
                 </div>
@@ -172,6 +226,17 @@ var EditRuleActionList = React.createClass({
             </div>
             );
     }
-});
+}
 
-module.exports = EditRuleActionList;
+
+export default connect((state) => ({
+    devices: state.devices.items,
+    users: state.users.items,
+    thermostats: state.thermostats.items,
+    sonoses: state.sonoses.items
+}), {
+    fetchDevices,
+    fetchUsers,
+    fetchThermostats,
+    fetchSonoses
+})(EditRuleActionList)

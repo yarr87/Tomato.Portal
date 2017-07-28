@@ -57,7 +57,7 @@ var browserifyTask = function (options) {
         entries: [options.src], // The entry file, normally "main.js"
         //transform: [browserifyShim, reactify], // Convert JSX style
         debug: options.development, // Sourcemapping
-        extensions: ['.jsx'],
+        extensions: ['.js', '.jsx'],
         paths: ['./node_modules', './app/scripts/'],
         cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
     });
@@ -70,7 +70,7 @@ var browserifyTask = function (options) {
   // Seems like babelify needs to go before browser-shim, but reactify was always after it.  Not sure if
   // the order matteres for reactify.
   // Note: babelify takes care of react jsx compilation and es6 transpilation
-  appBundler.transform('babelify');
+  appBundler.transform('babelify', { presets: ['es2015', 'react'] });
   appBundler.transform('browserify-shim');
 
   // Sets environment variable for dev/prod constants

@@ -6,3 +6,4 @@ app/vendor
 .tmp
 test/scripts/
 app/bower_components
+.idea

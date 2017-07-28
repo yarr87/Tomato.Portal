@@ -1,26 +1,43 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var ruleStore = require('stores/ruleStore');
-var RuleListItem = require('components/rules/ruleListItem');
-var actions = require('actions/actions');
+import { Link } from 'react-router'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchRules, deleteRule, toggleRule } from '../../actions/rule.actions'
+import RuleListItem from './ruleListItem'
 
-var RuleList = React.createClass({
-    mixins: [Reflux.connect(ruleStore)],
+class RuleList extends Component {
 
-    getInitialState: function() {
-        return { rules: [] };
-    },
+    constructor(props) {
+        super(props);
 
-    componentWillMount: function() {
-        actions.loadRules();
-    },
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleEnableDisable = this.handleEnableDisable.bind(this);
+    }
 
-    render: function () {
+    componentWillMount() {
+        this.props.dispatch(fetchRules());
+    }
 
-        var items = this.state.rules.map(function(item) {
+    handleDelete(rule) {
+        if (confirm('really delete?')) {
+            this.props.dispatch(deleteRule(rule));
+        }
+    }
+
+    handleEnableDisable(rule) {
+        this.props.dispatch(toggleRule(rule));
+    }
+
+    render() {
+
+        if (this.props.isFetching) {
+            return (<div>Loading...</div>);
+        }
+
+        var items = this.props.rules.map((item) => {
             return (
-                <RuleListItem rule={item} />
+                <RuleListItem rule={item} onDelete={this.handleDelete} onEnableDisable={this.handleEnableDisable} />
             );
         });
 
@@ -43,6 +60,14 @@ var RuleList = React.createClass({
             </div>
         );
     }
-});
+}
 
-module.exports = RuleList;
+function mapStateToProps(state) {
+  const rules = state.rules;
+  return {
+    isFetching: rules.isFetching,
+    rules: rules.items
+  }
+}
+
+export default connect(mapStateToProps)(RuleList)

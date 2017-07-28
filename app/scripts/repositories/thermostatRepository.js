@@ -1,12 +1,9 @@
-var $ = require('jquery');
+import request  from 'superagent'
+import promise from 'bluebird'
 var constants = require('appConstants');
-var globals = require('globals');
-var request = require('globals').request;
-var promise2 = require('bluebird').promise;
-var Promise = require('bluebird');
 var _ = require('lodash');
 
-var ThermostatRepository = (function () {
+export default (function () {
 
     var baseUrl = constants.ApiBaseUrl;
 
@@ -22,7 +19,7 @@ var ThermostatRepository = (function () {
           return _thermostatPromise;
         }
 
-        var result = request.get(baseUrl + 'thermostats');
+        var result = request.get(baseUrl + 'thermostats').accept('application/json');
 
         _thermostatPromise = result.promise().then(function(result) {
             _thermostats = result.body;
@@ -57,13 +54,18 @@ var ThermostatRepository = (function () {
                     .promise();
     };
 
+    var setThermostatTemp = function (id, temperature) {
+      return request.post(`${baseUrl}thermostats/${id}/temperature`)
+                    .send({ temperature })
+                    .promise();
+    };
+
     return {
         getThermostats: getThermostats,
         getThermostatById: getThermostatById,
         saveThermostat: saveThermostat,
-        deleteThermostat: deleteThermostat
+        deleteThermostat: deleteThermostat,
+        setThermostatTemp
     };
 
 })();
-
-module.exports = ThermostatRepository;

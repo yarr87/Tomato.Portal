@@ -22,7 +22,13 @@ var Picker = React.createClass({
 
     render: function () {
 
-        return (<Select name="test" value={this.props.selectedValue} options={this.props.options} onChange={this.handleChange} searchable={false} />);
+        // Specify isAction property to change the color from green to blue (minor hack)
+        var spanClass = this.props.isAction ? 'action' : '';
+
+        return (
+            <span className={spanClass}>
+                <Select name="test" value={this.props.selectedValue} options={this.props.options} onChange={this.handleChange} searchable={false} />
+            </span>);
     }
 });
 

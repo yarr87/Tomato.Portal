@@ -1,19 +1,17 @@
-var $ = require('jquery');
+import request  from 'superagent'
+import promise from 'bluebird'
+
 var constants = require('appConstants');
-var globals = require('globals');
-var request = require('globals').request;
-var promise2 = require('bluebird').promise;
-var Promise = require('bluebird');
 var _ = require('lodash');
 
-var DeviceRepository = (function () {
+export default (function () {
 
     var baseUrl = constants.ApiBaseUrl;
 
     var _devices = [];
     var _devicePromise;
 
-    var getDevices = function (callback) {
+    var getDevices = function () {
 
         if (_devices.length) {
           return Promise.resolve(_devices);
@@ -22,7 +20,8 @@ var DeviceRepository = (function () {
           return _devicePromise;
         }
 
-        var result = request.get(baseUrl + 'devices');
+        // doesn't work in firefox without the accept application/json
+        var result = request.get(baseUrl + 'devices').accept('application/json');
 
         _devicePromise = result.promise().then(function(result) {
             _devices = result.body;
@@ -82,5 +81,3 @@ var DeviceRepository = (function () {
     };
 
 })();
-
-module.exports = DeviceRepository;

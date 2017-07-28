@@ -1,21 +1,29 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var EditLightAction = require('components/rules/editRuleAction/editLightAction');
-var EditEmailAsTextAction = require('components/rules/editRuleAction/editEmailAsTextAction');
-var EditTemperatureAction = require('components/rules/editRuleAction/editTemperatureAction');
-var EditSonosAction = require('components/rules/editRuleAction/editSonosAction');
+import React, { Component } from 'react'
+import EditLightAction from './editLightAction'
+import EditEmailAsTextAction from './editEmailAsTextAction'
+import EditTemperatureAction from './editTemperatureAction'
+import EditSonosAction from './editSonosAction'
+import EditDelayAction from './editDelayAction'
+import _ from 'lodash'
 
 // Edit a single rule action.  Most of the logic will be done in a specific subclass (EditLightAction, etc)
-var EditRuleAction = React.createClass({
+export default class EditRuleAction extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.handleActionChange = this.handleActionChange.bind(this);
+    }
     
-    handleActionChange: function(ruleAction) {
-        this.props.onUpdate(ruleAction, this.props.index);
-    },
+    handleActionChange(ruleAction) {
+        this.props.onUpdate(ruleAction, this.props.ruleIndex);
+    }
 
-    render: function () {
+    render() {
 
-        var ruleAction = this.props.ruleAction;
+        // Making a copy so we don't edit the prop and mess up change detection
+        // Object.assign doesn't work - I don't think it handles deep properties correctly
+        var ruleAction = _.cloneDeep(this.props.ruleAction);
 
         var markup;
 
@@ -31,12 +39,13 @@ var EditRuleAction = React.createClass({
         else if (ruleAction.actionType === 'Sonos') {
             markup = (<EditSonosAction sonoses={this.props.sonoses} ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
         }
+        else if (ruleAction.actionType === 'Delay') {
+             markup = (<EditDelayAction ruleAction={ruleAction} onUpdate={this.handleActionChange} />);
+        }
         else {
             markup = (<div>{ruleAction.actionType}</div>);
         }
 
         return markup;
     }
-});
-
-module.exports = EditRuleAction;
+}

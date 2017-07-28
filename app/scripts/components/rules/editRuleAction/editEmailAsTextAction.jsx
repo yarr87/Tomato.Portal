@@ -1,28 +1,34 @@
-var React = require('react');
-var Reflux = require('reflux');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
 
 // Edit a single text action for a rule
-var EditEmailAsTextAction = React.createClass({
+export default class EditEmailAsTextAction extends Component {
 
-    handleUserChange: function(val) {
+    constructor(props) {
+        super(props);
+
+        this.handleUserChange = this.handleUserChange.bind(this);
+        this.handleMessageChange = this.handleMessageChange.bind(this);
+    }
+
+    handleUserChange(val) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.userId = val;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleMessageChange: function(e) {
+    handleMessageChange(e) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.message = e.target.value;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    render: function () {
+    render () {
 
         var selectedUserId = this.props.ruleAction.userId;
 
@@ -40,6 +46,4 @@ var EditEmailAsTextAction = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditEmailAsTextAction;
+}

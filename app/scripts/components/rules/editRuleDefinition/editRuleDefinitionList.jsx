@@ -1,19 +1,23 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var classNames = require('classnames');
-var actions = require('actions/actions');
-var deviceStore = require('stores/deviceStore');
-var userStore = require('stores/userStore');
-var EditRuleDefinition = require('components/rules/editRuleDefinition/editRuleDefinition');
-
 // List of editable rule definitions for edit rule page
-var EditRuleDefinitionList = React.createClass({
-    
-    mixins: [Reflux.listenTo(deviceStore, 'onDevicesLoaded'),
-             Reflux.listenTo(userStore, 'onUsersLoaded')],
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm } from 'redux-form';
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchDevices } from '../../../actions/device.actions'
+import { fetchUsers } from '../../../actions/user.actions'
+import { addRuleDefinition, deleteRuleDefinition, editRuleDefinition } from '../../../actions/ruleDetails.actions'
+import EditRuleDefinition from './editRuleDefinition'
 
-    ruleDefinitionTypes: [
+class EditRuleDefinitionList extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.handleRuleDefinitionChange = this.handleRuleDefinitionChange.bind(this);
+        this.handleRuleDefinitionDelete = this.handleRuleDefinitionDelete.bind(this);
+
+        this.ruleDefinitionTypes = [
         { 
             ruleType: 'Light',
             lightState: 
@@ -58,52 +62,41 @@ var EditRuleDefinitionList = React.createClass({
                 icon: 'fa-calendar'
             }
         }
-    ],
+        ];
+    }
 
-    getInitialState: function() {
-        return {
-            devices: [],
-            users: []
-        };
-    },
+    componentWillMount() {
+        this.props.fetchDevices();
+        this.props.fetchUsers();
+    }
 
-    componentWillMount: function() {
-        actions.loadDevices();
-        actions.loadUsers();
-    },
-
-    onDevicesLoaded: function(devices) {
+    componentWillReceiveProps(nextProps) {
         // Default for adding a new row and not changing anything
-        this.ruleDefinitionTypes[0].lightState.internalName = devices[0].internalName;
-        this.state.devices = devices;
-        this.setState({ devices: this.state.devices });
-    },
+        if (nextProps.devices.length) {
+            this.ruleDefinitionTypes[0].lightState.internalName = nextProps.devices[0].internalName;
+        }
 
-    onUsersLoaded: function(usersObj) {
-        // Default for adding a new row and not changing anything
-        this.ruleDefinitionTypes[1].userState.userId = usersObj.users[0].id;
-        this.state.users = usersObj.users;
-        this.setState({ users: this.state.users });
-    },
+        if (nextProps.users.length) {
+            this.ruleDefinitionTypes[1].userState.userId = nextProps.users[0].id;
+        }
+    }
 
-    addNew: function(ruleDef) {
+    addNew(ruleDef) {
         var newRuleDef = _.clone(ruleDef, true);
         delete newRuleDef.config;
 
-        this.props.onAdd(newRuleDef);
-    },
+        this.props.addRuleDefinition(newRuleDef);
+    }
 
-    handleRuleDefinitionChange: function(ruleDef, index) {
-        this.props.ruleDefinitions[index] = ruleDef;
-        this.props.onUpdate(this.props.ruleDefinitions);
-    },
+    handleRuleDefinitionChange(ruleDef, index) {
+        this.props.editRuleDefinition(ruleDef, index);
+    }
 
-    handleRuleDefinitionDelete: function(index) {
-        this.props.ruleDefinitions.splice(index, 1);
-        this.props.onUpdate(this.props.ruleDefinitions);
-    },
+    handleRuleDefinitionDelete(index) {
+        this.props.deleteRuleDefinition(index);
+    }
 
-    render: function () {
+    render () {
 
         var markup = this.props.ruleDefinitions.map((ruleDef, index) => {
 
@@ -115,7 +108,7 @@ var EditRuleDefinitionList = React.createClass({
                         </a>
                     </div>
                     <div className="rule-definition-edit">
-                        <EditRuleDefinition users={this.state.users} devices={this.state.devices} ruleDefinition={ruleDef} ruleIndex={index} onUpdate={this.handleRuleDefinitionChange} />
+                        <EditRuleDefinition users={this.props.users} devices={this.props.devices} ruleDefinition={ruleDef} ruleIndex={index} onUpdate={this.handleRuleDefinitionChange} />
                     </div>
                 </div>
             );
@@ -150,6 +143,15 @@ var EditRuleDefinitionList = React.createClass({
             </div>
             );
     }
-});
+}
 
-module.exports = EditRuleDefinitionList;
+export default connect((state) => ({
+    devices: state.devices.items,
+    users: state.users.items
+}), {
+  addRuleDefinition,
+  deleteRuleDefinition,
+  editRuleDefinition, 
+  fetchDevices,
+  fetchUsers
+})(EditRuleDefinitionList)

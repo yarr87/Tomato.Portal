@@ -1,22 +1,22 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
 
-var SceneListItem = React.createClass({
-    
-    getInitialState: function() {
-        return {};
-    },
+export default class SceneListItem extends Component {
 
-    handleDelete: function(e) {
-        e.preventDefault();
+    constructor(props) {
+      super(props);
 
-        if (confirm('really delete?')) {
-            actions.deleteScene(this.props.scene);
-        }
-    },
+      this.handleDelete = this.handleDelete.bind(this);
+    }
 
-    render: function () {
+    handleDelete(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.props.onDelete(this.props.scene);
+    }
+
+    render () {
 
         return (
             <tr key={this.props.scene.id}>
@@ -28,6 +28,4 @@ var SceneListItem = React.createClass({
             </tr>
         );
     }
-});
-
-module.exports = SceneListItem;
+}

@@ -1,18 +1,23 @@
-var React = require('react');
-var Reflux = require('reflux');
-var EditLightRule = require('components/rules/editRuleDefinition/editLightRule');
-var EditUserRule = require('components/rules/editRuleDefinition/editUserRule');
-var EditTimeRule = require('components/rules/editRuleDefinition/editTimeRule');
-var EditDayRule = require('components/rules/editRuleDefinition/editDayRule');
+import React, { Component } from 'react'
+import EditLightRule from './editLightRule'
+import EditUserRule from './editUserRule'
+import EditTimeRule from './editTimeRule'
+import EditDayRule from './editDayRule'
 
 // Edit a single rule definition.  Most of the logic will be done in a specific subclass (EditLightRule, EditUserRule, etc)
-var EditRuleDefinition = React.createClass({
-    
-    handleRuleDefinitionChange: function(ruleDef) {
-        this.props.onUpdate(ruleDef, this.props.index);
-    },
+export default class EditRuleDefinition extends Component {
 
-    render: function () {
+    constructor(props) {
+        super(props);
+
+        this.handleRuleDefinitionChange = this.handleRuleDefinitionChange.bind(this);
+    }
+    
+    handleRuleDefinitionChange(ruleDef) {
+        this.props.onUpdate(ruleDef, this.props.ruleIndex);
+    }
+
+    render() {
 
         var ruleDef = this.props.ruleDefinition;
 
@@ -36,6 +41,4 @@ var EditRuleDefinition = React.createClass({
 
         return def;
     }
-});
-
-module.exports = EditRuleDefinition;
+}

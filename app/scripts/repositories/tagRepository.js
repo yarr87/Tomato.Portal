@@ -1,12 +1,9 @@
-var $ = require('jquery');
+import request  from 'superagent'
+import promise from 'bluebird'
 var constants = require('appConstants');
-var globals = require('globals');
-var request = require('globals').request;
-var promise2 = require('bluebird').promise;
-var Promise = require('bluebird');
 var _ = require('lodash');
 
-var TagRepository = (function () {
+export default (function () {
 
     var baseUrl = constants.ApiBaseUrl;
 
@@ -22,7 +19,7 @@ var TagRepository = (function () {
           return _promise;
         }
 
-        var result = request.get(baseUrl + 'tags');
+        var result = request.get(baseUrl + 'tags').accept('application/json');
 
         _promise = result.promise().then(function(result) {
             _tags = result.body;
@@ -56,5 +53,3 @@ var TagRepository = (function () {
     };
 
 })();
-
-module.exports = TagRepository;

@@ -1,15 +1,20 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
-var Picker = require('components/picker/picker');
-var _ = require('lodash');
-var SceneTriggerGroupItem = require('components/scenes/triggers/sceneTriggerGroupItem');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
+import _ from 'lodash'
+import SceneTriggerGroupItem from './sceneTriggerGroupItem'
 
 // A collection of scene triggers that share the same GroupId.
 // Ex: all the buttons in a minimote
-var SceneTriggerGroup = React.createClass({
+export default class SceneTriggerGroup extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.handleGroupNameChange = this.handleGroupNameChange.bind(this);
+        this.handleItemUpdate = this.handleItemUpdate.bind(this);
+    }
     
-    handleGroupNameChange: function(e) {
+    handleGroupNameChange(e) {
         var triggers = this.props.triggers;
         var groupName = e.target.value;
 
@@ -19,18 +24,18 @@ var SceneTriggerGroup = React.createClass({
         });
 
         this.sendUpdate(groupName, triggers);
-    },
+    }
 
-    handleItemUpdate: function(trigger, index) {
+    handleItemUpdate(trigger, index) {
         this.props.triggers[index] = trigger;
         this.sendUpdate(this.props.groupName, this.props.triggers);
-    },
+    }
 
-    sendUpdate: function(groupName, triggers) {
+    sendUpdate(groupName, triggers) {
         this.props.onUpdate(groupName, triggers, this.props.index);
-    },
+    }
 
-    render: function () {
+    render () {
 
         var triggers = this.props.triggers || [];
 
@@ -51,11 +56,9 @@ var SceneTriggerGroup = React.createClass({
 
         return (
             <div className="scene-trigger-group">
-                <div>{this.props.triggers.length > 1 ? groupName : '' }</div>
+                <div>{triggers.length > 1 ? groupName : '' }</div>
                 {items}                
             </div>
         );
     }
-});
-
-module.exports = SceneTriggerGroup;
+}

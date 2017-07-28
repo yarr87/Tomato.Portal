@@ -1,72 +1,38 @@
-var React = require('react');
-var Reflux = require('reflux');
-var Link = require('globals').Router.Link;
-var thermostatStore = require('stores/thermostatStore');
-var actions = require('actions/actions');
-var _ = require('lodash');
-var Thermostat = require('components/hvac/thermostat');
+import { Link } from 'react-router'
+import Thermostat from './thermostat';
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import classNames from 'classnames'
+import { fetchThermostats, setThermostatTemperature } from '../../actions/thermostat.actions'
 
-var ThermostatList = React.createClass({
-    mixins: [Reflux.connect(thermostatStore)],
+class ThermostatList extends Component {
+    constructor(props) {
+        super(props)
 
-    getInitialState: function() {
-        return {
-            thermostats: []
-        };
-    },
+        this.onUpdateTemp = this.onUpdateTemp.bind(this);
+    }
 
-    componentWillMount: function() {
-        actions.loadThermostats();
-    },
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(fetchThermostats())
+    }
 
-    getCurrentSetTemp: function() {
-        var setPoint = this.state.thermostat.heatSetPoint;
-        return setPoint.state ? (Math.floor(setPoint.state) || 65) : -1;
-    },
+    onUpdateTemp(thermostat, temp) {
+        const { dispatch } = this.props
+        dispatch(setThermostatTemperature(thermostat.id, temp));
+    }
 
-    handleMinusClick: function() {
-        this.userUpdateTemp(-1);
-    },
+    render () {
 
-    handlePlusClick: function() {
-        this.userUpdateTemp(1);
-    },
+        const { isFetching, thermostats } = this.props
 
-    userUpdateTemp: function(diff) {
-        var setTemp = this.state.setTemp;
-
-        if (setTemp === -1) {
-            setTemp = this.getCurrentSetTemp();
+        if (isFetching) {
+          return (<div>Loading...</div>);
         }
 
-        setTemp += diff;
-
-        if (setTemp < 55 || setTemp > 75) {
-            return;
-        }
-
-        this.setState({ setTemp: setTemp });
-    },
-
-    sendUpdatedTemp: function(e) {
-        e.preventDefault();
-
-        var temp = this.state.setTemp;
-
-        if (temp === -1 || temp === this.getCurrentSetTemp()) {
-            return;
-        }
-
-        this.state.thermostat.heatSetPoint.state = temp;
-        this.setState({ thermostat: this.state.thermostat });
-
-        actions.setDeviceState(this.state.thermostat.heatSetPoint, temp);
-    },
-
-    render: function () {
-
-        var markup = (this.state.thermostats || []).map((thermostat) => {
-            return (<Thermostat thermostat={thermostat} />);
+        var markup = (thermostats || []).map((thermostat) => {
+            return (<Thermostat thermostat={thermostat} onUpdateTemp={this.onUpdateTemp} />);
         });
 
         return (
@@ -75,46 +41,15 @@ var ThermostatList = React.createClass({
                 {markup}
             </div>
         );
-
-        // TODO: handle multiple thermostats
-        // var currentSetTemp = this.getCurrentSetTemp();       
-        // var userSetTemp = this.state.setTemp;
-
-        // var thermostat = this.state.thermostat;
-
-        // if (userSetTemp === -1) {
-        //     userSetTemp = currentSetTemp;
-        // }
-
-        // var isDirty = userSetTemp !== currentSetTemp;
-
-        // return (
-        //     <div>
-        //         <div>
-        //         Current temp: { thermostat.temperature.state }
-        //         </div>
-        //         <div>
-        //         Set temp: { thermostat.heatSetPoint.state }
-        //         </div>
-        //         <div>
-        //         Battery: { thermostat.battery.state }
-        //         </div>
-
-        //         <div className="clearfix">
-        //             <div className="pull-left">
-        //                 <button className="btn btn-info btn-lg" onClick={ this.handleMinusClick }>-</button>
-        //             </div>
-        //             <div className="pull-right">
-        //                 <button className="btn btn-info btn-lg" href="#" onClick={ this.handlePlusClick }>+</button>
-        //             </div>
-        //             <div className="current-temp">{ userSetTemp }</div>
-        //         </div>
-        //         <div className="update-temp">
-        //             <button className="btn btn-primary" disabled={ !isDirty } onClick={ this.sendUpdatedTemp }>Set Temperature</button>
-        //         </div>
-        //     </div>
-        // );
     }
-});
+}
 
-module.exports = ThermostatList;
+function mapStateToProps(state) {//, ownProps) {
+  const thermostats = state.thermostats;
+  return {
+    isFetching: thermostats.isFetching,
+    thermostats: thermostats.items
+  }
+}
+
+export default connect(mapStateToProps)(ThermostatList)

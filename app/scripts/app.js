@@ -1,10 +1,22 @@
-var Router = require('router');
+require('jquery');
 
-Router.start();
-
-require('jQuery');
+// Adds a promise method to superagent requests
+require('superagent-bluebird-promise');
 require('bootstrap');
 
-// Global react object for non-browserify plugins
-//var React = require('react');
-//window.React = React;
+require('appConstants');
+
+import React from 'react'
+import { render } from 'react-dom'
+import { hashHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
+import Root from './containers/Root'
+import configureStore from './store/configureStore'
+
+const store = configureStore()
+const history = syncHistoryWithStore(hashHistory, store)
+
+render(
+  <Root store={store} history={history} />,
+  document.getElementById('content')
+) 

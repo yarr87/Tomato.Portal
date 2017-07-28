@@ -1,26 +1,33 @@
-var React = require('react');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
 
 // Edit a single light rule definition
-var EditLightRule = React.createClass({
+export default class EditLightRule extends Component {
 
-    availableStates: [
-        { id: "state_on", name: "is on", state: "ON", isTriggered: false },
-        { id: "state_off", name: "is off", state: "OFF", isTriggered: false },
-        { id: "turns_on", name: "turns on", state: "ON", isTriggered: true },
-        { id: "turns_off", name: "turns off", state: "OFF", isTriggered: true }
-    ],
+    constructor(props) {
+        super(props);
 
-    handleDeviceChange: function(newDeviceInternalName) {
+        this.handleDeviceChange = this.handleDeviceChange.bind(this);
+        this.handleStateChange = this.handleStateChange.bind(this);
+
+        this.availableStates = [
+            { id: "state_on", name: "is on", state: "ON", isTriggered: false },
+            { id: "state_off", name: "is off", state: "OFF", isTriggered: false },
+            { id: "turns_on", name: "turns on", state: "ON", isTriggered: true },
+            { id: "turns_off", name: "turns off", state: "OFF", isTriggered: true }
+        ];
+    }
+
+    handleDeviceChange(newDeviceInternalName) {
         var lightRule = this.props.lightRule;
 
         lightRule.lightState.internalName = newDeviceInternalName;
 
         this.props.onUpdate(lightRule);
-    },
+    }
 
-    handleStateChange: function(newStateId) {
+    handleStateChange(newStateId) {
         var lightRule = this.props.lightRule;
 
         var selectedState = _.find(this.availableStates, { id: newStateId });
@@ -29,9 +36,9 @@ var EditLightRule = React.createClass({
         lightRule.isTriggered = selectedState.isTriggered; 
 
         this.props.onUpdate(lightRule);
-    },
+    }
 
-    render: function () {
+    render() {
 
         var selectedLight = this.props.lightRule.lightState.internalName;
 
@@ -56,6 +63,4 @@ var EditLightRule = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditLightRule;
+}

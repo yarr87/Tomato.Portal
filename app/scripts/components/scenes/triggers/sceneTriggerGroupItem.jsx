@@ -1,42 +1,47 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
 var Picker = require('components/picker/picker');
 var _ = require('lodash');
 
 // A collection of scene triggers that share the same GroupId.
 // Ex: all the buttons in a minimote
-var SceneTriggerGroupItem = React.createClass({
-    
-    handleNameChange: function(e) {
-        var trigger = this.props.trigger;
+export default class SceneTriggerGroupItem extends Component {
 
-        trigger.name = e.target.value;
+    constructor(props) {
+        super(props);
 
-        this.sendUpdate(trigger);
-    },
-
-    handleInternalNameChange: function(e) {
-        var trigger = this.props.trigger;
-
-        trigger.triggerInternalName = e.target.value;
-
-        this.sendUpdate(trigger);
-    },
-
-    handleSceneChange: function(newSceneId) {
+        this.handleSceneChange = this.handleSceneChange.bind(this);
+    }
+    //
+    //handleNameChange: function(e) {
+    //    var trigger = this.props.trigger;
+    //
+    //    trigger.name = e.target.value;
+    //
+    //    this.sendUpdate(trigger);
+    //},
+    //
+    //handleInternalNameChange: function(e) {
+    //    var trigger = this.props.trigger;
+    //
+    //    trigger.triggerInternalName = e.target.value;
+    //
+    //    this.sendUpdate(trigger);
+    //},
+    //
+    handleSceneChange(newSceneId) {
         var trigger = this.props.trigger;
 
         trigger.sceneId = newSceneId;
 
         this.sendUpdate(trigger);
-    },
+    }
 
-    sendUpdate: function(trigger) {
+    sendUpdate(trigger) {
         this.props.onUpdate(trigger, this.props.index);
-    },
+    }
 
-    render: function () {
+    render () {
 
         var scenes = (this.props.scenes || []).map((scene) => {
             return { value: scene.id, label: scene.name };
@@ -76,6 +81,4 @@ var SceneTriggerGroupItem = React.createClass({
             </div>
         );
     }
-});
-
-module.exports = SceneTriggerGroupItem;
+}

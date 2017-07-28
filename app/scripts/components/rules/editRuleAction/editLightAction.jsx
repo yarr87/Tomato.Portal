@@ -1,17 +1,24 @@
-var React = require('react');
-var Reflux = require('reflux');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
 
 // Edit a single light state action for a rule
-var EditLightAction = React.createClass({
+export default class EditLightAction extends Component {
 
-    availableStates: [
-        { id: "state_on", name: "turn on", state: "ON" },
-        { id: "state_off", name: "turn off", state: "OFF" }
-    ],
+    constructor(props) {
+        super(props);
 
-    getDimmerLevels: function() {
+        this.handleDeviceChange = this.handleDeviceChange.bind(this);
+        this.handleDimmerLevelChange = this.handleDimmerLevelChange.bind(this);
+        this.handleStateChange = this.handleStateChange.bind(this);
+
+        this.availableStates = [
+            {id: "state_on", name: "turn on", state: "ON"},
+            {id: "state_off", name: "turn off", state: "OFF"}
+        ];
+    }
+
+    getDimmerLevels() {
         var levels = [];
 
         for(var i = 0; i <= 100; i += 10) {
@@ -19,9 +26,9 @@ var EditLightAction = React.createClass({
         }
 
         return levels;
-    },
+    }
 
-    handleDeviceChange: function(newDeviceInternalName) {
+    handleDeviceChange(newDeviceInternalName) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.deviceState.internalName = newDeviceInternalName;    
@@ -37,17 +44,17 @@ var EditLightAction = React.createClass({
         }
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleDimmerLevelChange: function(newDimmerLevel) {
+    handleDimmerLevelChange(newDimmerLevel) {
         var ruleAction = this.props.ruleAction;
 
         ruleAction.deviceState.state = newDimmerLevel;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleStateChange: function(newStateId) {
+    handleStateChange(newStateId) {
         var ruleAction = this.props.ruleAction;
 
         var selectedState = _.find(this.availableStates, { id: newStateId });
@@ -55,9 +62,9 @@ var EditLightAction = React.createClass({
         ruleAction.deviceState.state = selectedState.state;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    render: function () {
+    render () {
 
         var selectedLight = this.props.ruleAction.deviceState.internalName;
 
@@ -88,6 +95,4 @@ var EditLightAction = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditLightAction;
+}

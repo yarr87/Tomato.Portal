@@ -4,6 +4,7 @@ var Router = Globals.Router;
 var Route = Router.Route;
 var DefaultRoute = Router.IndexRoute;
 var RRouter = Router.Router;
+var ReactDOM = require('react-dom');
 
 var Layout = require('components/layout');
 var Home = require('components/home');
@@ -66,6 +67,6 @@ var routes = (
 
 exports.start = function() {
 
-  React.render(<RRouter routes={routes}/>, document.getElementById('content'));
+  ReactDOM.render(<Router routes={routes}/>, document.getElementById('content'));
 
 }

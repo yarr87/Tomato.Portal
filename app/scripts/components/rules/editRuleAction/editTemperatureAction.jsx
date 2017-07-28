@@ -1,45 +1,50 @@
-var React = require('react');
-var Reflux = require('reflux');
+import React, { Component } from 'react'
 var _ = require('lodash');
 var Picker = require('components/picker/picker');
 
 // Edit temperature action for a rule
-var EditTemperatureAction = React.createClass({
+export default class EditTemperatureAction extends Component {
 
-    getTemperatureOptions: function() {
+    constructor(props) {
+        super(props);
+
+        this.handleTempChange = this.handleTempChange.bind(this);
+        this.handleThermostatChange = this.handleThermostatChange.bind(this);
+    }
+
+    getTemperatureOptions() {
         var temps = [];
 
-        for(var i = 55; i <= 75; i ++) {
+        for(var i = 55; i <= 85; i ++) {
             temps.push({value: i.toString(), label: i });
         }
 
         return temps;
-    },
+    }
     
-    handleTempChange: function(newTemp) {
+    handleTempChange(newTemp) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.state = newTemp;
+        ruleAction.temperature = newTemp;
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    handleThermostatChange: function(newThermostatInternalName) {
+    handleThermostatChange(newThermostatId) {
         var ruleAction = this.props.ruleAction;
 
-        ruleAction.deviceState.internalName = newThermostatInternalName;    
+        ruleAction.thermostatId = newThermostatId;    
 
         this.props.onUpdate(ruleAction);
-    },
+    }
 
-    render: function () {
+    render () {
 
-        var selectedTemp = this.props.ruleAction.deviceState.state;
-        var selectedThermostat = this.props.ruleAction.deviceState.internalName;
+        var selectedTemp = this.props.ruleAction.temperature;
+        var selectedThermostat = this.props.ruleAction.thermostatId;
 
         var thermostatSelections = (this.props.thermostats || []).map((thermostat) => {
-            // TODO: handle coolSetPoint too
-            return { value: thermostat.heatSetPoint.internalName, label: thermostat.name };
+            return { value: thermostat.id, label: thermostat.name };
         });
 
         var tempOptions = this.getTemperatureOptions();
@@ -55,6 +60,4 @@ var EditTemperatureAction = React.createClass({
             </div>
             );
     }
-});
-
-module.exports = EditTemperatureAction;
+}

@@ -1,33 +1,44 @@
-var React = require('react');
-var Reflux = require('reflux');
-var _ = require('lodash');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
+import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
+
 var classNames = require('classnames');
+var _ = require('lodash');
 
-var Thermostat = React.createClass({
+export default class Thermostat extends Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+
+        this.handleMinusClick = this.handleMinusClick.bind(this);
+        this.handlePlusClick = this.handlePlusClick.bind(this);
+        this.sendUpdatedTemp = this.sendUpdatedTemp.bind(this);
+
+        this.state = {
             setTemp: -1
-        };
-    },
+        }
+    }
     
-    getCurrentSetTemp: function() {
+    getCurrentSetTemp() {
+        // We keep cool and heat set points in sync when updating via api, but for manual updates they can diverge.
+        // So if we're in A/C (mode === 2), show the cool set point, otherwise just use heat.
         var setTemp = this.props.thermostat.heatSetPoint.state;
+
+        if (this.props.thermostat.mode.state === '2') {
+            setTemp = this.props.thermostat.coolSetPoint.state;
+        }
         
         return setTemp ? (Math.floor(setTemp) || 65) : 65;// '?';
-    },
+    }
 
-    handleMinusClick: function() {
+    handleMinusClick() {
         this.userUpdateTemp(-1);
-    },
+    }
 
-    handlePlusClick: function() {
+    handlePlusClick() {
         this.userUpdateTemp(1);
-    },
+    }
 
-    userUpdateTemp: function(diff) {
+    userUpdateTemp(diff) {
         var setTemp = this.state.setTemp;
 
         if (setTemp === -1) {
@@ -40,16 +51,14 @@ var Thermostat = React.createClass({
 
         setTemp += diff;
 
-        if (setTemp < 55 || setTemp > 75) {
+        if (setTemp < 55 || setTemp > 85) {
             return;
         }
 
-        
-
         this.setState({ setTemp: setTemp });
-    },
+    }
 
-    sendUpdatedTemp: function(e) {
+    sendUpdatedTemp(e) {
         e.preventDefault();
 
         var temp = this.state.setTemp;
@@ -58,15 +67,16 @@ var Thermostat = React.createClass({
             return;
         }
 
-        actions.setDeviceState({ internalName: this.props.thermostat.heatSetPoint.internalName }, temp);
+        this.props.onUpdateTemp(this.props.thermostat, temp);
 
         // This is probably not best practice, but I'm lazy.
         this.props.thermostat.heatSetPoint.state = temp;
+        this.props.thermostat.coolSetPoint.state = temp;
         this.state.setTemp = -1;
         this.setState({ setTemp: this.state.setTemp });
-    },
+    }
 
-    render: function () {
+    render() {
 
         var thermostat = this.props.thermostat;
 
@@ -136,6 +146,4 @@ var Thermostat = React.createClass({
             </div>
         );
     }
-});
-
-module.exports = Thermostat;
+}

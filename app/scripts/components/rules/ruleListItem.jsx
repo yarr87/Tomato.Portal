@@ -1,37 +1,38 @@
-var React = require('react');
-var Link = require('globals').Router.Link;
-var actions = require('actions/actions');
-var globals = require('globals');
-var ReactRouter = globals.Router;
+import React, { Component, PropTypes } from 'react'
+var _ = require('lodash');
+import { Link } from 'react-router'
+var classNames = require('classnames');
+import { hashHistory } from 'react-router'
 
-var RuleListItem = React.createClass({
-    mixins: [ReactRouter.History],
+export default class RuleListItem extends Component {
 
-    getInitialState: function() {
-        return {};
-    },
+    constructor(props) {
+        super(props);
 
-    handleDelete: function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (confirm('really delete?')) {
-            actions.deleteRule(this.props.rule);
-        }
-    },
+        this.editRule = this.editRule.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleEnableDisable = this.handleEnableDisable.bind(this);
+    }
 
-    handleEnableDisable: function(e) {
+    handleDelete(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        this.props.rule.isDisabled = !this.props.rule.isDisabled;
-        actions.saveRule(this.props.rule);
-    },
+        this.props.onDelete(this.props.rule); 
+    }
 
-    editRule: function() {
-        this.history.pushState(null, '/rules/edit/' + this.props.rule.id);
-    },
+    handleEnableDisable(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-    render: function () {
+        this.props.onEnableDisable(this.props.rule);
+    }
+
+    editRule() {
+        hashHistory.push(`/rules/edit/${this.props.rule.id}`);
+    }
+
+    render() {
 
         return (
             <tr key={this.props.rule.id} onClick={this.editRule}>
@@ -54,6 +55,4 @@ var RuleListItem = React.createClass({
             </tr>
         );
     }
-});
-
-module.exports = RuleListItem;
+}
