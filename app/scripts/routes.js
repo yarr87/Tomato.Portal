@@ -5,7 +5,7 @@ import Layout from './components/Layout'
 import ThermostatList from './components/hvac/thermostatList'
 import EditThermostat from './components/hvac/editThermostat'
 
-import SonosList from './components/sonos/sonosList'
+import SonosList from './components/sonos/sonosList' 
 import EditSonos from './components/sonos/editSonos'
 
 import RuleList from './components/rules/ruleList'
