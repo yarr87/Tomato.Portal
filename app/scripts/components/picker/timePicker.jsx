@@ -18,7 +18,9 @@ var TimePicker = React.createClass({
             hours.push({ value: i, label: i });
         }
 
-        return hours;
+        let special = (this.props.specialTimeTypes || []).map(type => ({ value: type, label: type }));
+
+        return special.concat(hours);
     },
 
     getMinutes: function() {
@@ -34,9 +36,16 @@ var TimePicker = React.createClass({
     handleHourChange: function(val) {
 
         var time = this.parseCurrentTime();
-        time.hour = val;
+        let specialTimeType;
 
-        this.props.onChange(this.timeToString(time));
+        if (this.props.specialTimeTypes.indexOf(val) >= 0) {
+          specialTimeType = val;
+        }
+        else {
+          time.hour = val;    
+        }
+
+        this.props.onChange(this.timeToString(time), specialTimeType);
 
     },
 
@@ -55,6 +64,7 @@ var TimePicker = React.createClass({
     },
 
     parseCurrentTime: function() {
+
         var currentTime = this.props.time || '00:00:00';
 
         var timeParts = currentTime.split(':');
@@ -74,7 +84,8 @@ var TimePicker = React.createClass({
         return {
             hour: currentHour,
             minute: currentMinute,
-            amPm: currentAmPm
+            amPm: currentAmPm,
+            specialTime: this.props.specialTime
         };
     },
 
@@ -96,11 +107,17 @@ var TimePicker = React.createClass({
             { value: 'pm', label: 'pm' }
         ];
 
+        let selectedHour = currentTime.specialTime || currentTime.hour;
+
         return (
             <span>
-                <Picker options={hours} selectedValue={currentTime.hour} onChange={this.handleHourChange} />
-                <Picker options={minutes} selectedValue={currentTime.minute} onChange={this.handleMinuteChange} />
-                <Picker options={amPm} selectedValue={currentTime.amPm} onChange={this.handleAmPmChange} />
+                <Picker options={hours} selectedValue={selectedHour} onChange={this.handleHourChange} />
+                { currentTime.specialTime ? '' :
+                    <Picker options={minutes} selectedValue={currentTime.minute} onChange={this.handleMinuteChange} />
+                }
+                { currentTime.specialTime ? '' :
+                    <Picker options={amPm} selectedValue={currentTime.amPm} onChange={this.handleAmPmChange} />
+                }
             </span>
         );
     }

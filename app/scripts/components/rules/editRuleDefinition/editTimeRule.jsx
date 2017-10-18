@@ -19,6 +19,8 @@ export default class EditTimeRule extends Component {
             { type: "After", name: 'After', showStart: true, showEnd: false },
             { type: "Between", name: 'Between', showStart: true, showEnd: true }
         ];
+
+        this.specialTimeTypes = ['Sunrise', 'Sunset'];
     }
 
     handleTypeChange(newType) {
@@ -29,18 +31,20 @@ export default class EditTimeRule extends Component {
         this.props.onUpdate(timeRule);
     }
 
-    handleStartChange(start) {
+    handleStartChange(startTime, specialTimeType) {
         var timeRule = this.props.timeRule;
 
-        timeRule.start = start;
+        timeRule.start = startTime;
+        timeRule.specialStart = specialTimeType;
 
         this.props.onUpdate(timeRule);
     }
 
-    handleEndChange(end) {
+    handleEndChange(end, specialTimeType) {
         var timeRule = this.props.timeRule;
 
         timeRule.end = end;
+        timeRule.specialEnd = specialTimeType;
 
         this.props.onUpdate(timeRule);
     }
@@ -58,9 +62,9 @@ export default class EditTimeRule extends Component {
             <div className="row">
                 <div className="col-xs-12">
                     <Picker options={typeOptions} selectedValue={timeRule.timeRuleType} onChange={this.handleTypeChange} />
-                    {type.showStart ? <TimePicker time={timeRule.start} onChange={this.handleStartChange} /> : ''}
+                    {type.showStart ? <TimePicker time={timeRule.start} specialTime={timeRule.specialStart} specialTimeTypes={this.specialTimeTypes} onChange={this.handleStartChange} /> : ''}
                     {type.showStart && type.showEnd ? ' and ' : '' }
-                    {type.showEnd ? <TimePicker time={timeRule.end} onChange={this.handleEndChange} /> : ''}
+                    {type.showEnd ? <TimePicker time={timeRule.end} specialTime={timeRule.specialEnd} specialTimeTypes={this.specialTimeTypes} onChange={this.handleEndChange} /> : ''}
                 </div>
             </div>
         );
